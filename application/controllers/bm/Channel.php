@@ -402,147 +402,448 @@ class Channel extends CI_Controller
     private function _uploadContent()
     {
         $title = $this->input->post('title');
-        $full = $_FILES['full_version']['name'];
-        $demo = $_FILES['demo_version']['name'];
-        // var_dump($demo);
+        // $full = $this->input->post($_FILES['full_version']['name']);
+        // var_dump($full, $title);
         // die;
+
+        $full = $_FILES['full_version'];
+        $full_filename = $full['name'];
+        $full_size = $full['size'];
+        $full_ext = pathinfo($full_filename, PATHINFO_EXTENSION);
+
+        $demo = $_FILES['demo_version'];
+        $demo_filename = $demo['name'];
+        $demo_dize = $demo['size'];
+        $demo_ext = pathinfo($demo_filename, PATHINFO_EXTENSION);
         $thumb = $_FILES['thumbnail']['name'];
         $thumbs = $_FILES['thumbnail']['tmp_name'];
-
-
+        $SizeOfImage = $_FILES['thumbnail']['size'];
 
         $genre = $this->input->post('genre');
         $description = $this->input->post('description');
         $price = str_replace(',', '', $this->input->post('price'));
-        $ppn = $price * 0.1;
-        $tottal_price = $price + $ppn;
-        // echo "price :'.$price.'";
-        // echo "admin commision :'.$admin.'";
-        // echo "total_price :'.$current_price.'";
+
+
+        # $imgSize = getimagesize($thumbs);
+        // var_dump($price);
         // die;
 
-        if ($full && $demo && $thumb) {
-            $config['allowed_types'] = 'mp3|wav';
-            $config['max_size']      = '60048';
-            $config['upload_path'] = './files/full/';
-            $config['encrypt_name'] = TRUE;
-            $this->load->library('upload', $config, 'full_version');
-            $this->full_version->initialize($config);
-            $fullVer = $this->full_version->do_upload('full_version');
-
-            $config2['allowed_types'] = 'mp3|wav';
-            $config2['max_size']      = '60048s';
-            $config2['upload_path'] = './files/demo/';
-            $config2['encrypt_name'] = TRUE;
-            $this->load->library('upload', $config2, 'demo_version');
-            $this->demo_version->initialize($config2);
-            $demoVer = $this->demo_version->do_upload('demo_version');
-
-            $imgSize = getimagesize($thumbs);
-            $width = $imgSize[0];
-            $height = $imgSize[1];
-            if ($width != 1500 && $height != 1500) {
-
-                unlink(FCPATH . './files/full/' . $full);
-                unlink(FCPATH . './files/demo/' . $demo);
+        if ($full_ext == "wav" && $demo_ext == "wav") {
+            if ($full_size > 314572800) {
                 $this->session->set_flashdata(
                     'message',
                     '<div class="alert alert-danger alert-dismissible fade show"
-                                        role="alert">
-                                        <span class="alert-text">
-                                        Your image is not 1500x1500 pixel</span><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>'
+                                                    role="alert">
+                                                    <span class="alert-text">
+                                                    Your full version audio is too large, max size is 300MB</span><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>'
                 );
 
-                redirect('bm/channel/uploadcontent');
-            } else {
-                $config3['image_library'] = 'gd2';
-                $config3['allowed_types'] = 'gif|jpg|png';
-                $config3['max_size']      = '20048';
-                $config3['upload_path'] = './files/master-image/';
+                redirect('bm/channel/content');
+            } elseif ($demo_dize > 314572800) {
+                $this->session->set_flashdata(
+                    'message',
+                    '<div class="alert alert-danger alert-dismissible fade show"
+                                                    role="alert">
+                                                    <span class="alert-text">
+                                                    Your demo version audio is too large, max size is 300MB</span><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>'
+                );
 
-                $this->load->library('upload', $config3, 'thumbnail');
-                $this->thumbnail->initialize($config3);
-                $thumbVer = $this->thumbnail->do_upload('thumbnail');
+                redirect('bm/channel/content');
+            } else {
+                $config['allowed_types'] = 'wav';
+                $config['max_size']      = '0';
+                $config['upload_path'] = './files/full/';
+                $config['encrypt_name'] = TRUE;
+                $this->load->library('upload', $config, 'full_version');
+                $this->full_version->initialize($config);
+                $fullVer = $this->full_version->do_upload('full_version');
+                // var_dump($fullVer);
+                // die;
+                $config2['allowed_types'] = 'wav';
+                $config2['max_size']      = '0';
+                $config2['upload_path'] = './files/demo/';
+                $config2['encrypt_name'] = TRUE;
+                $this->load->library('upload', $config2, 'demo_version');
+                $this->demo_version->initialize($config2);
+                $demoVer = $this->demo_version->do_upload('full_version');
+                $fullNameFile = $this->full_version->data();
+                $demoNameFile = $this->demo_version->data();
+                $imageLenght = getimagesize($thumbs);
+                $width = $imageLenght[0];
+                $height = $imageLenght[1];
+                if ($thumb) {
+                    if ($width != 1500 && $height != 1500) {
+                        unlink(FCPATH . './files/full/' . $fullNameFile['file_name']);
+                        unlink(FCPATH . './files/demo/' . $demoNameFile['file_name']);
+                        $this->session->set_flashdata(
+                            'message',
+                            '<div class="alert alert-danger alert-dismissible fade show"
+                                                            role="alert">
+                                                            <span class="alert-text">
+                                                            Your image is not 1500x1500 pixel</span><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>'
+                        );
+
+                        redirect('bm/channel/uploadcontent');
+                    } else {
+                        if ($SizeOfImage > 2097152) {
+                            unlink(FCPATH . './files/full/' . $fullNameFile['file_name']);
+                            unlink(FCPATH . './files/demo/' . $demoNameFile['file_name']);
+                            $this->session->set_flashdata(
+                                'message',
+                                '<div class="alert alert-danger alert-dismissible fade show"
+                                                                role="alert">
+                                                                <span class="alert-text">
+                                                                Your image is too large, max size is 2MB</span><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>'
+                            );
+
+                            redirect('bm/channel/uploadcontent');
+                        } else {
+                            if ($fullVer && $demoVer) {
+                                $config3['image_library'] = 'gd2';
+                                $config3['allowed_types'] = 'gif|jpg|png';
+                                $config3['max_size']      = '2048';
+                                $config3['upload_path'] = './files/master-image/';
+                                $config3['encrypt_name'] = TRUE;
+
+
+                                $this->load->library('upload', $config3, 'thumbnail');
+                                $this->thumbnail->initialize($config3);
+                                $thumbVer = $this->thumbnail->do_upload('thumbnail');
+                                $thumbnailImage = $this->thumbnail->data();
+                                if ($thumbVer) {
+                                    $thumbnailImage = $this->thumbnail->data();
+                                    $upload_file = $thumbnailImage['file_name'];
+                                    $this->resizeImageProduct($upload_file);
+                                    if ($genre != "" && $price != "" && $description != "") {
+                                        $ppn = $price * 0.1;
+                                        $tottal_price = $price + $ppn;
+
+                                        $data = [
+                                            'id_product' => getAutoNumber('product', 'id_product', 'BTA', 8),
+                                            'id_user' => $this->session->userdata('id_user'),
+                                            'title' => $title,
+                                            'full_version' =>  $fullNameFile['file_name'],
+                                            'demo_version' =>  $demoNameFile['file_name'],
+                                            'thumbnail' =>  $thumbnailImage['file_name'],
+                                            'genre'    => $genre,
+                                            'thumbnail'    => $thumbnailImage['file_name'],
+                                            'description'    => $description,
+                                            'date_release'   => date('Y-m-d H:i:s'),
+                                            'price' => $price,
+                                            'ppn' => $ppn,
+                                            'selling_price' => $tottal_price,
+                                            'status_product' => 0,
+                                            'sales' => 0,
+                                        ];
+                                        var_dump($data);
+                                    } else {
+                                        unlink(FCPATH . './files/full/' . $fullNameFile['file_name']);
+                                        unlink(FCPATH . './files/demo/' . $demoNameFile['file_name']);
+                                        unlink(FCPATH . './files/master-image/' . $thumbnailImage['file_name']);
+                                        unlink(FCPATH . './files/thumbnail/' . $thumbnailImage['file_name']);
+                                        $this->session->set_flashdata(
+                                            'message',
+                                            '<div class="alert alert-danger alert-dismissible fade show"
+                                                                            role="alert">
+                                                                            <span class="alert-text">
+                                                                           All input is required!!!</span><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>'
+                                        );
+
+                                        redirect('bm/channel/uploadcontent');
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
             }
-
-
-            #$this->upload->initialize($config2);
-            if ($fullVer && $demoVer) {
-                $fulls = $this->full_version->data();
-                # print_r($fulls);
-                $demos = $this->demo_version->data();
-                # print_r($demos);
-
-            } else {
-                // echo $this->full_version->display_errors();
-                // echo $this->demo_version->display_errors();
+        } elseif ($full_ext == "mp3" && $demo_ext == "mp3") {
+            if ($full_size > 314572800) {
                 $this->session->set_flashdata(
                     'message',
                     '<div class="alert alert-danger alert-dismissible fade show"
-                                        role="alert">
-                                        <span class="alert-text">
-                                        Your File upload is not mp3 or wav</span><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>'
+                                                    role="alert">
+                                                    <span class="alert-text">
+                                                    Your full version audio is too large, max size is 300MB</span><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>'
                 );
 
-                redirect('bm/channel/uploadcontent');
-            }
-
-            if ($thumbVer) {
-                $thumbnailImage = $this->thumbnail->data();
-                $upload_file = $thumbnailImage['file_name'];
-                $this->resizeImageProduct($upload_file);
-            } else {
+                redirect('bm/channel/content');
+            } elseif ($demo_dize > 314572800) {
                 $this->session->set_flashdata(
                     'message',
                     '<div class="alert alert-danger alert-dismissible fade show"
-                                        role="alert">
-                                        <span class="alert-text">
-                                        Your File upload is not image type</span><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>'
+                                                    role="alert">
+                                                    <span class="alert-text">
+                                                    Your demo version audio is too large, max size is 300MB</span><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>'
                 );
 
-                redirect('bm/channel/uploadcontent');
+                redirect('bm/channel/content');
+            } else {
+                $config['allowed_types'] = 'mp3';
+                $config['max_size']      = '0';
+                $config['upload_path'] = './files/full/';
+                $config['encrypt_name'] = TRUE;
+                $this->load->library('upload', $config, 'full_version');
+                $this->full_version->initialize($config);
+                $fullVer = $this->full_version->do_upload('full_version');
+                // var_dump($fullVer);
+                // die;
+                $config2['allowed_types'] = 'mp3';
+                $config2['max_size']      = '0';
+                $config2['upload_path'] = './files/demo/';
+                $config2['encrypt_name'] = TRUE;
+                $this->load->library('upload', $config2, 'demo_version');
+                $this->demo_version->initialize($config2);
+                $demoVer = $this->demo_version->do_upload('full_version');
+                $fullNameFile = $this->full_version->data();
+                $demoNameFile = $this->demo_version->data();
+                $imageLenght = getimagesize($thumbs);
+                $width = $imageLenght[0];
+                $height = $imageLenght[1];
+                if ($thumb) {
+                    if ($width != 1500 && $height != 1500) {
+                        unlink(FCPATH . './files/full/' . $fullNameFile['file_name']);
+                        unlink(FCPATH . './files/demo/' . $demoNameFile['file_name']);
+                        $this->session->set_flashdata(
+                            'message',
+                            '<div class="alert alert-danger alert-dismissible fade show"
+                                                            role="alert">
+                                                            <span class="alert-text">
+                                                            Your image is not 1500x1500 pixel</span><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>'
+                        );
+
+                        redirect('bm/channel/uploadcontent');
+                    } else {
+                        if ($SizeOfImage > 2097152) {
+                            unlink(FCPATH . './files/full/' . $fullNameFile['file_name']);
+                            unlink(FCPATH . './files/demo/' . $demoNameFile['file_name']);
+                            $this->session->set_flashdata(
+                                'message',
+                                '<div class="alert alert-danger alert-dismissible fade show"
+                                                                role="alert">
+                                                                <span class="alert-text">
+                                                                Your image is too large, max size is 2MB</span><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>'
+                            );
+
+                            redirect('bm/channel/uploadcontent');
+                        } else {
+                            if ($fullVer && $demoVer) {
+                                $config3['image_library'] = 'gd2';
+                                $config3['allowed_types'] = 'gif|jpg|png';
+                                $config3['max_size']      = '2048';
+                                $config3['upload_path'] = './files/master-image/';
+                                $config3['encrypt_name'] = TRUE;
+
+
+                                $this->load->library('upload', $config3, 'thumbnail');
+                                $this->thumbnail->initialize($config3);
+                                $thumbVer = $this->thumbnail->do_upload('thumbnail');
+                                $thumbnailImage = $this->thumbnail->data();
+                                if ($thumbVer) {
+                                    $thumbnailImage = $this->thumbnail->data();
+                                    $upload_file = $thumbnailImage['file_name'];
+                                    $this->resizeImageProduct($upload_file);
+                                    if ($genre != "" && $price != "" && $description != "") {
+                                        $ppn = $price * 0.1;
+                                        $tottal_price = $price + $ppn;
+
+                                        $data = [
+                                            'id_product' => getAutoNumber('product', 'id_product', 'BTA', 8),
+                                            'id_user' => $this->session->userdata('id_user'),
+                                            'title' => $title,
+                                            'full_version' =>  $fullNameFile['file_name'],
+                                            'demo_version' =>  $demoNameFile['file_name'],
+                                            'thumbnail' =>  $thumbnailImage['file_name'],
+                                            'genre'    => $genre,
+                                            'thumbnail'    => $thumbnailImage['file_name'],
+                                            'description'    => $description,
+                                            'date_release'   => date('Y-m-d H:i:s'),
+                                            'price' => $price,
+                                            'ppn' => $ppn,
+                                            'selling_price' => $tottal_price,
+                                            'status_product' => 0,
+                                            'sales' => 0,
+                                        ];
+                                        var_dump($data);
+                                    } else {
+                                        unlink(FCPATH . './files/full/' . $fullNameFile['file_name']);
+                                        unlink(FCPATH . './files/demo/' . $demoNameFile['file_name']);
+                                        unlink(FCPATH . './files/master-image/' . $thumbnailImage['file_name']);
+                                        unlink(FCPATH . './files/thumbnail/' . $thumbnailImage['file_name']);
+                                        $this->session->set_flashdata(
+                                            'message',
+                                            '<div class="alert alert-danger alert-dismissible fade show"
+                                                                            role="alert">
+                                                                            <span class="alert-text">
+                                                                           All input is required!!!</span><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>'
+                                        );
+
+                                        redirect('bm/channel/uploadcontent');
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
             }
         } else {
 
             $this->session->set_flashdata(
                 'message',
                 '<div class="alert alert-danger alert-dismissible fade show"
-                                    role="alert">
-                                    <span class="alert-text">
-                                    Your File upload is requiered</span><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>'
+                                            role="alert">
+                                            <span class="alert-text">
+                                           Cannot Mix Upload Audio File!, for full version and demo must be same, all mp3 or all wav</span><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>'
             );
 
             redirect('bm/channel/uploadcontent');
         }
-        $data = [
-            'id_product' => getAutoNumber('product', 'id_product', 'BTA', 8),
-            'id_user' => $this->session->userdata('id_user'),
-            'title' => $title,
-            'full_version' => $fulls['file_name'],
-            'demo_version' =>  $demos['file_name'],
-            'genre'    => $genre,
-            'thumbnail'    => $thumbnailImage['file_name'],
-            'description'    => $description,
-            'date_release'   => date('Y-m-d H:i:s'),
-            'price' => $price,
-            'ppn' => $ppn,
-            'selling_price' => $tottal_price,
-            'status_product' => 0,
-            'sales' => 0,
-        ];
-        #var_dump($data);
-        $this->db->insert("product", $data);
-        $this->session->set_flashdata(
-            'message',
-            '<div class="alert alert-success alert-dismissible fade show"
-                                        role="alert">
-                                        <span class="alert-text">
-                                        Success Upload</span><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>'
-        );
+        // var_dump($demo);
+        // die;
+        // $thumb = $_FILES['thumbnail']['name'];
+        // $thumbs = $_FILES['thumbnail']['tmp_name'];
 
-        redirect('bm/channel/content');
+
+
+        // $genre = $this->input->post('genre');
+        // $description = $this->input->post('description');
+        // $price = str_replace(',', '', $this->input->post('price'));
+        // $ppn = $price * 0.1;
+        // $tottal_price = $price + $ppn;
+        // echo "price :'.$price.'";
+        // echo "admin commision :'.$admin.'";
+        // echo "total_price :'.$current_price.'";
+        // die;
+
+        // if ($full && $demo && $thumb) {
+        //     $config['allowed_types'] = 'mp3|wav';
+        //     $config['max_size']      = '307200';
+        //     $config['upload_path'] = './files/full/';
+        //     $config['encrypt_name'] = TRUE;
+        //     $this->load->library('upload', $config, 'full_version');
+        //     $this->full_version->initialize($config);
+        //     $fullVer = $this->full_version->do_upload('full_version');
+        //     // var_dump($fullVer);
+        //     // die;
+        //     $config2['allowed_types'] = 'mp3|wav';
+        //     $config2['max_size']      = '307200';
+        //     $config2['upload_path'] = './files/demo/';
+        //     $config2['encrypt_name'] = TRUE;
+        //     $this->load->library('upload', $config2, 'demo_version');
+        //     $this->demo_version->initialize($config2);
+        //     $demoVer = $this->demo_version->do_upload('demo_version');
+
+        //     $imgSize = getimagesize($thumbs);
+        //     $width = $imgSize[0];
+        //     $height = $imgSize[1];
+
+
+
+        //     #$this->upload->initialize($config2);
+        //     if ($fullVer && $demoVer) {
+        //         $fulls = $this->full_version->data();
+        //         // echo '<pre>';
+        //         // print_r($fulls);
+        //         // echo '</pre>';
+        //         $demos = $this->demo_version->data();
+        //         // print_r($demos);
+        //         #die;
+
+        //     } else {
+        //         // echo $this->full_version->display_errors();
+        //         // echo $this->demo_version->display_errors();
+
+        //         // unlink(FCPATH . './files/full/' . $fulls['file_name']);
+        //         // unlink(FCPATH . './files/demo/' . $demos['file_name']);
+        //         $this->session->set_flashdata(
+        //             'message',
+        //             '<div class="alert alert-danger alert-dismissible fade show"
+        //                                 role="alert">
+        //                                 <span class="alert-text">
+        //                                 Your audio upload is not mp3/wav or your audio size is bigger than 300MB</span><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>'
+        //         );
+
+        //         redirect('bm/channel/uploadcontent');
+        //     }
+        //     if ($width != 1500 && $height != 1500) {
+
+        //         unlink(FCPATH . './files/full/' . $fulls['file_name']);
+        //         unlink(FCPATH . './files/demo/' . $demos['file_name']);
+        //         $this->session->set_flashdata(
+        //             'message',
+        //             '<div class="alert alert-danger alert-dismissible fade show"
+        //                                 role="alert">
+        //                                 <span class="alert-text">
+        //                                 Your image is not 1500x1500 pixel</span><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>'
+        //         );
+
+        //         redirect('bm/channel/uploadcontent');
+        //     } else {
+        //         $config3['image_library'] = 'gd2';
+        //         $config3['allowed_types'] = 'gif|jpg|png';
+        //         $config3['max_size']      = '2048';
+        //         $config3['upload_path'] = './files/master-image/';
+
+        //         $this->load->library('upload', $config3, 'thumbnail');
+        //         $this->thumbnail->initialize($config3);
+        //         $thumbVer = $this->thumbnail->do_upload('thumbnail');
+        //     }
+
+        //     if ($thumbVer) {
+        //         $thumbnailImage = $this->thumbnail->data();
+        //         $upload_file = $thumbnailImage['file_name'];
+        //         $this->resizeImageProduct($upload_file);
+        //     } else {
+        //         $this->session->set_flashdata(
+        //             'message',
+        //             '<div class="alert alert-danger alert-dismissible fade show"
+        //                                 role="alert">
+        //                                 <span class="alert-text">
+        //                                 Your File upload is not image type</span><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>'
+        //         );
+
+        //         redirect('bm/channel/uploadcontent');
+        //     }
+        // } else {
+
+        //     $this->session->set_flashdata(
+        //         'message',
+        //         '<div class="alert alert-danger alert-dismissible fade show"
+        //                             role="alert">
+        //                             <span class="alert-text">
+        //                             Your File upload is requiered</span><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>'
+        //     );
+
+        //     redirect('bm/channel/uploadcontent');
+        // }
+        // $data = [
+        //     'id_product' => getAutoNumber('product', 'id_product', 'BTA', 8),
+        //     'id_user' => $this->session->userdata('id_user'),
+        //     'title' => $title,
+        //     'full_version' => $fulls['file_name'],
+        //     'demo_version' =>  $demos['file_name'],
+        //     'genre'    => $genre,
+        //     'thumbnail'    => $thumbnailImage['file_name'],
+        //     'description'    => $description,
+        //     'date_release'   => date('Y-m-d H:i:s'),
+        //     'price' => $price,
+        //     'ppn' => $ppn,
+        //     'selling_price' => $tottal_price,
+        //     'status_product' => 0,
+        //     'sales' => 0,
+        // ];
+        // #var_dump($data);
+        // $this->db->insert("product", $data);
+        // $this->session->set_flashdata(
+        //     'message',
+        //     '<div class="alert alert-success alert-dismissible fade show"
+        //                                 role="alert">
+        //                                 <span class="alert-text">
+        //                                 Success Upload</span><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>'
+        // );
+
+        // redirect('bm/channel/content');
     }
-
 
     public function rules()
     {

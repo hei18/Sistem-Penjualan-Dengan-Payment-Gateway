@@ -44,8 +44,6 @@
                          <form class="col-12 mb-30" action="<?= base_url('cs/dashboard/add'); ?>" method="post">
                              <?= form_hidden('id_product', $g['id_product']) ?>
                              <?= form_hidden('title', $g['title']) ?>
-                             <?= form_hidden('full_version', $g['full_version']) ?>
-
                              <?= form_hidden('selling_price', $g['selling_price']) ?>
 
 

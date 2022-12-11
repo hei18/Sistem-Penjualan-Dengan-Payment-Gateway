@@ -49,29 +49,32 @@
                                 <div class="form-group">
                                     <label for="exampleInputFile">Full Version</label>
                                     <br>
-                                    <small>The file upload is must be mp3 or wav</small>
+                                    <small>The file upload is must be mp3 or wav (MAX size is 300MB)</small>
                                     <div class="input-group">
                                         <div class="custom-file">
                                             <input id="full_version" name="full_version" type="file" class="custom-file-input" accept=".mp3, .wav">
                                             <label class="custom-file-label" for="exampleInputFile">Choose file</label>
                                         </div>
                                     </div>
+                                    <small class=" text-danger" id="file-result1"> </small>
+
                                 </div>
                                 <div class="form-group">
                                     <label for="exampleInputFile">Demo Version</label>
                                     <br>
-                                    <small>The file upload is must be mp3 or wav</small>
+                                    <small>The file upload is must be mp3 or wav (MAX size is 300MB)</small>
                                     <div class="input-group">
                                         <div class="custom-file">
                                             <input id="demo_version" name="demo_version" type="file" class="custom-file-input" accept=".mp3, .wav">
                                             <label class="custom-file-label" for="exampleInputFile">Choose file</label>
                                         </div>
                                     </div>
+                                    <small class=" text-danger" id="file-result2"> </small>
                                 </div>
                                 <div class="form-group">
                                     <label for="exampleInputFile">Thumbnail</label>
                                     <br>
-                                    <small>The Thumbnail is must be jpg\png\jpeg</small>
+                                    <small>The Thumbnail is must be jpg\png\jpeg (MAX size is 2MB)</small>
                                     <div class="input-group">
                                         <div class="custom-file">
                                             <input id="thumbnail" name="thumbnail" type="file" class="custom-file-input" accept=".jpeg, .jpg, .png">
@@ -120,7 +123,7 @@
                     <div class="card-footer">
                         <a type="button" href="<?= base_url('bm/channel/content'); ?>" class="btn btn-warning">Back</a>
 
-                        <button type="submit" class="btn btn-primary">Submit</button>
+                        <input name="submit" class="btn btn-info" type="submit" value="submit" disabled="true" />
                     </div>
                 </form>
             </div>

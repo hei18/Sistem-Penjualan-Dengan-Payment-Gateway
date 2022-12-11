@@ -9,17 +9,8 @@
 					<h1><?= $tittle; ?></h1>
 				</div>
 
-				<div class="col d-flex justify-content-end">
-
-					<a href="<?= base_url("bm/channel/uploadcontent"); ?>" class="btn btn-app d-none d-lg-block">
-						<i class="fa-solid fa-arrow-up-from-bracket fa-2x"></i>
-						<h5>Upload</h5>
-					</a>
 
 
-
-				</div>
-				<!-- /.info-box -->
 			</div>
 
 

@@ -29,6 +29,7 @@
 						<table class=" table table-bordered" width="100%">
 							 <thead>
 								<tr>
+									<th>Thumbnail</th>
 									<th>Title</th>
 									<th>Item</th>
 									<th>Status</th>
@@ -41,8 +42,11 @@
 
 
 									<tr>
+										<th>
+											<img src="<?= base_url('files/thumbnail/') . $c['thumbnail']; ?>" alt="<?= base64_encode($c['thumbnail']); ?>" srcset="" style="max-width: 80px;">
+										</th>
 										<th><?= $c['title']; ?></th>
-										<th><?= $c['full_version']; ?></th>
+										<th><?= $c['genre']; ?></th>
 										<th>
 											<?php if ($c['status'] == 1) : ?>
 												<span class="badge badge-success">Sent</span>
@@ -65,8 +69,8 @@
 			</div>
 
 			<div class="card">
-				<div class="card-header bg-primary">
-					<h3 class="card-title">DataTable with minimal features & hover style</h3>
+				<div class="card-header bg-warning">
+					<h3 class="card-title">Transaction</h3>
 				</div>
 				<!-- /.card-header -->
 				<div class="card-body">
@@ -79,8 +83,7 @@
 									<th>Transaction Time</th>
 									<th>Bank</th>
 									<th>VA Number</th>
-									<th>Bill Key</th>
-									<th>Bill Code</th>
+
 									<th>Status</th>
 									<th>Action</th>
 
@@ -97,8 +100,8 @@
 											<th><?= indonesian_date($c['transaction_time']); ?></th>
 											<th><?= $c['bank']; ?></th>
 											<th><?= $c['va_number']; ?></th>
-											<th><?= $c['bill_key']; ?></th>
-											<th><?= $c['biller_code']; ?></th>
+
+
 											<th>
 												<?php if ($c['status_code'] == 201) : ?>
 													<span class="badge badge-warning">pending</span>

@@ -110,6 +110,41 @@
       }
    });
 </script>
+<script>
+   $(document).ready(function() {
+
+      $('#full_version').on('change', function() {
+         for (var i = 0; i < $(this).get(0).files.length; ++i) {
+            var file1 = $(this).get(0).files[i].size;
+            if (file1) {
+               var file_size = $(this).get(0).files[i].size;
+               if (file_size > 314572800) {
+                  $('#file-result1').html("max file upload is 300MB");
+                  $('input[name="submit"]').prop('disabled', true);
+               } else {
+                  $('#demo_version').on('change', function() {
+                     for (var i = 0; i < $(this).get(0).files.length; ++i) {
+                        var file1 = $(this).get(0).files[i].size;
+                        if (file1) {
+                           var file_size = $(this).get(0).files[i].size;
+                           if (file_size > 314572800) {
+                              $('#file-result2').html("max file upload is 300MB");
+                              $('input[name="submit"]').prop('disabled', true);
+                           } else {
+                              $('input[name="submit"]').prop('disabled', false);
+                           }
+                        }
+                     }
+                  });
+               }
+            }
+         }
+      });
+
+
+
+   });
+</script>
 <!-- AdminLTE for demo purposes -->
 <!-- <script src="<?= base_url('assets/'); ?>dist/js/demo.js"></script> -->
 <!-- AdminLTE dashboard demo (This is only for demo purposes) -->

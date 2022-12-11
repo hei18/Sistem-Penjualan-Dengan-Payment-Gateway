@@ -32,6 +32,17 @@ class Mdl_cs extends CI_Model
 		$this->db->where('role', 'beatmaker');
 		return $this->db->get()->result_array();
 	}
+	public function getOneProduct()
+	{
+		$this->db->select('*');
+		$this->db->from('product');
+		$this->db->join('user', 'user.id_user = product.id_user');
+		$this->db->where('role', 'beatmaker');
+		$this->db->order_by('id_product', 'DESC');
+		$this->db->limit(1);
+
+		return $this->db->get()->result_array();
+	}
 	public function getByIdProduct($id_product)
 	{
 		return $this->db->get_where('product', ['id_product' => $id_product])->row_array();

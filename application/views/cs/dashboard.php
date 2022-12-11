@@ -21,6 +21,7 @@
 	<!-- Main content -->
 	<section class="content">
 		<div class="container-fluid">
+			<?= $this->session->flashdata('message'); ?>
 
 			<?php $query = $this->db->query("SELECT * FROM profiles INNER JOIN customer ON profiles.id_cs = customer.id_cs"); ?>
 			<?php if ($query->num_rows() > 0) : ?>
@@ -74,46 +75,31 @@
 					<!-- /.card -->
 				</div>
 				<div class="col-md-9">
-					<div class="row">
-						<div class="col">
-							<div class="info-box mb-3 bg-warning">
-								<span class="info-box-icon"><i class="fas fa-tag"></i></span>
-
-								<div class="info-box-content">
-									<span class="info-box-text">Inventory</span>
-									<span class="info-box-number">5,200</span>
-								</div>
-								<!-- /.info-box-content -->
-							</div>
-							<div class="info-box mb-3 bg-warning">
-								<span class="info-box-icon"><i class="fas fa-tag"></i></span>
-
-								<div class="info-box-content">
-									<span class="info-box-text">Inventory</span>
-									<span class="info-box-number">5,200</span>
-								</div>
-								<!-- /.info-box-content -->
-							</div>
-							<div class="info-box mb-3 bg-warning">
-								<span class="info-box-icon"><i class="fas fa-tag"></i></span>
-
-								<div class="info-box-content">
-									<span class="info-box-text">Inventory</span>
-									<span class="info-box-number">5,200</span>
-								</div>
-								<!-- /.info-box-content -->
-							</div>
-							<div class="info-box mb-3 bg-warning">
-								<span class="info-box-icon"><i class="fas fa-tag"></i></span>
-
-								<div class="info-box-content">
-									<span class="info-box-text">Inventory</span>
-									<span class="info-box-number">5,200</span>
-								</div>
-								<!-- /.info-box-content -->
-							</div>
+					<div class="card">
+						<div class="card-header bg-warning">
+							Latest instrumental
 						</div>
-						<!-- /.col -->
+						<div class="card-body">
+							<?php foreach ($beat as $key) : ?>
+								<form action="<?= base_url('cs/dashboard/addNew'); ?>" method="post">
+									<?= form_hidden('id_product', $key['id_product']) ?>
+									<?= form_hidden('title', $key['title']) ?>
+									<?= form_hidden('selling_price', $key['selling_price']) ?>
+
+									<blockquote class="blockquote mb-0">
+										<p>Beatmaker: <?= $key['nickname']; ?> | Title: <?= $key['title']; ?> | Genre: <?= $key['genre']; ?> </p>
+										<footer class="blockquote-footer">
+											<audio controls preload="auto" controlsList="nodownload noplaybackrate">
+												<source src="<?= base_url('files/demo/') . $key['demo_version']; ?>">
+											</audio>
+										</footer>
+										<p><?= $key['description']; ?></p>
+										<button type="submit" class="btn btn-info" style="width: 100%;"><?= idr($key['selling_price']); ?> Add To Chart</button>
+
+									</blockquote>
+								</form>
+							<?php endforeach; ?>
+						</div>
 					</div>
 				</div>
 				<!-- /.col -->

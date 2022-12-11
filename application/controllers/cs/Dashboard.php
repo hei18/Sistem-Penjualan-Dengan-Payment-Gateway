@@ -22,7 +22,11 @@ class Dashboard extends CI_Controller
 		$fetch['user'] = $this->user->getByIdCs($id_cs);
 		$fetch['prod'] = $this->user->getAllCount();
 		$fetch['bm'] = $this->user->getAllbm();
-
+		$fetch['beat'] = $this->user->getOneProduct();
+		// echo '<pre>';
+		// var_dump($fetch['beat']);
+		// echo '</pre>';
+		// die;
 		$this->load->view('layout/cs-header', $fetch);
 		$this->load->view('layout/cs-side',);
 		$this->load->view('cs/dashboard', $fetch);
@@ -95,6 +99,7 @@ class Dashboard extends CI_Controller
 		$qty = $this->user->getCartId($id_cs, $id_product);
 		#$qty = $this->db->get_where('cart',[])
 
+
 		if ($qty == 0) {
 			$sumQty = $qty['qty'] + 1;
 
@@ -127,7 +132,48 @@ class Dashboard extends CI_Controller
 			redirect('publics/instrumental');
 		}
 	}
+	public function addNew()
+	{
+		$id_cs = $this->session->userdata('id_cs');
+		$id_product = $this->input->post('id_product');
+		$selling_price = $this->input->post('selling_price');
+		$title = $this->input->post('title');
+		$qty = $this->user->getCartId($id_cs, $id_product);
+		#$qty = $this->db->get_where('cart',[])
 
+
+		if ($qty == 0) {
+			$sumQty = $qty['qty'] + 1;
+
+			// var_dump($sumQty);
+			// die;
+			$subtotal = $sumQty * $selling_price;
+			$data = [
+
+				'id_cs' => $id_cs,
+				'id_product' => $id_product,
+				'title'	=> $title,
+				'qty'	=> $sumQty,
+				'selling_price' => $selling_price,
+				'subtotal' => $subtotal,
+				// 'mode' => 201,
+			];
+			$this->db->insert('cart', $data);
+			$active_alert = '<div class="alert alert-success alert-dismissible fade show"
+			role="alert">
+			<span class="alert-text">
+			Success add to cart</span><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>';
+			$this->session->set_flashdata('message', $active_alert);
+			redirect('cs/dashboard/cart');
+		} elseif ($qty['id_cart'] != null) {
+			$active_alert = '<div class="alert alert-danger alert-dismissible fade show"
+			role="alert">
+			<span class="alert-text">
+			You can only add to cart one time per instrumental!!!</span><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>';
+			$this->session->set_flashdata('message', $active_alert);
+			redirect('cs/dashboard');
+		}
+	}
 	public function cart()
 	{
 		$id_cs = $this->session->userdata('id_cs');
