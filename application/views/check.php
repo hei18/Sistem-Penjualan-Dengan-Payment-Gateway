@@ -9,10 +9,7 @@
 </head>
 
 <body>
-	<h1>
-		income: <?= $in; ?>
-
-	</h1>
+	<img src="<?= base_url('assets/img/core-img/logos.png'); ?>" alt="">
 </body>
 
 </html>

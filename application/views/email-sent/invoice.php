@@ -94,16 +94,14 @@
 						<tbody>
 							<tr>
 								<td>
-									<table align="center" border="0" cellpadding="0" cellspacing="0" class="row-content stack" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #ffffff; color: #333; width: 620px;" width="620">
+									<table align="center" border="0" cellpadding="0" cellspacing="0" class="row-content stack" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #626469; color: #333; width: 620px;" width="620">
 										<tbody>
 											<tr>
 												<td class="column column-1" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; font-weight: 400; text-align: left; padding-left: 10px; padding-right: 10px; vertical-align: top; border-top: 0px; border-right: 0px; border-bottom: 0px; border-left: 0px;" width="50%">
-													<table border="0" cellpadding="0" cellspacing="0" class="paragraph_block block-2" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word;" width="100%">
+													<table border="0" cellpadding="0" cellspacing="0" class="image_block block-2" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;" width="100%">
 														<tr>
-															<td class="pad" style="padding-top:15px;padding-right:10px;padding-bottom:15px;padding-left:10px;">
-																<div style="color:#000000;font-size:14px;font-family:Lato, Tahoma, Verdana, Segoe, sans-serif;font-weight:400;line-height:120%;text-align:left;direction:ltr;letter-spacing:0px;mso-line-height-alt:16.8px;">
-																	<p style="margin: 0;">I'm a new paragraph block.</p>
-																</div>
+															<td class="pad" style="padding-bottom:20px;padding-top:20px;width:100%;padding-right:0px;padding-left:0px;">
+																<div align="left" class="alignment" style="line-height:10px"><img alt="Image" src="https://drive.google.com/uc?id=15fP8307byR4qBepm15wSZi-cbhw_wFqJ" style="display: block; height: auto; border: 0; width: 186px; max-width: 80%;" title="Image" width="186" /></div>
 															</td>
 														</tr>
 													</table>
@@ -113,8 +111,8 @@
 														<tr>
 															<td class="pad" style="padding-bottom:20px;padding-top:20px;">
 																<div style="font-family: 'Times New Roman', Georgia, serif">
-																	<div class="" style="font-size: 12px; font-family: TimesNewRoman, 'Times New Roman', Times, Baskerville, Georgia, serif; mso-line-height-alt: 14.399999999999999px; color: #555555; line-height: 1.2;">
-																		<p style="margin: 0; font-size: 14px; text-align: right; mso-line-height-alt: 16.8px;"><em>Month Year</em><br /></p>
+																	<div class="" style="font-size: 12px; font-family: TimesNewRoman, 'Times New Roman', Times, Baskerville, Georgia, serif; mso-line-height-alt: 14.399999999999999px; color: #ffffff; line-height: 1.2;">
+																		<p style="margin: 0; font-size: 14px; text-align: right; mso-line-height-alt: 16.8px;"><em><?= $a['year']; ?></em></p>
 																	</div>
 																</div>
 															</td>

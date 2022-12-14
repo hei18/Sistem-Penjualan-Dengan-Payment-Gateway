@@ -220,10 +220,15 @@ class Dashboard extends CI_Controller
 
 	public function updateprofile()
 	{
+
 		$this->form_validation->set_rules(
 			'nickname',
-			'Beat Maker Name',
-			'required|trim'
+			'Nickname',
+			'required|trim|is_unique[customer.nickname]',
+			array(
+				'required'      => 'You have not provided %s.',
+				'is_unique'     => '%s has been use, change to another'
+			)
 		);
 		$this->form_validation->set_rules(
 			'email',

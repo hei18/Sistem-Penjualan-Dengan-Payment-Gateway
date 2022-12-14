@@ -22,6 +22,8 @@ class Dashboard extends CI_Controller
 		$fetch['cs'] = $this->user->getAllCs();
 		$fetch['wd'] = $this->user->getAllWd();
 		$fetch['ppn'] = $this->user->getPPN();
+		// var_dump($fetch['ppn']);
+		// die;
 		$this->load->view('layout/adm-header', $fetch);
 		$this->load->view('layout/adm-side',);
 		$this->load->view('admin/dashboard', $fetch);
@@ -55,36 +57,153 @@ class Dashboard extends CI_Controller
 			'<div class="alert alert-success alert-dismissible fade show"
 										role="alert">
 										<span class="alert-text">
-										Success posted</span><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>'
+										Canceled</span><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>'
 		);
 		redirect('admin/dashboard/bmcontent');
 	}
+	public function updateReview($id_product)
+	{
+		$data = $this->user->getByIdProduct($id_product);
+		date_default_timezone_set('Asia/Jakarta');
 
+		$params = [
+			'title' => $data['title'],
+			'date_release' => $data['date_release'],
+			'genre' => $data['genre'],
+			'date_canceled' => date('Y-m-d'),
+			'year' => date('Y'),
+		];
+		$prod = $data['id_product'];
+		$email = $this->input->post('email');
+		if ($data > 0) {
+			$this->_SendEmailForReview($email, $prod, $params, 'review');
+			#var_dump($prod);
+		}
+		// $data = [
+		// 	'status_product' => 3
+		// ];
+
+		// $this->db->update('product', $data);
+
+		// $this->session->set_flashdata(
+		// 	'message',
+		// 	'<div class="alert alert-success alert-dismissible fade show"
+		// 								role="alert">
+		// 								<span class="alert-text">
+		// 								Success posted</span><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>'
+		// );
+		// redirect('admin/dashboard/bmcontent');
+	}
+
+	public function _SendEmailForReview($email, $prod, $params, $type)
+	{
+		$config = [
+			'protocol' => 'smtp',
+			'smtp_host' => 'ssl://smtp.googlemail.com',
+			'smtp_user' => 'beataudio1812@gmail.com',
+			'smtp_pass' => 'coihrjfpbftfoqyd',
+			'smtp_port' => 465,
+			'mailtype' => 'html',
+			'charset' => 'iso-8859-1',
+			'newline' => "\r\n",
+		];
+
+		$this->email->initialize($config);
+		$subject = 'CANCELED ' . time();
+		$canceledMessage = $this->load->view('email-sent/report-canceled', $params, TRUE);
+		$this->email->from('beataudio1812@gmail.com', 'Beat Audio');
+		$this->email->to($email);
+		if ($type == 'review') {
+			$this->email->subject($subject);
+			$this->email->message($canceledMessage);
+			$data = [
+				'status_product' => 3
+			];
+
+			$this->user->updateProduct($prod, $data, 'product');
+		}
+		$this->load->library('email', $config);
+
+		if ($this->email->send()) {
+			$this->session->set_flashdata(
+				'message',
+				'<div class="alert alert-success alert-dismissible fade show"
+											role="alert">
+											<span class="alert-text">
+											Success canceled and email was sent</span><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>'
+			);
+			redirect('admin/dashboard/bmcontent');
+		} else {
+			$this->email->print_debugger();
+			die;
+		}
+	}
 	public function deleteContent($id_product)
 	{
 		$data = $this->user->getByIdProduct($id_product);
-
+		date_default_timezone_set('Asia/Jakarta');
+		$params = [
+			'title' => $data['title'],
+			'date_release' => $data['date_release'],
+			'genre' => $data['genre'],
+			'date_canceled' => date('Y-m-d'),
+			'year' => date('Y'),
+		];
+		$prod = $data['id_product'];
+		$email = $this->input->post('email');
 		$callBackThumbnail = $data['thumbnail'];
 		$callBackFull = $data['full_version'];
 		$callBackDemo = $data['demo_version'];
 		if ($data > 0) {
-			$data = $this->user->deleteContentData($id_product);
+			$this->_sendEmailTakeDown($email, $prod, $callBackThumbnail, $callBackFull, $callBackDemo, $params, 'delete');
+		}
+	}
+	private function _sendEmailTakeDown($email, $prod, $callBackThumbnail, $callBackFull, $callBackDemo, $params, $type)
+	{
+		$config = [
+			'protocol' => 'smtp',
+			'smtp_host' => 'ssl://smtp.googlemail.com',
+			'smtp_user' => 'beataudio1812@gmail.com',
+			'smtp_pass' => 'coihrjfpbftfoqyd',
+			'smtp_port' => 465,
+			'mailtype' => 'html',
+			'charset' => 'iso-8859-1',
+			'newline' => "\r\n",
+		];
+
+		$this->email->initialize($config);
+		$subject = 'TAKEDOWN ' . time();
+		$canceledMessage = $this->load->view('email-sent/report-delete', $params, TRUE);
+		$this->email->from('beataudio1812@gmail.com', 'Beat Audio');
+		$this->email->to($email);
+
+		if ($type == 'delete') {
+			$this->email->subject($subject);
+			$this->email->message($canceledMessage);
 
 			unlink(FCPATH . './files/thumbnail/' . $callBackThumbnail);
 			unlink(FCPATH . './files/master-image/' . $callBackThumbnail);
 			unlink(FCPATH . './files/full/' . $callBackFull);
 			unlink(FCPATH . './files/demo/' . $callBackDemo);
+			$this->user->deleteContentData($prod);
+		}
+
+		$this->load->library('email', $config);
+
+		if ($this->email->send()) {
 			$this->session->set_flashdata(
 				'message',
 				'<div class="alert alert-success alert-dismissible fade show"
-                                            role="alert">
-                                            <span class="alert-text">
-                                            Success delete data</span><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>'
+											role="alert">
+											<span class="alert-text">
+											Success takedown and email was sent</span><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>'
 			);
 			redirect('admin/dashboard/bmcontent');
+		} else {
+			$this->email->print_debugger();
+			die;
 		}
 	}
-
 	public function requestWd()
 	{
 		$this->form_validation->set_rules('net_income', 'net income', 'required');
@@ -226,8 +345,9 @@ class Dashboard extends CI_Controller
 		$fetch['tittle'] = "Customer";
 		$fetch['user'] = $this->user->getById($id_user);
 		$fetch['cs'] = $this->user->getAllUserCustomer();
+		#$fetch['details'] = $this->user->getCustomerDetail();
 		// echo '<pre>';
-		// var_dump($fetch['bm']);
+		// var_dump($fetch['cs']);
 
 		// echo '</pre>';
 		// die;
@@ -237,9 +357,26 @@ class Dashboard extends CI_Controller
 		$this->load->view('layout/adm-footer');
 	}
 
+	public function detailUserCustomer($id_cs)
+	{
+		$fetch['header'] = "BeatAudio Studio";
+		$fetch['tittle'] = "Customer ";
+		$fetch['bmdata'] = $this->user->getCustomerDetail($id_cs);
+		// echo '<pre>';
+		// var_dump($fetch['bmdata']);
+
+		// echo '</pre>';
+		// die;
+		$this->load->view('layout/adm-header', $fetch);
+		$this->load->view('layout/adm-side',);
+		$this->load->view('admin/user-customer-detail', $fetch);
+		$this->load->view('layout/adm-footer');
+	}
 	public function requestdeleteCs($id_cs)
 	{
 		$data = $this->user->getByIdCs($id_cs);
+		// var_dump($data);
+		// die;
 		if ($data > 0) {
 			if ($data['image'] == "default.jpg") {
 

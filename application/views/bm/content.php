@@ -95,7 +95,15 @@
                                         </td>
 
                                         <td>
-                                            <a class="btn btn-sm btn-danger" onclick="return confirm('Are you sure want to delete <?= $d['title']; ?> ?')" href="<?= base_url('bm/channel/deletecontent/' . $d['id_product']); ?>"><i class="far fa-trash-alt"></i></a>
+                                            <?php if ($d['status_product'] == 0) : ?>
+
+                                                <a class="btn btn-sm btn-danger" onclick="return confirm('Are you sure want to delete <?= $d['title']; ?> ?')" href="<?= base_url('bm/channel/deletecontent/' . $d['id_product']); ?>"><i class="far fa-trash-alt"></i></a>
+                                            <?php elseif ($d['status_product'] == 1) : ?>
+                                                <span class="badge badge-success">Posted</span>
+                                            <?php elseif ($d['status_product'] == 3) : ?>
+                                                <a class="btn btn-sm btn-info" href="<?= base_url('bm/channel/edit/' . $d['id_product']); ?>"><i class="fa-solid fa-pen-to-square"></i></a>
+
+                                            <?php endif; ?>
                                         </td>
 
 

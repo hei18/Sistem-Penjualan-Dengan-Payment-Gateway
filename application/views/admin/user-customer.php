@@ -46,6 +46,7 @@
 									<tr>
 
 										<td>
+											<?= $d['id_cs']; ?>
 											<?= $d['nickname'] ?>
 										</td>
 										<td>
@@ -60,9 +61,9 @@
 											<?php elseif ($d['request_delete'] == NULL) : ?>
 											<?php endif; ?>
 
-											<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal<?= $d['id_cs']; ?>">
-												Launch demo modal
-											</button>
+											<a href="<?= base_url('admin/dashboard/detailUserCustomer/' . $d['id_cs']); ?>" class="btn btn-sm btn-primary">
+												<i class="fa-solid fa-circle-info"></i>
+											</a>
 										</td>
 									</tr>
 								<?php endforeach; ?>
@@ -83,7 +84,7 @@
 </aside>
 <!-- /.control-sidebar -->
 <!-- Modal -->
-<?php foreach ($cs as $d) :
+<?php foreach ($details as $d) :
 	$id = $d['id_cs'];
 ?>
 	<div class="modal fade" id="exampleModal<?= $d['id_cs']; ?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -99,20 +100,14 @@
 					<form>
 						<div class="row">
 							<div class="col">
-								<div class="form-group">
-									<label for="recipient-name" class="col-form-label">Bank</label>
-									<input type="text" class="form-control" value="<?= $d['bank_name']; ?>">
-								</div>
+
 								<div class="form-group">
 									<label for="recipient-name" class="col-form-label">Phone Number</label>
 									<input type="text" class="form-control" value="<?= $d['phone_number']; ?>">
 								</div>
 							</div>
 							<div class="col">
-								<div class="form-group">
-									<label for="recipient-name" class="col-form-label">Bank Number</label>
-									<input type="text" class="form-control" value="<?= $d['bank_number']; ?>">
-								</div>
+
 								<div class="form-group">
 									<label for="recipient-name" class="col-form-label">Address</label>
 									<textarea class="form-control" name="" id="" cols="30" rows="0"><?= $d['address']; ?></textarea>
@@ -126,7 +121,7 @@
 				</div>
 				<div class="modal-footer">
 					<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-					<button type="button" class="btn btn-primary">Save changes</button>
+
 				</div>
 			</div>
 		</div>

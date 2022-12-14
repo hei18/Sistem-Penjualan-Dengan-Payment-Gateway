@@ -126,7 +126,11 @@
 
 								<div class="info-box-content">
 									<span class="info-box-text"><a href="<?= base_url('admin/dashboard/requestWd'); ?>" class="text-white">Income From PPN</a></span>
-									<span class="info-box-number"><?= idr($ppn); ?></span>
+									<?php if ($ppn == NULL) : ?>
+										<span class="info-box-number">Rp 0</span>
+									<?php else : ?>
+										<span class="info-box-number"><?= idr($ppn); ?></span>
+									<?php endif; ?>
 								</div>
 								<!-- /.info-box-content -->
 							</div>

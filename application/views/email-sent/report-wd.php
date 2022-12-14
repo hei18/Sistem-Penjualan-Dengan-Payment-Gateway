@@ -101,7 +101,7 @@
 													<table border="0" cellpadding="0" cellspacing="0" class="image_block block-2" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;" width="100%">
 														<tr>
 															<td class="pad" style="padding-bottom:20px;padding-top:20px;width:100%;padding-right:0px;padding-left:0px;">
-																<div align="left" class="alignment" style="line-height:10px"><img alt="Image" src="<?= base_url('assets/img/core-img/logos.png'); ?>" style="display: block; height: auto; border: 0; width: 186px; max-width: 100%;" title="Image" width="186" /></div>
+																<div align="left" class="alignment" style="line-height:10px"><img alt="Image" src="https://drive.google.com/uc?id=15fP8307byR4qBepm15wSZi-cbhw_wFqJ" style="display: block; height: auto; border: 0; width: 186px; max-width: 80%;" title="Image" width="186" /></div>
 															</td>
 														</tr>
 													</table>
@@ -112,7 +112,7 @@
 															<td class="pad" style="padding-bottom:20px;padding-top:20px;">
 																<div style="font-family: 'Times New Roman', Georgia, serif">
 																	<div class="" style="font-size: 12px; font-family: TimesNewRoman, 'Times New Roman', Times, Baskerville, Georgia, serif; mso-line-height-alt: 14.399999999999999px; color: #ffffff; line-height: 1.2;">
-																		<p style="margin: 0; font-size: 14px; text-align: right; mso-line-height-alt: 16.8px;"><em><?= $now; ?></em><br /></p>
+																		<p style="margin: 0; font-size: 14px; text-align: right; mso-line-height-alt: 16.8px;"><em><?= $act['year']; ?></em></p>
 																	</div>
 																</div>
 															</td>

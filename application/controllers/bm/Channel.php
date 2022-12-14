@@ -100,6 +100,19 @@ class Channel extends CI_Controller
             redirect('bm/channel/content');
         }
     }
+    public function edit($id_product)
+    {
+        $id_user = $this->session->userdata('id_user');
+        $fetch['tittle'] = "Edit Content";
+        $fetch['header'] = "BeatAudio";
+        $fetch['user'] = $this->user->getByIdBm($id_user);
+        $fetch['users'] = $this->users->getByProfile($id_user);
+        $fetch['beat'] = $this->user->getByIdProduct($id_product);
+        $this->load->view('layout/bm-header', $fetch);
+        $this->load->view('layout/bm-side',);
+        $this->load->view('bm/edit-content');
+        $this->load->view('layout/bm-footer');
+    }
     public function updateprofile()
     {
         $this->form_validation->set_rules(
@@ -422,7 +435,8 @@ class Channel extends CI_Controller
         $genre = $this->input->post('genre');
         $description = $this->input->post('description');
         $price = str_replace(',', '', $this->input->post('price'));
-
+        // var_dump('full =' . $full_filename);
+        // var_dump('demo =' . $demo_filename);
 
         # $imgSize = getimagesize($thumbs);
         // var_dump($price);
@@ -457,6 +471,8 @@ class Channel extends CI_Controller
                 $this->load->library('upload', $config, 'full_version');
                 $this->full_version->initialize($config);
                 $fullVer = $this->full_version->do_upload('full_version');
+                $fullNameFile = $this->full_version->data();
+
                 // var_dump($fullVer);
                 // die;
                 $config2['allowed_types'] = 'wav';
@@ -465,9 +481,9 @@ class Channel extends CI_Controller
                 $config2['encrypt_name'] = TRUE;
                 $this->load->library('upload', $config2, 'demo_version');
                 $this->demo_version->initialize($config2);
-                $demoVer = $this->demo_version->do_upload('full_version');
-                $fullNameFile = $this->full_version->data();
+                $demoVer = $this->demo_version->do_upload('demo_version');
                 $demoNameFile = $this->demo_version->data();
+
                 $imageLenght = getimagesize($thumbs);
                 $width = $imageLenght[0];
                 $height = $imageLenght[1];
@@ -535,7 +551,19 @@ class Channel extends CI_Controller
                                             'status_product' => 0,
                                             'sales' => 0,
                                         ];
-                                        var_dump($data);
+                                        // echo '<pre>';
+                                        // var_dump($data);
+                                        // echo '</pre>';
+                                        $this->db->insert("product", $data);
+                                        $this->session->set_flashdata(
+                                            'message',
+                                            '<div class="alert alert-success alert-dismissible fade show"
+                                                                        role="alert">
+                                                                        <span class="alert-text">
+                                                                        Success Upload wait for admin review</span><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>'
+                                        );
+
+                                        redirect('bm/channel/content');
                                     } else {
                                         unlink(FCPATH . './files/full/' . $fullNameFile['file_name']);
                                         unlink(FCPATH . './files/demo/' . $demoNameFile['file_name']);
@@ -586,6 +614,8 @@ class Channel extends CI_Controller
                 $this->load->library('upload', $config, 'full_version');
                 $this->full_version->initialize($config);
                 $fullVer = $this->full_version->do_upload('full_version');
+                $fullNameFile = $this->full_version->data();
+
                 // var_dump($fullVer);
                 // die;
                 $config2['allowed_types'] = 'mp3';
@@ -594,9 +624,9 @@ class Channel extends CI_Controller
                 $config2['encrypt_name'] = TRUE;
                 $this->load->library('upload', $config2, 'demo_version');
                 $this->demo_version->initialize($config2);
-                $demoVer = $this->demo_version->do_upload('full_version');
-                $fullNameFile = $this->full_version->data();
+                $demoVer = $this->demo_version->do_upload('demo_version');
                 $demoNameFile = $this->demo_version->data();
+
                 $imageLenght = getimagesize($thumbs);
                 $width = $imageLenght[0];
                 $height = $imageLenght[1];
@@ -664,7 +694,16 @@ class Channel extends CI_Controller
                                             'status_product' => 0,
                                             'sales' => 0,
                                         ];
-                                        var_dump($data);
+                                        $this->db->insert("product", $data);
+                                        $this->session->set_flashdata(
+                                            'message',
+                                            '<div class="alert alert-success alert-dismissible fade show"
+                                                                        role="alert">
+                                                                        <span class="alert-text">
+                                                                        Success Upload</span><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>'
+                                        );
+
+                                        redirect('bm/channel/content');
                                     } else {
                                         unlink(FCPATH . './files/full/' . $fullNameFile['file_name']);
                                         unlink(FCPATH . './files/demo/' . $demoNameFile['file_name']);

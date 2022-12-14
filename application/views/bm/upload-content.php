@@ -104,7 +104,7 @@
                                 </div>
                                 <div class="form-group">
                                     <label for="exampleInputEmail1">Description</label>
-                                    <textarea class="form-control" name="description" id="description" rows="2"></textarea>
+                                    <textarea class="form-control" name="description" id="description" rows="2" placeholder="Describe about your instrumental such as what DAW you use, how many bpm, explain the ambience, what chords start from and anything related to your instrumental"></textarea>
                                     <?= form_error('description', '<small class=" text-danger">', '</small>'); ?>
 
                                 </div>

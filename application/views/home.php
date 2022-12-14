@@ -3,7 +3,7 @@
     <div class="hero-slides owl-carousel">
         <div class="single-hero-slide d-flex align-items-center justify-content-center">
             <!-- Slide Img -->
-            <div class="slide-img bg-img"><img src="<?= base_url('assets/img/bg-img/bg-2.jpg'); ?>" alt=""></div>
+            <div class="slide-img bg-img" style="background-image: url(<?= base_url('assets/'); ?>img/bg-img/bg-2.jpg);"></div>
             <!-- Slide Content -->
             <div class="container">
                 <div class="row">

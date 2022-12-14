@@ -67,9 +67,18 @@ class Mdl_admin extends CI_Model
 	{
 		$this->db->select('*');
 		$this->db->from('customer');
-		$this->db->join('profiles', 'profiles.id_cs = customer.id_cs');
+		#$this->db->join('profiles', 'profiles.id_cs = customer.id_cs', 'left');
 		$this->db->where('role', 'customer');
 		return $this->db->get()->result_array();
+	}
+	public function getCustomerDetail($id_cs)
+	{
+		$this->db->select('*');
+		$this->db->from('customer');
+		$this->db->join('profiles', 'profiles.id_cs = customer.id_cs');
+		$this->db->where('role', 'customer');
+		$this->db->where('customer.id_cs', $id_cs);
+		return $this->db->get()->row_array();
 	}
 	public function getAllCs()
 	{
@@ -127,6 +136,10 @@ class Mdl_admin extends CI_Model
 	public function updatePassword($id_user, $data)
 	{
 		$this->db->update('user', $data, ['id_user' => $id_user]);
+	}
+	public function updateProduct($id_product, $data)
+	{
+		$this->db->update('product', $data, ['id_product' => $id_product]);
 	}
 	/**
 	 * Delete

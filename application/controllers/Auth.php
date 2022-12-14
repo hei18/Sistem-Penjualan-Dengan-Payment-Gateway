@@ -265,12 +265,18 @@ class Auth extends CI_Controller
             'newline' => "\r\n",
         ];
         $this->email->initialize($config);
+
+
+
         $email = $this->input->post('email');
         $encode = urlencode($token);
+        date_default_timezone_set('Asia/Jakarta');
+
         $data1['act'] = [
             'year' => date("Y"),
             'email' => $email,
-            'token' => $encode
+            'token' => $encode,
+
         ];
         $registMessage = $this->load->view('email-sent/activation', $data1, TRUE);
 
@@ -281,7 +287,7 @@ class Auth extends CI_Controller
         $this->email->to($email);
         if ($type == 'verify') {
 
-            $this->email->subject('Account Verivication');
+            $this->email->subject('Account Verification - ' . time());
             $this->email->message($registMessage);
         } elseif ($type == 'forgot') {
             $this->email->subject('Reset Password');
@@ -564,5 +570,10 @@ class Auth extends CI_Controller
             'year' => date("Y")
         ];
         $this->load->view('email-sent/activation', $data1);
+    }
+
+    public function checks()
+    {
+        $this->load->view('check');
     }
 }

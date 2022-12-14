@@ -31,6 +31,8 @@
 								<div class="form-group">
 									<label for="exampleInputEmail1">Nickname</label>
 									<input type="text" name="nickname" id="nickname" value="<?= $user['nickname']; ?>" class="form-control">
+									<?= form_error('nickname', '<small class=" text-danger">', '</small>'); ?>
+
 								</div>
 								<div class="form-group">
 									<label for="exampleInputEmail1">Email</label>

@@ -10,7 +10,11 @@
 
 				</div>
 				<div class="col">
-					<h1><?= $tittle; ?> : NONE</h1>
+					<?php if ($bmdata == NULL) : ?>
+						<h1><?= $tittle; ?> : NONE</h1>
+					<?php else : ?>
+						<h1><?= $tittle; ?> : <?= $bmdata['nickname']; ?></h1>
+					<?php endif; ?>
 
 				</div>
 
@@ -58,7 +62,7 @@
 												<input type="text" class="form-control" value="<?= $bmdata['last_name']; ?>" readonly>
 											</div>
 											<div class="form-group">
-												<label for="exampleInputEmail1">Phone Number</label>
+												<label for="exampleInputEmail1">Address</label>
 												<textarea class="form-control" id="exampleFormControlTextarea1" rows="1"><?= $bmdata['address']; ?></textarea>
 											</div>
 										</div>
@@ -72,7 +76,7 @@
 				<div class="col">
 					<div class="card">
 						<div class="card-header bg-danger">
-							<h3 class="card-title">Your Bank Account</h3>
+							<h3 class="card-title">Bank Account</h3>
 						</div>
 						<!-- /.card-header -->
 						<div class="card-body">

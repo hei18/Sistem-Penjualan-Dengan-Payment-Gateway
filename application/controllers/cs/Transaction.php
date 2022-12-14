@@ -102,7 +102,7 @@ class Transaction extends CI_Controller
 		}
 	}
 
-	private function _sendFile($email, $order_id, $order, $amount, $type)
+	public function _sendFile($email, $order_id, $order, $amount, $type)
 	{
 		$config = [
 			'protocol' => 'smtp',
@@ -113,20 +113,28 @@ class Transaction extends CI_Controller
 			'mailtype' => 'html',
 			'charset' => 'iso-8859-1',
 			'newline' => "\r\n",
+			"smtp_keep_alive"    => TRUE
 		];
 		$this->email->initialize($config);
 		#$this->email->set_header('Content-type', 'text/html');
 		$id_cs = $this->session->userdata('id_cs');
 
 		$c = $this->user->getFile($id_cs, $order_id);
+		$profile = $this->user->getByProfile($id_cs);
 
 		$data['c'] = $c;
+		// echo '<pre>';
+		// $nickname = ;
+		// var_dump($nickname);
+		// echo '</pre>';
+
+
 		$data['a'] = [
 			'year' => date('Y'),
 			'amount' => $amount,
 			'order_id' => $order_id,
 			'order_date' => $order,
-			'nickname' => $this->session->userdata('nickname'),
+			'nickname' => $profile['first_name'] . ' ' . $profile['last_name'],
 			'email' => $this->session->userdata('email')
 		];
 
@@ -164,13 +172,13 @@ class Transaction extends CI_Controller
 		$this->load->library('email', $config);
 		$this->email->send();
 		$active_alert = '<div class="alert alert-success alert-dismissible fade show"
-		role="alert">
-		<span class="alert-text">
-		Now check your email</span><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>';
+	role="alert">
+	<span class="alert-text">
+	Now check your email</span><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>';
 		$this->session->set_flashdata('message', $active_alert);
 		redirect('cs/dashboard/transaction');
-		// if () {
-		// 	#return true;
+		#$this->email->send();
+		// if ($this->email->send()) {
 		// } else {
 		// 	$this->email->print_debugger();
 		// 	die;
