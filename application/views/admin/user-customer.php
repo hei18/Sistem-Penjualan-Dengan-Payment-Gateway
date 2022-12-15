@@ -24,7 +24,7 @@
 
 			<div class="card">
 				<div class="card-header bg-warning">
-					<h5>All Customer</h5>
+					All Customer
 				</div>
 				<!-- /.card-header -->
 				<div class="card-body">

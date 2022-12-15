@@ -57,83 +57,83 @@
 				<div class="col-md-9">
 					<div class="row">
 						<div class="col-md-3 col-sm-6 col-12">
-							<div class="info-box">
-								<span class="info-box-icon bg-info"><i class="fa-sharp fa-solid fa-music"></i></span>
+							<a class="text-white" href="<?= base_url('admin/dashboard/bmcontent'); ?>">
+								<div class="info-box">
+									<span class="info-box-icon bg-info"><i class="fa-sharp fa-solid fa-music"></i></span>
 
-								<div class="info-box-content">
-									<span class="info-box-text"><a class="text-white" href="<?= base_url('admin/dashboard/bmcontent'); ?>">Instrumental</a></span>
-									<span class="info-box-number"><?= $prod; ?></span>
+									<div class="info-box-content">
+										<span class="info-box-text">Instrumental</span>
+										<span class="info-box-number"><?= $prod; ?></span>
+									</div>
+									<!-- /.info-box-content -->
 								</div>
-								<!-- /.info-box-content -->
-							</div>
+							</a>
 							<!-- /.info-box -->
 						</div>
 						<!-- /.col -->
 						<div class="col-md-3 col-sm-6 col-12">
-							<div class="info-box">
-								<span class="info-box-icon bg-success"><i class="fa-sharp fa-solid fa-users"></i></span>
-								<i class=""></i>
-								<div class="info-box-content">
-									<span class="info-box-text">Beatmaker</span>
-									<span class="info-box-number"><?= $bm; ?></span>
+							<a class="text-white" href="<?= base_url('admin/dashboard/beatmaker'); ?>">
+
+								<div class="info-box">
+									<span class="info-box-icon bg-success"><i class="fa-sharp fa-solid fa-users"></i></span>
+									<i class=""></i>
+									<div class="info-box-content">
+										<span class="info-box-text">Beatmaker</span>
+										<span class="info-box-number"><?= $bm; ?></span>
+									</div>
+									<!-- /.info-box-content -->
 								</div>
-								<!-- /.info-box-content -->
-							</div>
+							</a>
 							<!-- /.info-box -->
 						</div>
 						<!-- /.col -->
 						<div class="col-md-3 col-sm-6 col-12">
-							<div class="info-box">
-								<span class="info-box-icon bg-info"><i class="fa-sharp fa-solid fa-users"></i></span>
-								<i class=""></i>
+							<a class="text-white" href="<?= base_url('admin/dashboard/customer'); ?>">
 
-								<div class="info-box-content">
-									<span class="info-box-text">Customer</span>
-									<span class="info-box-number"><?= $cs; ?></span>
+								<div class=" info-box">
+									<span class="info-box-icon bg-info"><i class="fa-sharp fa-solid fa-users"></i></span>
+									<i class=""></i>
+
+									<div class="info-box-content">
+										<span class="info-box-text">Customer</span>
+										<span class="info-box-number"><?= $cs; ?></span>
+									</div>
+									<!-- /.info-box-content -->
 								</div>
-								<!-- /.info-box-content -->
-							</div>
+							</a>
 							<!-- /.info-box -->
 						</div>
 						<!-- /.col -->
 						<div class="col-md-3 col-sm-6 col-12">
-							<div class="info-box">
-								<span class="info-box-icon bg-danger"><i class="far fa-star"></i></span>
+							<a href="<?= base_url('admin/dashboard/requestWd'); ?>" class="text-white">
+								<div class="info-box">
+									<span class="info-box-icon bg-danger"><i class="fa-solid fa-money-bills"></i></span>
 
-								<div class="info-box-content">
-									<span class="info-box-text">Likes</span>
-									<span class="info-box-number">93,139</span>
+									<div class="info-box-content">
+										<span class="info-box-text">Request Withdaw</span>
+										<span class="info-box-number"><?= $wd; ?></span>
+									</div>
+									<!-- /.info-box-content -->
 								</div>
-								<!-- /.info-box-content -->
-							</div>
+							</a>
 							<!-- /.info-box -->
 						</div>
 						<div class="col-md-3 col-sm-6 col-12">
-							<div class="info-box">
-								<span class="info-box-icon bg-danger"><i class="fa-solid fa-money-bills"></i></span>
+							<a href="<?= base_url('admin/dashboard/income'); ?>" class="text-white">
+								<div class="info-box">
+									<span class="info-box-icon bg-info"><i class="fa-solid fa-money-bills"></i></span>
 
-								<div class="info-box-content">
-									<span class="info-box-text"><a href="<?= base_url('admin/dashboard/requestWd'); ?>" class="text-white">Request Withdaw</a></span>
-									<span class="info-box-number"><?= $wd; ?></span>
+									<div class="info-box-content">
+										<span class="info-box-text">Income From PPN</span>
+										<?php if ($ppn == NULL) : ?>
+											<span class="info-box-number">Rp 0</span>
+										<?php else : ?>
+											<span class="info-box-number"><?= idr($ppn); ?></span>
+										<?php endif; ?>
+									</div>
+									<!-- /.info-box-content -->
 								</div>
-								<!-- /.info-box-content -->
-							</div>
-							<!-- /.info-box -->
-						</div>
-						<div class="col-md-3 col-sm-6 col-12">
-							<div class="info-box">
-								<span class="info-box-icon bg-info"><i class="fa-solid fa-money-bills"></i></span>
-
-								<div class="info-box-content">
-									<span class="info-box-text"><a href="<?= base_url('admin/dashboard/requestWd'); ?>" class="text-white">Income From PPN</a></span>
-									<?php if ($ppn == NULL) : ?>
-										<span class="info-box-number">Rp 0</span>
-									<?php else : ?>
-										<span class="info-box-number"><?= idr($ppn); ?></span>
-									<?php endif; ?>
-								</div>
-								<!-- /.info-box-content -->
-							</div>
+							</a>
 							<!-- /.info-box -->
 						</div>
 						<!-- /.col -->

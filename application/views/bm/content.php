@@ -52,7 +52,7 @@
                                     <th>Demo_version</th>
                                     <th>Genre</th>
                                     <th>Status</th>
-
+                                    <th>Sales</th>
                                     <th>Info</th>
 
                                 </tr>
@@ -93,7 +93,9 @@
                                                 <span class="badge badge-danger">Canceled</span>
                                             <?php endif; ?>
                                         </td>
-
+                                        <td>
+                                            <?= $d['sales']; ?>
+                                        </td>
                                         <td>
                                             <?php if ($d['status_product'] == 0) : ?>
 

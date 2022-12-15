@@ -17,7 +17,19 @@ class Mdl_admin extends CI_Model
 		return $this->db->get_where('user', ['id_user' => $id_user])->row_array();
 	}
 
+	public function getIncome()
+	{
+		$this->db->select('*');
+		$this->db->from('income');
+		return $this->db->get()->result_array();
+	}
+	public function getTotal()
+	{
+		$this->db->select_sum('ppn_income');
+		$this->db->from('income');
 
+		return $this->db->get()->row()->ppn_income;
+	}
 	public function getUserData($id_user)
 	{
 		$this->db->select('*');
@@ -107,6 +119,7 @@ class Mdl_admin extends CI_Model
 		$this->db->select('*');
 		$this->db->from('product');
 		$this->db->join('user', 'user.id_user = product.id_user');
+		$this->db->join('profiles', 'user.id_user = profiles.id_user');
 		$this->db->where('role', 'beatmaker');
 		$this->db->order_by('id_product', 'DESC');
 

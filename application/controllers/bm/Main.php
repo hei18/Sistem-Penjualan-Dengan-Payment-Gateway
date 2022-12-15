@@ -17,12 +17,5 @@ class Main extends CI_Controller
     public function index()
 
     {
-        $id_user = $this->session->userdata('id_user');
-        $fetch['user'] = $this->user->getById($id_user);
-        $fetch['getProduct'] = $this->getProduct->getAllProductToDisplay();
-        $fetch['getBm'] = $this->getProduct->getBeatMaker();
-        $this->load->view('layout/main-header-bm', $fetch);
-        $this->load->view('bm/home');
-        $this->load->view('layout/main-footer-bm');
     }
 }

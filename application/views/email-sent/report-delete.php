@@ -112,7 +112,7 @@
 															<td class="pad" style="padding-bottom:20px;padding-top:20px;">
 																<div style="font-family: 'Times New Roman', Georgia, serif">
 																	<div class="" style="font-size: 12px; font-family: TimesNewRoman, 'Times New Roman', Times, Baskerville, Georgia, serif; mso-line-height-alt: 14.399999999999999px; color: #ffffff; line-height: 1.2;">
-																		<p style="margin: 0; font-size: 14px; text-align: right; mso-line-height-alt: 16.8px;"><em><?= $act['year']; ?></em></p>
+																		<p style="margin: 0; font-size: 14px; text-align: right; mso-line-height-alt: 16.8px;"><em><?= $year; ?></em></p>
 																	</div>
 																</div>
 															</td>
@@ -179,7 +179,7 @@
 															<td class="pad" style="padding-bottom:5px;padding-left:10px;padding-right:10px;padding-top:10px;">
 																<div style="font-family: sans-serif">
 																	<div class="" style="font-size: 12px; mso-line-height-alt: 14.399999999999999px; color: #71777D; line-height: 1.2; font-family: Lato, Tahoma, Verdana, Segoe, sans-serif;">
-																		<p style="margin: 0; font-size: 14px; text-align: left; mso-line-height-alt: 16.8px;"><span style="font-size:15px;">Dear, (name)</span></p>
+																		<p style="margin: 0; font-size: 14px; text-align: left; mso-line-height-alt: 16.8px;"><span style="font-size:15px;">Dear, <?= $full_name; ?></span></p>
 																		<p style="margin: 0; font-size: 14px; text-align: justify; mso-line-height-alt: 16.8px;"><span style="font-size:15px;">We apologize, your submission was takedown because we reviewed your demo version it doesn't have our watermark and make sure your demo version is half the duration of your full version or make it 1:30 minutes, it's your choice. Below are the details: <br /></span></p>
 																	</div>
 																</div>
@@ -452,9 +452,9 @@
 														<tr>
 															<td class="pad">
 																<div align="center" class="alignment">
-																	<!--[if mso]><v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" style="height:38px;width:82px;v-text-anchor:middle;" arcsize="11%" stroke="false" fillcolor="#3AAEE0"><w:anchorlock/><v:textbox inset="0px,0px,0px,0px"><center style="color:#ffffff; font-family:Tahoma, Verdana, sans-serif; font-size:14px"><![endif]-->
-																	<a href="<?= base_url('auth'); ?>" style="text-decoration:none;display:inline-block;color:#ffffff;background-color:#3AAEE0;border-radius:4px;width:auto;border-top:0px solid transparent;font-weight:400;border-right:0px solid transparent;border-bottom:0px solid transparent;border-left:0px solid transparent;padding-top:5px;padding-bottom:5px;font-family:Lato, Tahoma, Verdana, Segoe, sans-serif;font-size:14px;text-align:center;mso-border-alt:none;word-break:keep-all;"><span style="padding-left:20px;padding-right:20px;font-size:14px;display:inline-block;letter-spacing:normal;"><span dir="ltr" style="word-break: break-word; line-height: 28px;">LOGIN</span></span></a>
-																	<!--[if mso]></center></v:textbox></v:roundrect><![endif]-->
+
+																	<a href="<?= base_url() . 'bm/channel/reCreate?email=' . $email . '&token=' . $token; ?>" style="text-decoration:none;display:inline-block;color:#ffffff;background-color:#3AAEE0;border-radius:4px;width:auto;border-top:0px solid transparent;font-weight:400;border-right:0px solid transparent;border-bottom:0px solid transparent;border-left:0px solid transparent;padding-top:5px;padding-bottom:5px;font-family:Lato, Tahoma, Verdana, Segoe, sans-serif;font-size:14px;text-align:center;mso-border-alt:none;word-break:keep-all;"><span style="padding-left:20px;padding-right:20px;font-size:14px;display:inline-block;letter-spacing:normal;"><span dir="ltr" style="word-break: break-word; line-height: 28px;">LOGIN</span></span></a>
+
 																</div>
 															</td>
 														</tr>

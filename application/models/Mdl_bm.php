@@ -31,7 +31,15 @@ class Mdl_bm extends CI_Model
         $this->db->where('income.id_user =', $id_user);
         return $this->db->get()->result_array();
     }
-
+    public function getValidateWd($id_user)
+    {
+        $this->db->select('*');
+        $this->db->from('income');
+        $this->db->join('user', 'user.id_user = income.id_user');
+        $this->db->where('income.id_user =', $id_user);
+        $this->db->where('income.status_income =', 0);
+        return $this->db->get()->row_array();
+    }
     public function getByProducts($id_user)
     {
         $this->db->select('*');
@@ -49,6 +57,16 @@ class Mdl_bm extends CI_Model
         $this->db->where('profiles.id_user =', $id_user);
 
         return $this->db->get()->result_array();
+    }
+    public function getProfileRequest($id_user)
+    {
+        $this->db->select('*');
+        $this->db->from('profiles');
+        $this->db->join('user', 'user.id_user = profiles.id_user',);
+
+        $this->db->where('profiles.id_user =', $id_user);
+
+        return $this->db->get()->row_array();
     }
 
     public function getBank($id_user)
@@ -98,6 +116,11 @@ class Mdl_bm extends CI_Model
     public function update_user($id_user, $data)
     {
         $this->db->update('user', $data, ['id_user' => $id_user]);
+    }
+
+    public function updateIncome($email, $data)
+    {
+        $this->db->update('income', $data, ['email' => $email]);
     }
 
 

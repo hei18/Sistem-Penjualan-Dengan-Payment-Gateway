@@ -92,10 +92,10 @@
 								</div>
 
 								<div class="form-group">
-									<label for="exampleInputFile">File input</label>
+									<label for="exampleInputFile">Photo Profile</label>
 									<div class="input-group">
 										<div class="custom-file">
-											<input type="file" class="custom-file-input" id="image" name="image">
+											<input type="file" class="custom-file-input" id="image" name="image" accept=".jpeg, .jpg, .png">
 											<label class="custom-file-label" for="image">Choose file</label>
 										</div>
 									</div>

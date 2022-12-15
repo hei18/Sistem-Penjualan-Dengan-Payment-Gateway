@@ -55,6 +55,11 @@ class Auth extends CI_Controller
         <span class="alert-text">
         Please verify your account!</span><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>';
 
+        $req_alert = '<div class="alert alert-danger alert-dismissible fade show"
+        role="alert">
+        <span class="alert-text">
+        You dont have access again!</span><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>';
+
         $password_alert = '<div class="alert alert-danger alert-dismissible fade show"
         role="alert">
         <span class="alert-text">
@@ -69,6 +74,7 @@ class Auth extends CI_Controller
             $json = $user->password;
             if (password_verify($password, $json)) {
                 $activated = $user->is_active;
+                $req = $user->request_delete;
                 if ($activated == 1) {
                     $id_user = $user->id_user;
                     $nickname = $user->nickname;
@@ -89,7 +95,10 @@ class Auth extends CI_Controller
                     } elseif ($role == "admin") {
                         redirect('admin/dashboard');
                     }
-                } else {
+                } elseif ($activated == 0 && $req == "DELETED") {
+                    $this->session->set_flashdata('message', $req_alert);
+                    redirect('auth');
+                } elseif ($activated == 0) {
                     $this->session->set_flashdata('message', $active_alert);
                     redirect('auth');
                 }
@@ -101,6 +110,7 @@ class Auth extends CI_Controller
             $json = $customer->password;
             if (password_verify($password, $json)) {
                 $activated = $customer->is_active;
+                $req = $customer->request_delete;
                 if ($activated == 1) {
                     $id_cs = $customer->id_cs;
                     $nickname = $customer->nickname;
@@ -119,7 +129,10 @@ class Auth extends CI_Controller
                     if ($role == "customer") {
                         redirect('publics');
                     }
-                } else {
+                } elseif ($activated == 0 && $req == "DELETED") {
+                    $this->session->set_flashdata('message', $req_alert);
+                    redirect('auth');
+                } elseif ($activated == 0) {
                     $this->session->set_flashdata('message', $active_alert);
                     redirect('auth');
                 }

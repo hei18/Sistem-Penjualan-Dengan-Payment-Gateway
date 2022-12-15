@@ -23,7 +23,9 @@
 			<?= $this->session->flashdata('message'); ?>
 
 			<div class="card">
-
+				<div class="card-header bg-warning">
+					Request Withdraw
+				</div>
 				<!-- /.card-header -->
 				<div class="card-body">
 					<div class="table-responsive">
@@ -31,7 +33,7 @@
 							<thead class="thead-dark">
 								<tr>
 
-									<th>Income</th>
+									<th>Request Transfer</th>
 									<th>From</th>
 									<th>Bank Account</th>
 									<th>Date Withdraw</th>

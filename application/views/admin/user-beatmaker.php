@@ -24,7 +24,7 @@
 
 			<div class="card">
 				<div class="card-header bg-warning">
-					<h5>All BeatMaker</h5>
+					All Beatmaker
 				</div>
 				<!-- /.card-header -->
 				<div class="card-body">
@@ -38,7 +38,6 @@
 									<th>Eamail</th>
 									<th>Request DELETE</th>
 									<th>Action</th>
-
 
 								</tr>
 							</thead>

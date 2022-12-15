@@ -46,10 +46,21 @@
 								</tr>
 							</thead>
 							<tbody>
+								<?php if (empty($getProd)) : ?>
+									<tr>
+										<td colspan="8">
+											<div class="alert alert-info" role="alert">
+												No Data
+											</div>
+										</td>
+									</tr>
+								<?php endif; ?>
 								<?php foreach ($getProd as $d) : ?>
 									<form action="<?= base_url('admin/dashboard/deleteContent/') . $d['id_product']; ?>" method="POST">
 										<tr>
 											<input type="hidden" name="email" id="email" value="<?= $d['email']; ?>">
+											<input type="hidden" name="first_name" id="first_name" value="<?= $d['first_name']; ?>">
+											<input type="hidden" name="last_name" id="last_name" value="<?= $d['last_name']; ?>">
 											<td><img src="<?= base_url('files/thumbnail/') . $d['thumbnail']; ?>" alt="" style="max-width: 150px;"></td>
 											<td><?= $d['nickname']; ?></td>
 											<td><?= $d['title']; ?></td>

@@ -32,10 +32,11 @@
                                 <div class="form-group">
                                     <label for="exampleInputEmail1">BeatMaker Name</label>
                                     <input type="text" name="nickname" id="nickname" value="<?= $user['nickname']; ?>" class="form-control">
+                                    <?= form_error('nickname', '<small class=" text-danger">', '</small>'); ?>
                                 </div>
                                 <div class="form-group">
                                     <label for="exampleInputEmail1">Email</label>
-                                    <input name="email" id="email" value="<?= $user['email']; ?>" type="email" class="form-control" placeholder="Enter email">
+                                    <input name="email" id="email" value="<?= $user['email']; ?>" type="email" class="form-control" placeholder="Enter email" readonly>
                                 </div>
                                 <div class="form-group">
                                     <?php if ($query->num_rows() > 0) : ?>
@@ -92,10 +93,10 @@
 
 
                                 <div class="form-group">
-                                    <label for="exampleInputFile">File input</label>
+                                    <label for="exampleInputFile">Photo Profile</label>
                                     <div class="input-group">
                                         <div class="custom-file">
-                                            <input type="file" class="custom-file-input" id="image" name="image">
+                                            <input type="file" class="custom-file-input" id="image" name="image" accept=".jpeg, .jpg, .png">
                                             <label class="custom-file-label" for="image">Choose file</label>
                                         </div>
                                     </div>

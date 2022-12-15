@@ -38,12 +38,29 @@ class Dashboard extends CI_Controller
 		$fetch['prod'] = $this->user->getAllCount();
 		$fetch['bm'] = $this->user->getAllbm();
 		$fetch['getProd'] = $this->user->getAllProduct();
+		// echo '<pre>';
+		// var_dump($fetch['getProd']);
+		// echo '</pre>';
+		// die;
 		$this->load->view('layout/adm-header', $fetch);
 		$this->load->view('layout/adm-side',);
 		$this->load->view('admin/bm-content', $fetch);
 		$this->load->view('layout/adm-footer');
 	}
+	public function income()
+	{
+		$id_user = $this->session->userdata('id_user');
+		$fetch['user'] = $this->user->getById($id_user);
+		$fetch['webIncome'] = $this->user->getIncome();
+		$fetch['ppn'] = $this->user->getTotal();
 
+		$fetch['header'] = "BeatAudio Studio";
+		$fetch['tittle'] = "Income From PPN";
+		$this->load->view('layout/adm-header', $fetch);
+		$this->load->view('layout/adm-side',);
+		$this->load->view('admin/income',);
+		$this->load->view('layout/adm-footer');
+	}
 	public function update()
 	{
 		$data = [
@@ -79,20 +96,6 @@ class Dashboard extends CI_Controller
 			$this->_SendEmailForReview($email, $prod, $params, 'review');
 			#var_dump($prod);
 		}
-		// $data = [
-		// 	'status_product' => 3
-		// ];
-
-		// $this->db->update('product', $data);
-
-		// $this->session->set_flashdata(
-		// 	'message',
-		// 	'<div class="alert alert-success alert-dismissible fade show"
-		// 								role="alert">
-		// 								<span class="alert-text">
-		// 								Success posted</span><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>'
-		// );
-		// redirect('admin/dashboard/bmcontent');
 	}
 
 	public function _SendEmailForReview($email, $prod, $params, $type)
@@ -141,8 +144,23 @@ class Dashboard extends CI_Controller
 	public function deleteContent($id_product)
 	{
 		$data = $this->user->getByIdProduct($id_product);
+		$first_name = htmlspecialchars($this->input->post('first_name'));
+		$last_name = htmlspecialchars($this->input->post('last_name'));
+		$email = $this->input->post('email');
+
+		$token = base64_encode(random_bytes(32));
+		$user_token = [
+			'email' => $email,
+			'token' => $token,
+			'date_created' => time()
+		];
+		$this->db->insert('user_token', $user_token);
+
 		date_default_timezone_set('Asia/Jakarta');
 		$params = [
+			'token' => $token,
+			'email' => $email,
+			'full_name' => $first_name . ' ' . $last_name,
 			'title' => $data['title'],
 			'date_release' => $data['date_release'],
 			'genre' => $data['genre'],
@@ -150,7 +168,6 @@ class Dashboard extends CI_Controller
 			'year' => date('Y'),
 		];
 		$prod = $data['id_product'];
-		$email = $this->input->post('email');
 		$callBackThumbnail = $data['thumbnail'];
 		$callBackFull = $data['full_version'];
 		$callBackDemo = $data['demo_version'];

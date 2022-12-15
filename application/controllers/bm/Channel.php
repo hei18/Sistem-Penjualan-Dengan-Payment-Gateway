@@ -9,6 +9,7 @@ class Channel extends CI_Controller
 
         as_bm();
         $this->load->library('form_validation');
+        $this->load->library('pdf');
         $this->load->helper('download');
 
         $this->load->model('mdl_bm', 'user');
@@ -115,10 +116,15 @@ class Channel extends CI_Controller
     }
     public function updateprofile()
     {
+
         $this->form_validation->set_rules(
             'nickname',
-            'Beat Maker Name',
-            'required|trim'
+            'Nickname',
+            'required|trim|is_unique[user.nickname]',
+            array(
+                'required'      => 'You have not provided %s.',
+                'is_unique'     => '%s has been use, change to another'
+            )
         );
         $this->form_validation->set_rules(
             'email',
@@ -1144,20 +1150,161 @@ class Channel extends CI_Controller
                     );
                     redirect('bm/channel/setting');
                 } elseif ($req == "DELETED") {
+                    $id_user = $this->session->userdata('id_user');
+                    $income = $this->user->getIncome($id_user);
+                    // var_dump($income);
+                    // die;
+                    if ($income != 0) {
+                        $this->session->set_flashdata(
+                            'message',
+                            '<div class="alert alert-danger alert-dismissible fade show"
+                    role="alert">
+                    <span class="alert-text">
+                    Request denied, make sure you have done withdraw!!</span>
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span></button></div>'
+                        );
+                        redirect('bm/channel/setting');
+                    } else {
+                        $money = $this->user->getValidateWd($id_user);
 
-                    $data2 = [
-                        'is_active' => 0,
-                        'request_delete' => $req,
-                    ];
-                    $this->user->update_user($this->session->userdata('id_user'), $data2);
-                    $this->session->unset_userdata('id_user');
-                    $this->session->unset_userdata('id_cs');
-                    $this->session->unset_userdata('nickname');
-                    $this->session->unset_userdata('email');
-                    $this->session->unset_userdata('role');
-                    $this->session->set_flashdata('message', '<div class="alert alert-success" role="alert">Your Request In Process</div>');
-                    redirect('auth');
+                        // echo '<pre>';
+                        // var_dump($money);
+                        // echo '</pre>';
+                        // die;
+                        if ($money > 0) {
+                            if ($money['status_income'] == 0) {
+                                $this->session->set_flashdata(
+                                    'message',
+                                    '<div class="alert alert-danger alert-dismissible fade show"
+                            role="alert">
+                            <span class="alert-text">
+                            Request denied, you have one pending withdrawal status!! </span>
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span></button></div>'
+                                );
+                                redirect('bm/channel/setting');
+                            } else {
+                            }
+                        } elseif ($money == NULL) {
+                            $email = $this->session->userdata('email');
+                            $this->_SendEmailToDelete($email, $req, 'delete');
+                        }
+
+                        // $data2 = [
+                        //     'is_active' => 0,
+                        //     'request_delete' => $req,
+                        // ];
+                        // $this->user->update_user($this->session->userdata('id_user'), $data2);
+                        // $this->session->unset_userdata('id_user');
+                        // $this->session->unset_userdata('id_cs');
+                        // $this->session->unset_userdata('nickname');
+                        // $this->session->unset_userdata('email');
+                        // $this->session->unset_userdata('role');
+                        // $this->session->set_flashdata('message', '<div class="alert alert-success" role="alert">Your Request In Process</div>');
+                        // redirect('auth');
+                    }
                 }
+            }
+        }
+    }
+
+    private function _SendEmailToDelete($email, $req, $type)
+    {
+        $config = [
+            'protocol' => 'smtp',
+            'smtp_host' => 'ssl://smtp.googlemail.com',
+            'smtp_user' => 'beataudio1812@gmail.com',
+            'smtp_pass' => 'coihrjfpbftfoqyd',
+            'smtp_port' => 465,
+            'mailtype' => 'html',
+            'charset' => 'iso-8859-1',
+            'newline' => "\r\n",
+            "smtp_keep_alive"    => TRUE
+        ];
+        $this->email->initialize($config);
+
+
+        $id_user = $this->session->userdata('id_user');
+        $param = $this->user->getProfileRequest($id_user);
+        $Full = $this->user->getByProducts($id_user);
+        $Demo = $this->user->getByProducts($id_user);
+
+        $data['bm'] = [
+            'uid' => $id_user,
+            'full_name' => $param['first_name'] . ' ' . $param['last_name'],
+        ];
+
+        $message = $this->load->view('email-sent/request-delete-bm', $data, TRUE);
+
+        $this->email->from('beataudio1812@gmail.com', 'Beat Audio');
+        $this->email->to($email);
+        if ($type == 'delete') {
+            $this->email->subject('REQUEST DELETE - ' . time());
+            $this->email->message($message);
+            // $data1 = [
+            //     'id_user' => ''
+            // ];
+            $data2 = [
+                'is_active' => 0,
+                'request_delete' => $req,
+            ];
+            $this->user->update_user($this->session->userdata('id_user'), $data2);
+            #$this->user->updateIncome($this->session->userdata('email'), $data1);
+        }
+        $this->load->library('email', $config);
+        $this->email->send();
+        $this->session->unset_userdata('id_user');
+        $this->session->unset_userdata('id_cs');
+        $this->session->unset_userdata('nickname');
+        $this->session->unset_userdata('email');
+        $this->session->unset_userdata('role');
+        $this->session->set_flashdata('message', '<div class="alert alert-success" role="alert">Success Request Data</div>');
+        redirect('auth');
+    }
+    public function yourData()
+    {
+        $id_user = $this->session->userdata('id_user');
+
+        $param['bm'] = $this->user->getProfileRequest($id_user);
+        $param['bank'] = $this->users->getBank($id_user);
+        $this->load->view('email-sent/data-bm-print', $param);
+    }
+
+    public function reCreate()
+    {
+        $email = $this->input->get('email');
+        $token = $this->input->get('token');
+
+        $user = $this->db->get_where('user', ['email' => $email])->row();
+
+
+        if ($user) {
+            $user_token = $this->db->get_where('user_token', ['email' => $email])->row();
+            if ($user_token) {
+                $json = $user_token->date_created;
+                if (time() - $json < (60 * 60 * 24)) {
+                    // echo 'hellow';
+                    $this->db->delete('user_token', ['email' => $email]);
+                    $this->session->set_flashdata(
+                        'message',
+                        '<div class="alert alert-danger alert-dismissible fade show"
+                    role="alert">
+                    <span class="alert-text">
+                    You can re-upload your instrumental with our watermark 0n your demo version! </span>
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span></button></div>'
+                    );
+                    redirect('bm/channel/uploadcontent');
+                }
+            } else {
+                $this->session->unset_userdata('id_user');
+                $this->session->unset_userdata('id_cs');
+                $this->session->unset_userdata('nickname');
+                $this->session->unset_userdata('email');
+                $this->session->unset_userdata('role');
+                $this->session->set_flashdata('message', '<div class="alert alert-danger" role="alert">Timeout!</div>');
+                redirect('auth');
             }
         }
     }
