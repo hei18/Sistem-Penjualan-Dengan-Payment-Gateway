@@ -104,13 +104,11 @@
                                     <button type="submit" name="submit" class="btn btn-primary btn-block swalDefaultSuccess">
                                         <?= idr($o['selling_price']) ?>
                                     </button>
-                                    <button type="button" class="btn btn-success swalDefaultSuccess">
-                                        Launch Success Toast
-                                    </button>
+
                                 <?php endif ?>
                             <?php elseif ($this->session->userdata('role') == 'beatmaker') : ?>
                                 <?php if ($this->session->userdata('id_user')) : ?>
-                                    <a type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal2">
+                                    <a type="button" class="btn btn-primary btn-block" data-toggle="modal" data-target="#exampleModal2">
                                         <?= idr($o['selling_price']) ?>
                                     </a>
                                 <?php endif ?>
@@ -126,3 +124,64 @@
         <?php endforeach; ?>
     </div>
 </section>
+
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Create Customer account to buy</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col">
+                        <h5>If you have account</h5>
+                        <a href="<?= base_url('auth'); ?>" class="btn btn-primary">Login</a>
+                    </div>
+                    <div class="col">
+                        <h5>If you don't have account</h5>
+                        <a href="<?= base_url('auth/register'); ?>" class="btn btn-warning">Register</a>
+                    </div>
+                </div>
+
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="exampleModal2" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Create Customer account to buy</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col">
+                        <h5>If you have account</h5>
+                        <a href="<?= base_url('auth'); ?>" class="btn btn-primary">Login</a>
+                    </div>
+                    <div class="col">
+                        <h5>If you don't have account</h5>
+                        <a href="<?= base_url('auth/register'); ?>" class="btn btn-warning">Register</a>
+                    </div>
+                </div>
+
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+
+            </div>
+        </div>
+    </div>
+</div>
