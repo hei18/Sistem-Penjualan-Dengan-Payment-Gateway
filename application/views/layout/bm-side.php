@@ -52,7 +52,7 @@
                     </ul>
                 </li>
                 <li class="nav-item">
-                    <a href="<?= base_url('main'); ?>" class="nav-link">
+                    <a href="<?= base_url('publics'); ?>" class="nav-link">
                         <i class="nav-icon fa-sharp fa-solid fa-music"></i>
 
                         <p>

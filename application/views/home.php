@@ -64,34 +64,65 @@
 <section class="featured-artist-area section-padding-100 bg-img bg-overlay bg-fixed" style="background-image: url(<?= base_url('assets/img/bg-img/bg-4.jpg'); ?>);">
     <div class="container">
         <?php foreach ($one as $o) : ?>
-            <div class="row align-items-end">
-                <div class="col-12 col-md-5 col-lg-4">
-                    <div class="featured-artist-thumb">
-                        <img src="<?= base_url('files/thumbnail/') . $o['thumbnail']; ?>" alt="">
+            <form action="<?= base_url('cs/dashboard/addHome'); ?>" method="post">
+                <?= form_hidden('id_product', $o['id_product']) ?>
+                <?= form_hidden('title', $o['title']) ?>
+                <?= form_hidden('selling_price', $o['selling_price']) ?>
+                <div class="row align-items-end">
+                    <div class="col-12 col-md-5 col-lg-4">
+                        <div class="featured-artist-thumb">
+                            <img src="<?= base_url('files/master-image/') . $o['thumbnail']; ?>" alt="">
 
-                    </div>
-                </div>
-                <div class="col-12 col-md-7 col-lg-8">
-                    <div class="featured-artist-content">
-                        <!-- Section Heading -->
-                        <div class="section-heading white text-left mb-30">
-                            <p>New Instrumental From</p>
-                            <h2><?= $o['nickname']; ?></h2>
                         </div>
-                        <p>
-                            <?= $o['description']; ?>
-                        </p>
-                        <div class="song-play-area">
-                            <div class="song-name">
-                                <p><?= $o['title']; ?> | Genre : <?= $o["genre"]; ?></p>
+                    </div>
+                    <div class="col-12 col-md-7 col-lg-8">
+                        <div class="featured-artist-content">
+                            <!-- Section Heading -->
+                            <div class="section-heading white text-left mb-30">
+                                <p>New Instrumental From</p>
+                                <h2><?= $o['nickname']; ?></h2>
                             </div>
-                            <audio controls preload="auto" controlsList="nodownload noplaybackrate">
-                                <source src="<?= base_url('files/demo/') . $o['demo_version']; ?>">
-                            </audio>
+                            <p>
+                                <?= $o['description']; ?>
+                            </p>
+                            <div class="song-play-area">
+                                <div class="song-name">
+                                    <p><?= $o['title']; ?> | Genre : <?= $o["genre"]; ?></p>
+                                </div>
+                                <audio controls preload="auto" controlsList="nodownload noplaybackrate">
+                                    <source src="<?= base_url('files/demo/') . $o['demo_version']; ?>">
+                                </audio>
+                            </div>
                         </div>
+                        <?php if ($o['status_product'] == 0) : ?>
+                            <button class="btn btn-primary btn-block">
+                                instrumental under review
+                            </button>
+                        <?php elseif ($o['status_product'] == 1) : ?>
+                            <?php if ($this->session->userdata('role') == 'customer') : ?>
+                                <?php if ($this->session->userdata('id_cs')) : ?>
+                                    <button type="submit" name="submit" class="btn btn-primary btn-block swalDefaultSuccess">
+                                        <?= idr($o['selling_price']) ?>
+                                    </button>
+                                    <button type="button" class="btn btn-success swalDefaultSuccess">
+                                        Launch Success Toast
+                                    </button>
+                                <?php endif ?>
+                            <?php elseif ($this->session->userdata('role') == 'beatmaker') : ?>
+                                <?php if ($this->session->userdata('id_user')) : ?>
+                                    <a type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal2">
+                                        <?= idr($o['selling_price']) ?>
+                                    </a>
+                                <?php endif ?>
+                            <?php elseif ($this->session->userdata('role') == NULL) : ?>
+                                <a type="button" class="btn btn-primary btn-block" data-toggle="modal" data-target="#exampleModal">
+                                    <?= idr($o['selling_price']) ?>
+                                </a>
+                            <?php endif; ?>
+                        <?php endif; ?>
                     </div>
                 </div>
-            </div>
+            </form>
         <?php endforeach; ?>
     </div>
 </section>

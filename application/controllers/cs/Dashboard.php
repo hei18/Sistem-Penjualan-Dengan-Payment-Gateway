@@ -13,6 +13,7 @@ class Dashboard extends CI_Controller
 		$this->load->model('mdl_cs', 'users');
 		$this->load->model('mdl_cs', 'carts');
 		$this->load->model('mdl_cs', 'item');
+		$this->load->library('pdf');
 	}
 	public function index()
 	{
@@ -130,6 +131,46 @@ class Dashboard extends CI_Controller
 			You can only add to cart one time per instrumental!!!</span><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>';
 			$this->session->set_flashdata('message', $active_alert);
 			redirect('publics/instrumental');
+		}
+	}
+	public function addHome()
+	{
+
+		$id_cs = $this->session->userdata('id_cs');
+		$id_product = $this->input->post('id_product');
+		$selling_price = $this->input->post('selling_price');
+		$title = $this->input->post('title');
+		$qty = $this->user->getCartId($id_cs, $id_product);
+		#$qty = $this->db->get_where('cart',[])
+
+
+		if ($qty == 0) {
+			$sumQty = $qty['qty'] + 1;
+
+			// var_dump($sumQty);
+			// die;
+			$subtotal = $sumQty * $selling_price;
+			$data = [
+
+				'id_cs' => $id_cs,
+				'id_product' => $id_product,
+				'title'	=> $title,
+				'qty'	=> $sumQty,
+				'selling_price' => $selling_price,
+				'subtotal' => $subtotal,
+				// 'mode' => 201,
+			];
+			$this->db->insert('cart', $data);
+			// $active_alert = '<div class="alert alert-success alert-dismissible fade show"
+			// role="alert">
+			// <span class="alert-text">
+			// Success add to cart</span><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>';
+			$this->session->set_flashdata('onecart', 'Success add to cart');
+			redirect('publics');
+		} elseif ($qty['id_cart'] != null) {
+
+			$this->session->set_flashdata('error', 'You can only add to cart one time per instrumental!!!');
+			redirect('publics');
 		}
 	}
 	public function addNew()
@@ -255,13 +296,7 @@ class Dashboard extends CI_Controller
 			'Address',
 			'required'
 		);
-		// if (empty($_FILES['image']['name'])) {
-		//     $this->form_validation->set_rules(
-		//         'image',
-		//         'Photo Profile',
-		//         'required|is_image'
-		//     );
-		// }
+
 
 		if ($this->form_validation->run() == false) {
 			$id_cs = $this->session->userdata('id_cs');
@@ -430,7 +465,7 @@ class Dashboard extends CI_Controller
 		$fetch['user'] = $this->user->getByIdCs($id_cs);
 		$fetch['users'] = $this->users->getByProfile($id_cs);
 		$fetch['bill'] = $this->users->getTransaction($id_cs);
-		$fetch['item'] = $this->item->getHistory($id_cs);
+		#$fetch['item'] = $this->item->getHistory($id_cs);
 		// echo '<pre>';
 		// var_dump($fetch['item']);
 
@@ -442,7 +477,25 @@ class Dashboard extends CI_Controller
 		$this->load->view('layout/adm-footer');
 	}
 
+	public function item($order_id)
+	{
+		$id_cs = $this->session->userdata('id_cs');
+		$fetch['header'] = "BeatAudio";
+		$fetch['tittle'] = "Detail Item";
+		$fetch['user'] = $this->user->getByIdCs($id_cs);
+		$fetch['users'] = $this->users->getByProfile($id_cs);
+		$fetch['bill'] = $this->users->getTransaction($id_cs);
+		$fetch['item'] = $this->item->getHistory($id_cs, $order_id);
+		// echo '<pre>';
+		// var_dump($fetch['item']);
 
+		// echo '</pre>';
+		// die;
+		$this->load->view('layout/cs-header', $fetch);
+		$this->load->view('layout/cs-side',);
+		$this->load->view('cs/list', $fetch);
+		$this->load->view('layout/adm-footer');
+	}
 	public function updateCart()
 	{
 		$id_cart = $this->input->post('id_cart');
@@ -579,21 +632,114 @@ class Dashboard extends CI_Controller
 					);
 					redirect('cs/dashboard/setting');
 				} elseif ($req == "DELETED") {
-
-					$data2 = [
-						'is_active' => 0,
-						'request_delete' => $req,
-					];
-					$this->user->update_user($this->session->userdata('id_cs'), $data2);
-					$this->session->unset_userdata('id_user');
-					$this->session->unset_userdata('id_cs');
-					$this->session->unset_userdata('nickname');
-					$this->session->unset_userdata('email');
-					$this->session->unset_userdata('role');
-					$this->session->set_flashdata('message', '<div class="alert alert-success" role="alert">Your Request In Process</div>');
-					redirect('auth');
+					$id_cs = $this->session->userdata('id_cs');
+					$cart = $this->user->getCart($id_cs);
+					if (!empty($cart)) {
+						$this->session->set_flashdata(
+							'message',
+							'<div class="alert alert-danger alert-dismissible fade show"
+					role="alert">
+					<span class="alert-text">
+					Request denied, you have cart on waiting</span>
+					<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+					<span aria-hidden="true">&times;</span></button></div>'
+						);
+						redirect('cs/dashboard/setting');
+					} else {
+						$trans = $this->user->getTransactionView($id_cs);
+						#var_dump($trans);
+						if ($trans != []) {
+							$this->session->set_flashdata(
+								'message',
+								'<div class="alert alert-danger alert-dismissible fade show"
+						role="alert">
+						<span class="alert-text">
+						Request denied, you have a pending payment transaction!!</span>
+						<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+						<span aria-hidden="true">&times;</span></button></div>'
+							);
+							redirect('cs/dashboard/setting');
+						} elseif ($trans == []) {
+							$email = $this->session->userdata('email');
+							$this->_SendEmailToDelete($email, $req, 'delete');
+						}
+					}
 				}
 			}
 		}
+	}
+
+	private function _SendEmailToDelete($email, $req, $type)
+	{
+		$config = [
+			'protocol' => 'smtp',
+			'smtp_host' => 'ssl://smtp.googlemail.com',
+			'smtp_user' => 'beataudio1812@gmail.com',
+			'smtp_pass' => 'coihrjfpbftfoqyd',
+			'smtp_port' => 465,
+			'mailtype' => 'html',
+			'charset' => 'iso-8859-1',
+			'newline' => "\r\n",
+			"smtp_keep_alive"    => TRUE
+		];
+		$this->email->initialize($config);
+
+
+		$id_cs = $this->session->userdata('id_cs');
+		$param = $this->user->getProfileRequest($id_cs);
+		// $Full = $this->user->getByProducts($id_cs);
+		// $Demo = $this->user->getByProducts($id_cs);
+		$params['bm'] = $this->user->getProfileRequest($id_cs);
+
+		$params['tr'] = $this->user->getTransaction($id_cs);
+		$this->load->view('email-sent/data-cs-print', $params);
+
+
+
+		$data['bm'] = [
+			'uid' => $id_cs,
+			'full_name' => $param['first_name'] . ' ' . $param['last_name'],
+		];
+		$message = $this->load->view('email-sent/request-delete-cs', $data, TRUE);
+		$filename = $params['bm']['nickname'] . '-personal-data.pdf';
+		$this->email->from('beataudio1812@gmail.com', 'Beat Audio');
+		$this->email->to($email);
+		if ($type == 'delete') {
+			$this->email->subject('REQUEST DELETE - ' . time());
+			$this->email->message($message);
+			$this->email->attach($_SERVER['DOCUMENT_ROOT'] . '/testing/files/pdf/' . $filename);
+			// $data1 = [
+			//     'id_user' => ''
+			// ];
+			$data2 = [
+				'is_active' => 0,
+				'request_delete' => $req,
+			];
+			$this->user->update_user($this->session->userdata('id_cs'), $data2);
+			#$this->user->updateIncome($this->session->userdata('email'), $data1);
+		}
+		$this->load->library('email', $config);
+		$this->email->send();
+		unlink($_SERVER['DOCUMENT_ROOT'] . '/testing/files/pdf/' . $filename);
+		$this->session->unset_userdata('id_user');
+		$this->session->unset_userdata('id_cs');
+		$this->session->unset_userdata('nickname');
+		$this->session->unset_userdata('email');
+		$this->session->unset_userdata('role');
+
+		$this->session->set_flashdata('message', '<div class="alert alert-success" role="alert">Your Request In Process and check your email</div>');
+		redirect('auth');
+	}
+	public function yourData()
+	{
+		$id_cs = $this->session->userdata('id_cs');
+
+
+
+		// $this->session->unset_userdata('id_user');
+		// $this->session->unset_userdata('id_cs');
+		// $this->session->unset_userdata('nickname');
+		// $this->session->unset_userdata('email');
+		// $this->session->unset_userdata('role');
 	}
 }

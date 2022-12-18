@@ -44,7 +44,7 @@ class Snap extends CI_Controller
 
 		// Required
 		$transaction_details = array(
-			'order_id' => rand(),
+			'order_id' => getAutoNumber('transaction', 'order_id', 'CsOrder-', 13),
 			'gross_amount' => $grossamount, // no decimal allowed for creditcard
 		);
 
@@ -116,9 +116,6 @@ class Snap extends CI_Controller
 		// var_dump($result);
 		// echo '</pre>';
 		// die;
-		#$bca = $result->va_numbers[0]->bank;
-
-		#$q = $this->user->getByProfile($id_user);
 
 		if ($result->payment_type == 'bank_transfer') {
 			if ($result->va_numbers) {
@@ -157,9 +154,7 @@ class Snap extends CI_Controller
 		}
 		$this->db->insert_batch('order_history', $check);
 
-
-		// var_dump($h);
-
+		$key = $result->transaction_id;
 		$data = [
 			'order_id' => $result->order_id,
 			'id_cs'	=> $id_cs,
@@ -173,18 +168,61 @@ class Snap extends CI_Controller
 			'va_number' => $vaNumber,
 			// 'bill_key' => $bill_key,
 			'biller_code' => $billerCode,
-
-
+			'transaction_id' => $key,
+			'button_handle' => 0
 		];
 
 
-		// var_dump($data);
-		// die;
+
 		$this->db->insert('transaction', $data);
+		$email = $this->session->userdata('email');
+		$this->_EmailValidate($email, $key, 'validate');
+		// $active_alert = '<div class="alert alert-warning alert-dismissible fade show"
+		// 	role="alert">
+		// 	<span class="alert-text">
+		// 	Check your email for instruction!!</span><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>';
+		// $this->session->set_flashdata('message', $active_alert);
+		// redirect('cs/dashboard/transaction');
+	}
+
+	private function _EmailValidate($email, $key, $type)
+	{
+		$config = [
+			'protocol' => 'smtp',
+			'smtp_host' => 'ssl://smtp.googlemail.com',
+			'smtp_user' => 'beataudio1812@gmail.com',
+			'smtp_pass' => 'coihrjfpbftfoqyd',
+			'smtp_port' => 465,
+			'mailtype' => 'html',
+			'charset' => 'iso-8859-1',
+			'newline' => "\r\n",
+			"smtp_keep_alive"    => TRUE
+		];
+		$this->email->initialize($config);
+		$id_cs = $this->session->userdata('id_cs');
+		$undefine = $key;
+		$user = $this->user->getTransactionValidate($id_cs, $undefine);
+		$define = [
+			'full_name' => $user['first_name'] . ' ' . $user['last_name'],
+			'url' => $user['pdf_url'],
+			'order_id' => $user['order_id']
+		];
+
+		$message = $this->load->view('email-sent/instruction', $define, TRUE);
+		// var_dump($user);
+		// die;
+		$this->email->from('beataudio1812@gmail.com', 'Beat Audio');
+		$this->email->to($email);
+		if ($type == 'validate') {
+			$this->email->subject('PAYMENT INSTRUCTION - ' . time());
+			$this->email->message($message);
+		}
+		$this->load->library('email', $config);
+		$this->email->send();
 		$active_alert = '<div class="alert alert-warning alert-dismissible fade show"
-		role="alert">
-		<span class="alert-text">
-		Lets Pay Your Bills!</span><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>';
+			role="alert">
+			<span class="alert-text">
+			Check your email for instruction!!</span><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>';
 		$this->session->set_flashdata('message', $active_alert);
 		redirect('cs/dashboard/transaction');
 	}

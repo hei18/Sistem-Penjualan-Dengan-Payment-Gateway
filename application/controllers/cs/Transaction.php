@@ -158,6 +158,14 @@ class Transaction extends CI_Controller
 			];
 
 			$this->user->updateOrderHistory($id_cs, $data3, 'order_history');
+
+			$data1 = [
+				'button_handle' => 1
+			];
+
+
+			$this->user->updateTransaction($order_id, $data1, 'transaction');
+
 			$this->user->deleteCartByIdUser($id_cs);
 			foreach ($c as $key) {
 				$this->db->set('sales', $key['sales'] + 1);

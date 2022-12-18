@@ -60,7 +60,7 @@
                             <tbody>
                                 <?php if (empty($displayBeat)) : ?>
                                     <tr>
-                                        <td colspan="7">
+                                        <td colspan="8">
                                             <div class="alert alert-info" role="alert">
                                                 No Data
                                             </div>

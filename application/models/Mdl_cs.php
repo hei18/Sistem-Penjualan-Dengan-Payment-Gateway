@@ -126,8 +126,38 @@ class Mdl_cs extends CI_Model
 
 		return $this->db->get()->result_array();
 	}
+	public function getTransactionValidate($id_cs, $key)
+	{
 
-	public function getHistory($id_cs)
+		$this->db->select('*');
+		$this->db->from('transaction');
+		#$this->db->join('cart', 'cart.id_cart = transaction.id_cart');
+		#$this->db->join('product', 'product.id_product = transaction.id_product');
+		$this->db->join('customer', 'customer.id_cs = transaction.id_cs');
+		$this->db->join('profiles', 'profiles.id_cs = customer.id_cs');
+		$this->db->where('transaction.id_cs =', $id_cs);
+		$this->db->where('transaction.transaction_id', $key);
+		#$this->db->order_by('order_id');
+
+		return $this->db->get()->row_array();
+	}
+	public function getTransactionView($id_cs)
+	{
+
+		$this->db->select('*');
+		$this->db->from('transaction');
+		#$this->db->join('cart', 'cart.id_cart = transaction.id_cart');
+		#$this->db->join('product', 'product.id_product = transaction.id_product');
+		$this->db->join('customer', 'customer.id_cs = transaction.id_cs');
+		$this->db->join('profiles', 'profiles.id_cs = customer.id_cs');
+		$this->db->where('transaction.id_cs =', $id_cs);
+		$this->db->where('transaction.status_code =', 201);
+		#$this->db->order_by('order_id');
+
+		return $this->db->get()->result_array();
+	}
+
+	public function getHistory($id_cs, $order_id)
 	{
 		$this->db->select('*');
 		$this->db->from('order_history');
@@ -136,6 +166,7 @@ class Mdl_cs extends CI_Model
 		$this->db->join('customer', 'customer.id_cs = order_history.id_cs');
 		$this->db->join('product', 'product.id_product = order_history.Id_product');
 		$this->db->where('order_history.id_cs =', $id_cs);
+		$this->db->where('order_history.order_id =', $order_id);
 		return $this->db->get()->result_array();
 	}
 	public function countAllCart($id_cs)
@@ -156,7 +187,16 @@ class Mdl_cs extends CI_Model
 		$this->db->where('id_cs', $id_cs);
 		return $this->db->get()->row()->subtotal;
 	}
+	public function getProfileRequest($id_cs)
+	{
+		$this->db->select('*');
+		$this->db->from('profiles');
+		$this->db->join('customer', 'customer.id_cs = profiles.id_cs',);
 
+		$this->db->where('profiles.id_cs =', $id_cs);
+
+		return $this->db->get()->row_array();
+	}
 	public function getFile($id_cs, $order_id)
 	{
 		$this->db->select('*');
@@ -188,6 +228,11 @@ class Mdl_cs extends CI_Model
 	public function deleteCart($id_cart)
 	{
 		$this->db->where('id_cart', $id_cart);
+		return $this->db->delete('cart');
+	}
+	public function deleteCartAfterPayment($id_cs)
+	{
+		$this->db->where('id_cs', $id_cs);
 		return $this->db->delete('cart');
 	}
 

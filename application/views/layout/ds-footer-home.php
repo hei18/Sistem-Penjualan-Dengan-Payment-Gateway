@@ -51,6 +51,7 @@
    <script src="<?= base_url('assets/'); ?>plugins/datatables-buttons/js/buttons.html5.min.js"></script>
    <script src="<?= base_url('assets/'); ?>plugins/datatables-buttons/js/buttons.print.min.js"></script>
    <script src="<?= base_url('assets/'); ?>plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
+   <script src="<?= base_url('assets/'); ?>plugins/sweetalert2/sweetalert2.min.js"></script>
    <script>
        window.addEventListener("play", function(evt) {
            if (window.$_currentlyPlaying && window.$_currentlyPlaying != evt.target) {
@@ -84,6 +85,31 @@
                "responsive": true,
            });
        });
+   </script>
+
+   <script>
+       <?php if ($this->session->flashdata('onecart')) { ?>
+           var insider = <?= json_encode($this->session->flashdata('onecart')); ?>
+
+           swal.fire({
+               text: insider,
+               title: 'berhasil',
+               icon: 'success',
+               //    showConfirmButton: false,
+               //    timer: 2500
+           });
+       <?php  } ?>
+       <?php if ($this->session->flashdata('error')) { ?>
+           var insider = <?= json_encode($this->session->flashdata('error')); ?>
+
+           swal.fire({
+               text: insider,
+               title: 'Opps...',
+               icon: 'error',
+               //    showConfirmButton: false,
+               //    timer: 2500
+           });
+       <?php  } ?>
    </script>
    </body>
 

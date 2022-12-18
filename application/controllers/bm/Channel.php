@@ -1,6 +1,6 @@
 <?php
 defined('BASEPATH') or exit('No direct script access allowed');
-
+#require FCPATH.'/vendor/autoload.php';
 class Channel extends CI_Controller
 {
     public function __construct()
@@ -10,6 +10,7 @@ class Channel extends CI_Controller
         as_bm();
         $this->load->library('form_validation');
         $this->load->library('pdf');
+
         $this->load->helper('download');
 
         $this->load->model('mdl_bm', 'user');
@@ -1190,19 +1191,6 @@ class Channel extends CI_Controller
                             $email = $this->session->userdata('email');
                             $this->_SendEmailToDelete($email, $req, 'delete');
                         }
-
-                        // $data2 = [
-                        //     'is_active' => 0,
-                        //     'request_delete' => $req,
-                        // ];
-                        // $this->user->update_user($this->session->userdata('id_user'), $data2);
-                        // $this->session->unset_userdata('id_user');
-                        // $this->session->unset_userdata('id_cs');
-                        // $this->session->unset_userdata('nickname');
-                        // $this->session->unset_userdata('email');
-                        // $this->session->unset_userdata('role');
-                        // $this->session->set_flashdata('message', '<div class="alert alert-success" role="alert">Your Request In Process</div>');
-                        // redirect('auth');
                     }
                 }
             }
@@ -1234,17 +1222,24 @@ class Channel extends CI_Controller
             'uid' => $id_user,
             'full_name' => $param['first_name'] . ' ' . $param['last_name'],
         ];
+        $id_user = $this->session->userdata('id_user');
+
+        $param['bm'] = $this->user->getProfileRequest($id_user);
+        $param['bank'] = $this->users->getBank($id_user);
+        $this->load->view('email-sent/data-bm-print', $param);
 
         $message = $this->load->view('email-sent/request-delete-bm', $data, TRUE);
+
+        $filename = $param['bm']['nickname'] . '-personal-data.pdf';
 
         $this->email->from('beataudio1812@gmail.com', 'Beat Audio');
         $this->email->to($email);
         if ($type == 'delete') {
             $this->email->subject('REQUEST DELETE - ' . time());
             $this->email->message($message);
-            // $data1 = [
-            //     'id_user' => ''
-            // ];
+
+            $this->email->attach($_SERVER['DOCUMENT_ROOT'] . '/testing/files/pdf/' . $filename);
+
             $data2 = [
                 'is_active' => 0,
                 'request_delete' => $req,
@@ -1254,21 +1249,27 @@ class Channel extends CI_Controller
         }
         $this->load->library('email', $config);
         $this->email->send();
+        unlink($_SERVER['DOCUMENT_ROOT'] . '/testing/files/pdf/' . $filename);
         $this->session->unset_userdata('id_user');
         $this->session->unset_userdata('id_cs');
         $this->session->unset_userdata('nickname');
         $this->session->unset_userdata('email');
         $this->session->unset_userdata('role');
-        $this->session->set_flashdata('message', '<div class="alert alert-success" role="alert">Success Request Data</div>');
+        $this->session->set_flashdata('message', '<div class="alert alert-success" role="alert">Success Reques Delete Data</div>');
         redirect('auth');
     }
-    public function yourData()
+    public function yourData($id_user)
     {
-        $id_user = $this->session->userdata('id_user');
+        $id_user = $this->session->userdata($id_user);
 
         $param['bm'] = $this->user->getProfileRequest($id_user);
         $param['bank'] = $this->users->getBank($id_user);
         $this->load->view('email-sent/data-bm-print', $param);
+        // $this->session->unset_userdata('id_user');
+        // $this->session->unset_userdata('id_cs');
+        // $this->session->unset_userdata('nickname');
+        // $this->session->unset_userdata('email');
+        // $this->session->unset_userdata('role');
     }
 
     public function reCreate()
@@ -1308,4 +1309,13 @@ class Channel extends CI_Controller
             }
         }
     }
+    // public function check()
+    // {
+    //     $id_user = $this->session->userdata('id_user');
+
+    //     $param['bm'] = $this->user->getProfileRequest($id_user);
+    //     # $param['bank'] = $this->users->getBank($id_user);
+    //     $filename = 'sad-personal-data.pdf';
+    //     unlink($_SERVER['DOCUMENT_ROOT'] . '/testing/files/pdf/' . $filename);
+    // }
 }

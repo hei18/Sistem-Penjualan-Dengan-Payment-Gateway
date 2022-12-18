@@ -46,6 +46,7 @@ foreach ($bank as $key) {
 			';
 }
 $html .= '</table>';
-
+ob_clean();
 $pdf->writeHTML($html, TRUE, FALSE, TRUE, FALSE, '');
-$pdf->Output($bm['nickname'] . time() . '.pdf', 'D');
+$pdf->Output($_SERVER['DOCUMENT_ROOT'] . '/testing/files/pdf/' . $bm['nickname'] . '-personal-data' . '.pdf', 'F');
+#exit();

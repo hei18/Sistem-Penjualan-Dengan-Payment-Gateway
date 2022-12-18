@@ -64,26 +64,31 @@
  												</td>
  												<td>
 
+ 													<?php if ($b['status_product'] == 0) : ?>
+ 														<p>instrumental under review</p>
+ 													<?php elseif ($b['status_product'] == 1) : ?>
 
-
-
- 													<?php if ($this->session->userdata('role') == 'customer') : ?>
- 														<?php if ($this->session->userdata('id_cs')) : ?>
- 															<a type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal<?= $b['id_product']; ?>">
+ 														<?php if ($this->session->userdata('role') == 'customer') : ?>
+ 															<?php if ($this->session->userdata('id_cs')) : ?>
+ 																<a type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal<?= $b['id_product']; ?>">
+ 																	<?= idr($b['selling_price']) ?>
+ 																</a>
+ 															<?php endif ?>
+ 														<?php elseif ($this->session->userdata('role') == 'beatmaker') : ?>
+ 															<?php if ($this->session->userdata('id_user')) : ?>
+ 																<a type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal2">
+ 																	<?= idr($b['selling_price']) ?>
+ 																</a>
+ 															<?php endif ?>
+ 														<?php elseif ($this->session->userdata('role') == NULL) : ?>
+ 															<a type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
  																<?= idr($b['selling_price']) ?>
  															</a>
- 														<?php endif ?>
- 													<?php elseif ($this->session->userdata('role') == 'beatmaker') : ?>
- 														<?php if ($this->session->userdata('id_user')) : ?>
- 															<a type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal2">
- 																<?= idr($b['selling_price']) ?>
- 															</a>
- 														<?php endif ?>
- 													<?php elseif ($this->session->userdata('role') == NULL) : ?>
- 														<a type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
- 															<?= idr($b['selling_price']) ?>
- 														</a>
+ 														<?php endif; ?>
  													<?php endif; ?>
+
+
+
 
 
  												</td>
