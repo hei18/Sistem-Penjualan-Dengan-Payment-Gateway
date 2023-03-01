@@ -5,9 +5,9 @@
             <div class="col-12 col-lg-8">
                 <div class="login-content">
                     <?php if ($this->session->userdata('reset_email_cs')) : ?>
-                        <h3>Reset your password for: <?= $this->session->userdata('reset_email_cs');   ?></h3>
+                        <h3>Reset Password Untuk: <?= $this->session->userdata('reset_email_cs');   ?></h3>
                     <?php elseif ($this->session->userdata('reset_email_bm')) : ?>
-                        <h3>Reset your password for: <?= $this->session->userdata('reset_email_bm');   ?></h3>
+                        <h3>Reset Password Untuk: <?= $this->session->userdata('reset_email_bm');   ?></h3>
                     <?php endif; ?>
 
                     <?= $this->session->flashdata('message'); ?>
@@ -21,7 +21,7 @@
                                 <?= form_error('password1', '<small class=" text-danger">', '</small>'); ?>
                             </div>
                             <div class="form-group">
-                                <label for="exampleInputPassword1">Re-Enter Password</label>
+                                <label for="exampleInputPassword1">Ulagi Password</label>
                                 <input type="password" class="form-control" id="password2" name="password2" placeholder="Password">
                                 <?= form_error('password2', '<small class=" text-danger">', '</small>'); ?>
 

@@ -29,15 +29,12 @@
     <!-- Main content -->
     <section class="content">
         <div class="container-fluid">
-            <div class="alert alert-info alert-dismissible fade show d-md-none" role="alert">
-                <span class="alert-text">
-                    You can upload your instrumental in website</span><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-            </div>
+
             <?= $this->session->flashdata('message'); ?>
 
             <div class="card">
                 <div class="card-header">
-                    <h3 class="card-title">Better you read this <a class="btn btn-info" href="<?= base_url('bm/channel/rules'); ?>">RULES</a> before upload</h3>
+                    <h3 class="card-title">Baca <a class="btn btn-info" href="<?= base_url('bm/channel/rules'); ?>">Aturan Ini</a> Sebelum Upload</h3>
                 </div>
                 <!-- /.card-header -->
                 <div class="card-body">
@@ -46,13 +43,13 @@
                             <thead class="thead-dark">
                                 <tr>
 
-                                    <th>Thumbnail</th>
-                                    <th>Title</th>
-                                    <th>Full_version</th>
-                                    <th>Demo_version</th>
-                                    <th>Genre</th>
+                                    <th>Gambar</th>
+                                    <th>Judul</th>
+                                    <th>Versi Lengkap</th>
+                                    <th>Versi Demo</th>
+                                    <th>Jenis Musik</th>
                                     <th>Status</th>
-                                    <th>Sales</th>
+                                    <th>Penjualan</th>
                                     <th>Info</th>
 
                                 </tr>

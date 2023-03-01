@@ -29,7 +29,7 @@
 			<?php else : ?>
 				<div class="alert alert-primary alert-dismissible fade show" role="alert">
 					<span class="alert-text">
-						Welcome <?= $user['nickname']; ?> , let's update your profile, <a href="<?= base_url('cs/dashboard/updateprofile'); ?>">clik here now!</a>
+						Selamat Datang <?= $user['nickname']; ?> , lengkapi profil anda, <a href="<?= base_url('cs/dashboard/updateprofile'); ?>">klik disini</a>
 					</span>
 					<button type="button" class="close" data-dismiss="alert" aria-label="Close">
 						<span aria-hidden="true">&times;
@@ -56,12 +56,7 @@
 								<li class="list-group-item">
 									<b><?= $user['email']; ?></b>
 								</li>
-								<li class="list-group-item">
-									<b>Following</b>
-								</li>
-								<li class="list-group-item">
-									<b>Friends</b>
-								</li>
+
 							</ul>
 
 							<a href="<?= base_url('cs/dashboard/profile'); ?>" class="btn btn-primary btn-block"><b>Detail Profile</b></a>
@@ -77,7 +72,7 @@
 				<div class="col-md-9">
 					<div class="card">
 						<div class="card-header bg-warning">
-							Latest instrumental
+							Instrumental Terbaru
 						</div>
 						<div class="card-body">
 							<?php foreach ($beat as $key) : ?>
@@ -87,14 +82,14 @@
 									<?= form_hidden('selling_price', $key['selling_price']) ?>
 
 									<blockquote class="blockquote mb-0">
-										<p>Beatmaker: <?= $key['nickname']; ?> | Title: <?= $key['title']; ?> | Genre: <?= $key['genre']; ?> </p>
+										<p>Beatmaker: <?= $key['nickname']; ?> | Judul: <?= $key['title']; ?> | Jenis Musik: <?= $key['genre']; ?> </p>
 										<footer class="blockquote-footer">
 											<audio controls preload="auto" controlsList="nodownload noplaybackrate">
 												<source src="<?= base_url('files/demo/') . $key['demo_version']; ?>">
 											</audio>
 										</footer>
 										<p><?= $key['description']; ?></p>
-										<button type="submit" class="btn btn-info" style="width: 100%;"><?= idr($key['selling_price']); ?> Add To Chart</button>
+										<button type="submit" class="btn btn-info" style="width: 100%;"><?= idr($key['selling_price']); ?></button>
 
 									</blockquote>
 								</form>

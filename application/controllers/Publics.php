@@ -16,6 +16,7 @@ class Publics extends CI_Controller
 
         $this->load->library('form_validation');
         $this->load->library('pagination');
+        $this->load->library('encryption');
     }
     /**
      * 1. index adalah halaman home utama
@@ -40,7 +41,7 @@ class Publics extends CI_Controller
         $fetch['header'] = "BeatAudio";
 
         $this->load->view('layout/ds-header-home', $fetch);
-        $this->load->view('home');
+        $this->load->view('public/home');
         $this->load->view('layout/ds-footer-home');
     }
 
@@ -56,7 +57,7 @@ class Publics extends CI_Controller
         // $check = $this->input->post('keyword');
         // $this->db->like('genre', $check);
         // $this->db->from('product');
-        $config['base_url'] = 'http://localhost/testing/publics/instrumental/';
+        $config['base_url'] = 'https://beataudiostore.com/publics/instrumental/';
         $config['total_rows'] = $this->getProduct->countAllProduct($data['keyword']);
         $fetch['total_rows'] = $config['total_rows'];
         $config['per_page'] = 5;
@@ -112,7 +113,7 @@ class Publics extends CI_Controller
         $fetch['header'] = "BeatAudio";
 
         $this->load->view('layout/ds-header-home', $fetch);
-        $this->load->view('instrumental', $fetch);
+        $this->load->view('public/instrumental', $fetch);
         $this->load->view('layout/ds-footer-home');
         #$this->load->view('check', $fetch);
         // $data = $this->getProduct->getAllProduct();
@@ -124,9 +125,11 @@ class Publics extends CI_Controller
     }
 
 
-    public function artist($id_user)
+    public function artist()
     {
+        $get_idUser = $this->input->get('key');
 
+        $id_user = base64_decode($get_idUser);
 
         $id_cs = $this->session->userdata('id_cs');
         $fetch['artist'] = $this->artist->getArtistWithId($id_user);
@@ -151,13 +154,12 @@ class Publics extends CI_Controller
             $id_product = $this->input->post('id_product');
             $selling_price = $this->input->post('selling_price');
             $title = $this->input->post('title');
-            $qty = $this->add->getCartId($id_cs, $id_product);
-            #$qty = $this->db->get_where('cart',[])
-            $sumQty = $qty['qty'] + 1;
+            $qty = $this->cs->getCartId($id_cs, $id_product);
+            #$qty = $this->db->get_where('cart', []);
 
-            // var_dump($sumQty);
+
+            // var_dump($qty['id_cart']);
             // die;
-
             if ($qty == 0) {
                 $sumQty = $qty['qty'] + 1;
 
@@ -165,30 +167,39 @@ class Publics extends CI_Controller
                 // die;
                 $subtotal = $sumQty * $selling_price;
                 $data = [
-
+                    'id_cart' => getAutoNumber('cart', 'id_cart', 'INV', 8),
                     'id_cs' => $id_cs,
                     'id_product' => $id_product,
                     'title'    => $title,
                     'qty'    => $sumQty,
-                    'selling_price' => $selling_price,
-                    'subtotal' => $subtotal,
-                    // 'mode' => 201,
+                    'bill_price' => $selling_price,
+                    'subtotal' => $subtotal
                 ];
                 $this->db->insert('cart', $data);
-                $active_alert = '<div class="alert alert-success alert-dismissible fade show"
-			role="alert">
-			<span class="alert-text">
-			Success add to cart</span><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>';
-                $this->session->set_flashdata('message', $active_alert);
-                redirect('publics/artist/' . $id_user);
-            } elseif ($qty['id_cart'] != null) {
-                $active_alert = '<div class="alert alert-danger alert-dismissible fade show"
-			role="alert">
-			<span class="alert-text">
-			You can only add to cart one time per instrumental!!!</span><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>';
-                $this->session->set_flashdata('message', $active_alert);
-                redirect('publics/artist/' . $id_user);
+            } elseif ($qty['id_cart'] != 0) {
+
+                $sumQty = $qty['qty'] + 1;
+                // var_dump($sumQty);
+                // die;
+                $subtotal = $sumQty * $selling_price;
+                $data = [
+                    'id_cart' => $qty['id_cart'],
+                    'id_cs' => $id_cs,
+                    'id_product' => $id_product,
+                    'title'    =>  $title,
+                    'qty'    => $sumQty,
+                    'bill_price' => $selling_price,
+                    'subtotal' => $subtotal
+                ];
+                $this->cs->updateCart($id_cs, $qty['id_cart'], $data, 'cart');
             }
+
+            $active_alert = '<div class="alert alert-success alert-dismissible fade show"
+            role="alert">
+            <span class="alert-text">
+            Berhasil Menambahkan Ke Keranjang</span><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>';
+            $this->session->set_flashdata('message', $active_alert);
+            redirect('publics/artist?key=' . base64_encode($id_user));
         }
 
 
@@ -197,12 +208,49 @@ class Publics extends CI_Controller
 
     public function about()
     {
+        $id_cs = $this->session->userdata('id_cs');
         $fetch['header'] = "BeatAudio";
+        $fetch['header'] = "BeatAudio Studio";
+        $fetch['tittle'] = "Dashboard";
+        $fetch['cs'] = $this->cs->getByIdCs($id_cs);
         $this->load->view('layout/ds-header-home', $fetch);
-        $this->load->view('about', $fetch);
+        $this->load->view('public/about', $fetch);
         $this->load->view('layout/ds-footer-home');
     }
 
+    public function terms()
+    {
+        $id_cs = $this->session->userdata('id_cs');
+        $fetch['header'] = "BeatAudio";
+        $fetch['header'] = "BeatAudio Studio";
+        $fetch['tittle'] = "Dashboard";
+        $fetch['cs'] = $this->cs->getByIdCs($id_cs);
+        $this->load->view('layout/ds-header-home', $fetch);
+        $this->load->view('public/terms', $fetch);
+        $this->load->view('layout/ds-footer-home');
+    }
+    public function contact()
+    {
+        $id_cs = $this->session->userdata('id_cs');
+        $fetch['header'] = "BeatAudio";
+        $fetch['header'] = "BeatAudio Studio";
+        $fetch['tittle'] = "Dashboard";
+        $fetch['cs'] = $this->cs->getByIdCs($id_cs);
+        $this->load->view('layout/ds-header-home', $fetch);
+        $this->load->view('public/contact', $fetch);
+        $this->load->view('layout/ds-footer-home');
+    }
+    public function refund()
+    {
+        $id_cs = $this->session->userdata('id_cs');
+        $fetch['header'] = "BeatAudio";
+        $fetch['header'] = "BeatAudio Studio";
+        $fetch['tittle'] = "Dashboard";
+        $fetch['cs'] = $this->cs->getByIdCs($id_cs);
+        $this->load->view('layout/ds-header-home', $fetch);
+        $this->load->view('public/refund', $fetch);
+        $this->load->view('layout/ds-footer-home');
+    }
 
     public function uploads()
     {
@@ -210,11 +258,29 @@ class Publics extends CI_Controller
         // $this->load->view('artist/profiles', $fetch);
         $this->load->view('form_upload');
     }
-
-    public function run()
+    public function sell()
     {
-        echo "create";
+        $id_cs = $this->session->userdata('id_cs');
+        $fetch['header'] = "BeatAudio";
+        $fetch['header'] = "BeatAudio Studio";
+        $fetch['tittle'] = "Dashboard";
+        $fetch['cs'] = $this->cs->getByIdCs($id_cs);
+        $this->load->view('layout/ds-header-home', $fetch);
+        $this->load->view('public/how-to-sell', $fetch);
+        $this->load->view('layout/ds-footer-home');
     }
+    public function buy()
+    {
+        $id_cs = $this->session->userdata('id_cs');
+        $fetch['header'] = "BeatAudio";
+        $fetch['header'] = "BeatAudio Studio";
+        $fetch['tittle'] = "Dashboard";
+        $fetch['cs'] = $this->cs->getByIdCs($id_cs);
+        $this->load->view('layout/ds-header-home', $fetch);
+        $this->load->view('public/how-to-buy', $fetch);
+        $this->load->view('layout/ds-footer-home');
+    }
+
     public function insert_audio()
     {
 

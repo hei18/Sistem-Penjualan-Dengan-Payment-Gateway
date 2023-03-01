@@ -7,7 +7,16 @@ class Mdl_bm extends CI_Model
     {
         return $this->db->get_where('user', ['id_user' => $id_user])->row_array();
     }
+    // public function profileValidate($id_user)
+    // {
+    //     $this->db->select('*');
+    //     $this->db->from('profiles');
+    //     $this->db->join('user', 'profiles.id_user = user.id_user');
+    //     #$this->db->join('data_bank', 'data_bank.id_user = user.id_user', 'left');
+    //     $this->db->where('user.id_user =', $id_user);
 
+    //     return $this->db->get()->row_array();
+    // }
 
     public function getMyBank($id_user)
     {
@@ -46,6 +55,7 @@ class Mdl_bm extends CI_Model
         $this->db->from('product');
         $this->db->join('user', 'user.id_user = product.id_user');
         $this->db->where('product.id_user', $id_user);
+        $this->db->order_by('product.id_product', 'DESC');
         return $this->db->get()->result_array();
     }
     public function getProfile($id_user)
@@ -68,6 +78,16 @@ class Mdl_bm extends CI_Model
 
         return $this->db->get()->row_array();
     }
+    public function getFileName($id_user)
+    {
+        $this->db->select('*');
+        $this->db->from('user');
+        #$this->db->join('user', 'user.id_user = profiles.id_user',);
+
+        $this->db->where('user.id_user =', $id_user);
+
+        return $this->db->get()->row_array();
+    }
 
     public function getBank($id_user)
     {
@@ -76,6 +96,16 @@ class Mdl_bm extends CI_Model
         $this->db->join('user', 'user.id_user = data_bank.id_user',);
 
         $this->db->where('data_bank.id_user =', $id_user);
+
+        return $this->db->get()->result_array();
+    }
+    public function getIncomeForWd($id_user)
+    {
+        $this->db->select('*');
+        $this->db->from('income');
+        $this->db->join('user', 'user.id_user = income.id_user',);
+
+        $this->db->where('income.id_user =', $id_user);
 
         return $this->db->get()->result_array();
     }
@@ -92,9 +122,29 @@ class Mdl_bm extends CI_Model
     {
         return $this->db->query('SELECT SUM(sales*price) AS income FROM product INNER JOIN user ON user.id_user = product.id_user WHERE product.id_user =' . $id_user)->row()->income;
     }
+    public function getDoneIncome($id_user)
+    {
+        $this->db->select_sum('net_income');
+        $this->db->from('income');
+        $this->db->where('income.id_user =', $id_user);
+        $this->db->where('income.status_income =', 1);
+        return $this->db->get()->row()->net_income;
+    }
     public function getPPN($id_user)
     {
         return $this->db->query('SELECT SUM(sales*ppn) AS ppn FROM product INNER JOIN user ON user.id_user = product.id_user WHERE product.id_user =' . $id_user)->row()->ppn;
+    }
+
+    public function getReportWithdraw($id_user, $from, $until)
+    {
+        $newFrom = $this->db->escape($from);
+        $newUntil = $this->db->escape($until);
+        $this->db->select('*');
+        $this->db->from('income');
+        $this->db->where('DATE(date_wd) BETWEEN ' . $newFrom . ' AND ' . $newUntil);
+
+        $this->db->where('income.id_user =', $id_user);
+        return $this->db->get()->result_array();
     }
     /**
      * Update

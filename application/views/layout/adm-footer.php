@@ -35,47 +35,6 @@
 <script type="text/javascript" src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="SB-Mid-client-Ms9Ny7jiWGiF4bGL"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
 <!-- <script type="text/javascript" src="https://cdn.datatables.net/v/bs4/dt-1.13.1/datatables.min.js"></script> -->
-<script>
-	$('.custom-file-input').on('change', function() {
-		let fileName = $(this).val().split('\\').pop();
-		$(this).next('.custom-file-label').addClass("selected").html(fileName);
-	});
-	$(function() {
-		$("#example1").DataTable({
-			"responsive": true,
-			"lengthChange": false,
-			"autoWidth": false,
-			"buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
-		}).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
-		$('#example2').DataTable({
-			"paging": true,
-			"lengthChange": false,
-			"searching": false,
-			"ordering": true,
-			"info": true,
-			"autoWidth": false,
-			"responsive": true,
-		});
-	});
-
-	$(document).ready(function() {
-		$(".money").simpleMoneyFormat();
-
-		$(document).on("keypress", ".numberOnly", function(e) {
-			if (e.which != 8 && e.which != 0 && (e.which < 48 || e.which > 57)) {
-				return false;
-			}
-		});
-	});
-</script>
-<script>
-	$(document).ready(function() {
-		$('#example').DataTable({
-			responsive: true
-		});
-	});
-</script>
-
 <script type="text/javascript">
 	$('#pay-button').click(function(event) {
 		var amount = $(this).data('amount')
@@ -85,7 +44,7 @@
 
 		$.ajax({
 
-			url: '<?= site_url() ?>cs/snap/token',
+			url: '<?= base_url() ?>cs/snap/token',
 
 			cache: false,
 			data: {
@@ -130,6 +89,48 @@
 	});
 </script>
 <script>
+	$('.custom-file-input').on('change', function() {
+		let fileName = $(this).val().split('\\').pop();
+		$(this).next('.custom-file-label').addClass("selected").html(fileName);
+	});
+	$(function() {
+		$("#example1").DataTable({
+			"responsive": true,
+			"lengthChange": false,
+			"autoWidth": false,
+			"buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+		}).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+		$('#example2').DataTable({
+			"paging": true,
+			"lengthChange": false,
+			"searching": false,
+			"ordering": true,
+			"info": true,
+			"autoWidth": false,
+			"responsive": true,
+		});
+	});
+
+	$(document).ready(function() {
+		$(".money").simpleMoneyFormat();
+
+		$(document).on("keypress", ".numberOnly", function(e) {
+			if (e.which != 8 && e.which != 0 && (e.which < 48 || e.which > 57)) {
+				return false;
+			}
+		});
+	});
+</script>
+<script>
+	$(document).ready(function() {
+		$('#example').DataTable({
+			responsive: true
+		});
+	});
+</script>
+
+
+<script>
 	window.addEventListener("play", function(evt) {
 		if (window.$_currentlyPlaying && window.$_currentlyPlaying != evt.target) {
 			window.$_currentlyPlaying.pause();
@@ -138,6 +139,27 @@
 		}
 		window.$_currentlyPlaying = evt.target;
 	}, true);
+</script>
+
+<script>
+	var image = document.getElementById('image');
+	if (image.addEventListener) {
+		image.addEventListener('change', function(event) {
+			for (var i = 0; i < $(this).get(0).files.length; ++i) {
+				image = $(this).get(0).files[i].size;
+				if (image) {
+					var image_size = $(this).get(0).files[i].size;
+					if (image_size > 2097152) {
+						$('#file-result3').html("max file upload for image is 2MB");
+						$('button[name="submit"]').prop('disabled', true);
+
+					} else {
+						$('button[name="submit"]').prop('disabled', false);
+					}
+				}
+			}
+		});
+	}
 </script>
 
 <!-- AdminLTE for demo purposes -->

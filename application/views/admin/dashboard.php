@@ -30,10 +30,10 @@
 					<div class="card card-primary card-outline">
 						<div class="card-body box-profile">
 							<div class="text-center">
-								<img class="profile-user-img img-fluid img-circle" src="<?= base_url('files/pp/') . $user['image'] ?>" alt="User profile picture">
+								<img class="profile-user-img img-fluid img-circle" src="<?= base_url('files/pp/default.jpg') ?>" alt="User profile picture">
 							</div>
 
-							<h3 class="profile-username text-center"><?= $user['nickname']; ?></h3>
+
 
 							<p class="text-muted text-center"><?= $user['role']; ?></p>
 
@@ -110,7 +110,7 @@
 									<span class="info-box-icon bg-danger"><i class="fa-solid fa-money-bills"></i></span>
 
 									<div class="info-box-content">
-										<span class="info-box-text">Request Withdaw</span>
+										<span class="info-box-text">Permintaan Penarikan</span>
 										<span class="info-box-number"><?= $wd; ?></span>
 									</div>
 									<!-- /.info-box-content -->
@@ -124,7 +124,7 @@
 									<span class="info-box-icon bg-info"><i class="fa-solid fa-money-bills"></i></span>
 
 									<div class="info-box-content">
-										<span class="info-box-text">Income From PPN</span>
+										<span class="info-box-text">Pendapatan dari PPN</span>
 										<?php if ($ppn == NULL) : ?>
 											<span class="info-box-number">Rp 0</span>
 										<?php else : ?>

@@ -18,7 +18,7 @@
 
 .select2-container--bootstrap4 .select2-selection {
   width: 100%;
-  background-color: #fff;
+  /* background-color: #343a40; */
   border: 1px solid #ced4da;
   border-radius: 0.25rem;
   -webkit-transition: border-color 0.15s ease-in-out, -webkit-box-shadow 0.15s ease-in-out;

@@ -29,7 +29,7 @@
             <div class="card card-primary">
                 <?= $this->session->flashdata('message'); ?>
                 <div class="card-header bg-warning">
-                    <h3 class="card-title">Better you read this <a class="btn btn-info" href="<?= base_url('bm/channel/rules'); ?>">RULES</a> before upload</h3>
+                    <h3 class="card-title">Baca <a class="btn btn-info" href="<?= base_url('bm/channel/rules'); ?>">Aturan Ini</a> Sebelum Upload</h3>
 
                 </div>
                 <!-- /.card-header -->
@@ -41,53 +41,54 @@
 
 
                                 <div class="form-group">
-                                    <label for="exampleInputEmail1">Title</label>
-                                    <input id="title" name="title" type="text" class="form-control">
+                                    <label for="exampleInputEmail1">Judul</label>
+                                    <input autocomplete="off" id="title" name="title" type="text" class="form-control">
                                     <?= form_error('title', '<small class=" text-danger">', '</small>'); ?>
 
                                 </div>
                                 <div class="form-group">
-                                    <label for="exampleInputFile">Full Version</label>
+                                    <label for="exampleInputFile">Versi Lengkap</label>
                                     <br>
-                                    <small>The file upload is must be mp3 or wav (MAX size is 300MB)</small>
+                                    <small>File Harus mp3 atau wav (Ukuran Max 100MB)</small>
                                     <div class="input-group">
                                         <div class="custom-file">
                                             <input id="full_version" name="full_version" type="file" class="custom-file-input" accept=".mp3, .wav">
-                                            <label class="custom-file-label" for="exampleInputFile">Choose file</label>
+                                            <label autocomplete="off" class="custom-file-label" for="exampleInputFile">mp3/wav</label>
                                         </div>
                                     </div>
                                     <small class=" text-danger" id="file-result1"> </small>
 
                                 </div>
                                 <div class="form-group">
-                                    <label for="exampleInputFile">Demo Version</label>
+                                    <label for="exampleInputFile">Versi Demo</label>
                                     <br>
-                                    <small>The file upload is must be mp3 or wav (MAX size is 300MB)</small>
+                                    <small>File Harus mp3 atau wav (Ukuran Max 100MB)</small>
                                     <div class="input-group">
                                         <div class="custom-file">
                                             <input id="demo_version" name="demo_version" type="file" class="custom-file-input" accept=".mp3, .wav">
-                                            <label class="custom-file-label" for="exampleInputFile">Choose file</label>
+                                            <label autocomplete="off" class="custom-file-label" for="exampleInputFile">mp3/wav</label>
                                         </div>
                                     </div>
                                     <small class=" text-danger" id="file-result2"> </small>
                                 </div>
                                 <div class="form-group">
-                                    <label for="exampleInputFile">Thumbnail</label>
+                                    <label for="exampleInputFile">Gambar</label>
                                     <br>
-                                    <small>The Thumbnail is must be jpg\png\jpeg (MAX size is 2MB)</small>
+                                    <small>Gambar harus jpg\png\jpeg (Ukuran Max 2MB)</small>
                                     <div class="input-group">
                                         <div class="custom-file">
                                             <input id="thumbnail" name="thumbnail" type="file" class="custom-file-input" accept=".jpeg, .jpg, .png">
-                                            <label class="custom-file-label" for="exampleInputFile">Choose file</label>
+                                            <label autocomplete="off" class="custom-file-label" for="exampleInputFile">jpeg/jpg/png</label>
                                         </div>
                                     </div>
+                                    <small class=" text-danger" id="file-result3"> </small>
                                 </div>
                             </div>
                             <div class="col">
                                 <div class="form-group">
-                                    <label for="disabledSelect">Genre</label>
+                                    <label for="disabledSelect">Jenis Musik</label>
                                     <select id="genre" name="genre" class="form-control">
-                                        <option value="">Select Your Genre</option>
+                                        <option value="">Pilih Jenis Musik</option>
                                         <option value="Classical">Classical</option>
                                         <option value="Dubstep">Dubstep</option>
                                         <option value="EDM">EDM</option>
@@ -99,18 +100,20 @@
                                         <option value="Rock">Rock</option>
                                         <option value="Trap">Trap</option>
                                     </select>
+
                                     <?= form_error('genre', '<small class=" text-danger">', '</small>'); ?>
 
                                 </div>
+
                                 <div class="form-group">
-                                    <label for="exampleInputEmail1">Description</label>
-                                    <textarea class="form-control" name="description" id="description" rows="2" placeholder="Describe about your instrumental such as what DAW you use, how many bpm, explain the ambience, what chords start from and anything related to your instrumental"></textarea>
+                                    <label for="exampleInputEmail1">Deskripsi</label>
+                                    <textarea class="form-control" name="description" id="description" rows="2" placeholder="Jelaskan tentang instrumen Anda seperti DAW apa yang Anda gunakan, berapa bpm, jelaskan suasananya, akor dimulai dari apa dan apa pun yang terkait dengan instrumen Anda"></textarea>
                                     <?= form_error('description', '<small class=" text-danger">', '</small>'); ?>
 
                                 </div>
                                 <div class="form-group">
-                                    <label for="exampleInputEmail1">Price</label>
-                                    <input id="price" name="price" type="text" class="form-control money numberOnly">
+                                    <label for="exampleInputEmail1">Harga</label>
+                                    <input autocomplete="off" id="price" name="price" type="text" class="form-control money numberOnly">
                                     <?= form_error('price', '<small class=" text-danger">', '</small>'); ?>
 
                                 </div>
@@ -121,7 +124,7 @@
                     <!-- /.card-body -->
 
                     <div class="card-footer">
-                        <a type="button" href="<?= base_url('bm/channel/content'); ?>" class="btn btn-warning">Back</a>
+                        <a type="button" href="<?= base_url('bm/channel/content'); ?>" class="btn btn-warning">Kembali</a>
 
                         <input name="submit" class="btn btn-info" type="submit" value="submit" disabled="true" />
                     </div>

@@ -6,7 +6,7 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1>Profile</h1>
+                    <h1>Profil</h1>
                     <?= $this->session->flashdata('message'); ?>
                 </div>
 
@@ -44,7 +44,7 @@
                             <?php if ($query->num_rows() > 0) : ?>
                                 <div class="row">
                                     <div class="col">
-                                        <strong><i class="fa-sharp fa-solid fa-user"></i>&nbsp;&nbsp;&nbsp;Full Name</strong>
+                                        <strong><i class="fa-sharp fa-solid fa-user"></i>&nbsp;&nbsp;&nbsp;Nama Lengkap</strong>
 
                                         <p class="text-muted">
                                             <?= $users['first_name']; ?> <?= $users['last_name']; ?>
@@ -52,19 +52,19 @@
 
                                         <hr>
 
-                                        <strong><i class="fas fa-map-marker-alt mr-1"></i>&nbsp;&nbsp;&nbsp;Address</strong>
+                                        <strong><i class="fas fa-map-marker-alt mr-1"></i>&nbsp;&nbsp;&nbsp;Alamat</strong>
 
                                         <p class="text-muted"><?= $users['address']; ?></p>
 
                                         <hr>
-                                        <strong><i class="fa-solid fa-envelope"></i></i>&nbsp;&nbsp;&nbsp;email</strong>
+                                        <strong><i class="fa-solid fa-envelope"></i></i>&nbsp;&nbsp;&nbsp;Email</strong>
 
                                         <p class="text-muted"><?= $users['email']; ?></p>
 
                                         <hr>
                                     </div>
                                     <div class="col">
-                                        <strong><i class="fa-sharp fa-solid fa-phone"></i>&nbsp;&nbsp;&nbsp;Phone Number</strong>
+                                        <strong><i class="fa-sharp fa-solid fa-phone"></i>&nbsp;&nbsp;&nbsp;Nomor Ponsel</strong>
 
                                         <p class="text-muted">
                                             <?= $users['phone_number']; ?>
@@ -73,7 +73,7 @@
 
                                         <hr>
 
-                                        <strong><i class="fa-solid fa-money-check-dollar"></i>&nbsp;&nbsp;&nbsp;Bank Account</strong>
+                                        <strong><i class="fa-solid fa-money-check-dollar"></i>&nbsp;&nbsp;&nbsp;Akun Bank</strong>
                                         <?php foreach ($bank as $key) : ?>
                                             <p class="text-muted"> <?= $key['bank_name']; ?>, <?= $key['bank_number'] ?></p>
 

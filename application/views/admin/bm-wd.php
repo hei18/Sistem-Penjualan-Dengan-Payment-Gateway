@@ -24,7 +24,7 @@
 
 			<div class="card">
 				<div class="card-header bg-warning">
-					Request Withdraw
+					Permintaan Penarikan
 				</div>
 				<!-- /.card-header -->
 				<div class="card-body">
@@ -32,13 +32,14 @@
 						<table class="table table-bordered">
 							<thead class="thead-dark">
 								<tr>
-
-									<th>Request Transfer</th>
-									<th>From</th>
-									<th>Bank Account</th>
-									<th>Date Withdraw</th>
+									<th>ID Penarikan</th>
+									<th>Permintaan Penarikan</th>
+									<th>Dari</th>
+									<th>Akun Bank</th>
+									<th>Tanggal Penarikan</th>
+									<th>Tanggal Transfer</th>
 									<th>Status</th>
-									<th>Action</th>
+									<th>Aksi</th>
 
 								</tr>
 							</thead>
@@ -54,10 +55,12 @@
 								<?php endif; ?>
 								<?php foreach ($wd as $d) : ?>
 									<tr>
+										<td><?= $d['wd_id']; ?></td>
 										<td><?= idr($d['net_income']); ?></td>
 										<td><?= $d['email']; ?></td>
 										<td><?= $d['bank_name']; ?> - <?= $d['bank_number']; ?></td>
 										<td><?= indonesian_date($d['date_wd']); ?></td>
+										<td><?= indonesian_date($d['date_approve']); ?></td>
 										<td>
 											<?php if ($d['status_income'] == 0) : ?>
 												<span class="badge badge-warning">Pending</span>
@@ -69,6 +72,7 @@
 										<td>
 											<form action="<?= base_url('admin/dashboard/requestWd'); ?>" method="post">
 												<input type="hidden" name="net_income" id="net_income" value="<?= $d['net_income']; ?>">
+												<input type="hidden" name="wd_id" id="wd_id" value="<?= $d['wd_id']; ?>">
 												<input type="hidden" name="email" id="email" value="<?= $d['email']; ?>">
 												<input type="hidden" name="date_wd" id="date_wd" value="<?= $d['date_wd']; ?>">
 												<?php if ($d['status_income'] == 0) : ?>

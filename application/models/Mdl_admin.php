@@ -3,9 +3,9 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
 class Mdl_admin extends CI_Model
 {
-	public function getById($id_user)
+	public function getById($id_admin)
 	{
-		return $this->db->get_where('user', ['id_user' => $id_user])->row_array();
+		return $this->db->get_where('administrator', ['id_admin' => $id_admin])->row_array();
 	}
 	public function getByIdCs($id_cs)
 	{
@@ -23,6 +23,7 @@ class Mdl_admin extends CI_Model
 		$this->db->from('income');
 		return $this->db->get()->result_array();
 	}
+
 	public function getTotal()
 	{
 		$this->db->select_sum('ppn_income');
@@ -83,6 +84,45 @@ class Mdl_admin extends CI_Model
 		$this->db->where('role', 'customer');
 		return $this->db->get()->result_array();
 	}
+
+	public function getByProfile($id_cs)
+	{
+		$this->db->select('*');
+		$this->db->from('customer');
+		$this->db->join('profiles', 'profiles.id_cs = customer.id_cs', 'left');
+		$this->db->where('customer.id_cs =', $id_cs);
+
+		return $this->db->get()->row_array();
+	}
+	public function getTransaction($id_cs)
+	{
+
+		$this->db->select('*');
+		$this->db->from('transaction');
+		#$this->db->join('cart', 'cart.id_cart = transaction.id_cart');
+		#$this->db->join('product', 'product.id_product = transaction.id_product');
+		$this->db->join('customer', 'customer.id_cs = transaction.id_cs');
+		$this->db->join('profiles', 'profiles.id_cs = customer.id_cs');
+		$this->db->where('transaction.id_cs =', $id_cs);
+		$this->db->order_by('id_transaction', 'DESC');
+		#$this->db->order_by('order_id');
+
+		return $this->db->get()->result_array();
+	}
+
+	public function getHistory($id_cs, $order_id)
+	{
+		$this->db->select('*');
+		$this->db->from('order_history');
+		#$this->db->join('cart', 'cart.id_cart = transaction.id_cart');
+		#$this->db->join('product', 'product.id_product = transaction.id_product');
+		$this->db->join('customer', 'customer.id_cs = order_history.id_cs');
+		#$this->db->join('product', 'product.id_product = order_history.Id_product');
+		$this->db->where('order_history.id_cs =', $id_cs);
+		$this->db->where('order_history.order_id =', $order_id);
+		return $this->db->get()->result_array();
+	}
+
 	public function getCustomerDetail($id_cs)
 	{
 		$this->db->select('*');
@@ -146,9 +186,9 @@ class Mdl_admin extends CI_Model
 		$this->db->update('income', $data, ['email' => $email]);
 	}
 
-	public function updatePassword($id_user, $data)
+	public function updatePassword($id_admin, $data)
 	{
-		$this->db->update('user', $data, ['id_user' => $id_user]);
+		$this->db->update('administrator', $data, ['id_admin' => $id_admin]);
 	}
 	public function updateProduct($id_product, $data)
 	{

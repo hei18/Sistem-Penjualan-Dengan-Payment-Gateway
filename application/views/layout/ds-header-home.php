@@ -12,7 +12,6 @@
     <title><?= $header; ?></title>
 
     <!-- Favicon -->
-    <!-- <link rel="icon" href="<?= base_url('assets/'); ?>img/core-img/favicon.ico"> -->
 
     <!-- Stylesheet -->
     <link rel="stylesheet" href="<?= site_url('assets/style.css'); ?>">
@@ -42,7 +41,7 @@
                     <nav class="classy-navbar justify-content-between" id="oneMusicNav">
 
                         <!-- Nav brand -->
-                        <a href="index.html" class="nav-brand"><img src="<?= base_url('assets/'); ?>img/core-img/logoss.png" alt=""></a>
+                        <a href="<?= base_url('publics'); ?>" class="nav-brand"><img src="<?= base_url('assets/'); ?>img/core-img/logoss.png" alt=""></a>
 
                         <!-- Navbar Toggler -->
                         <div class="classy-navbar-toggler">
@@ -60,11 +59,11 @@
                             <!-- Nav Start -->
                             <div class="classynav">
                                 <ul>
-                                    <li><a href="<?= base_url('publics'); ?>">Home</a></li>
+                                    <li><a href="<?= base_url('publics'); ?>">Halaman Utama</a></li>
                                     <li><a href="<?= base_url('publics/instrumental'); ?>">Instrumental</a></li>
 
 
-                                    <li><a href="<?= base_url('publics/about'); ?>">About Us</a></li>
+                                    <li><a href="<?= base_url('publics/about'); ?>">Tentang Kami</a></li>
                                 </ul>
                                 <?php if ($this->session->userdata('email')) : ?>
                                     <?php if ($this->session->userdata('role') == 'customer') : ?>
@@ -73,7 +72,7 @@
                                                 <a href="#"> <?= $cs['nickname']; ?></a>
                                                 <ul class="dropdown">
                                                     <li><a href="<?= base_url('cs/dashboard'); ?>">Dashboard</a></li>
-                                                    <li><a href="<?= base_url('auth/logout'); ?>">Logout</a></li>
+                                                    <li><a href="<?= base_url('auth/logout'); ?>">Keluar</a></li>
                                                 </ul>
                                             </li>
 
@@ -85,7 +84,7 @@
                                                 <a href="#"> <?= $this->session->userdata('nickname') ?></a>
                                                 <ul class="dropdown">
                                                     <li><a href="<?= base_url('bm/channel'); ?>">BeatAudio Studio</a></li>
-                                                    <li><a href="<?= base_url('auth/logout'); ?>">Logout</a></li>
+                                                    <li><a href="<?= base_url('auth/logout'); ?>">Keluar</a></li>
                                                 </ul>
                                             </li>
 
@@ -128,7 +127,7 @@
                                                                         <?= $c['title']; ?>
                                                                     </h6>
 
-                                                                    <p class="text-sm"><?= $c['qty']; ?> x <?= idr($c['selling_price']); ?></p>
+                                                                    <p class="text-sm"><?= $c['qty']; ?> x <?= idr($c['bill_price']); ?></p>
                                                                     <p class="text-sm fa fa-calculator">&nbsp;<?= idr($c['subtotal']); ?></p>
                                                                 </div>
                                                             </div>
@@ -145,7 +144,7 @@
 
                                                 <?php else : ?>
 
-                                                    <a href="<?= base_url('cs/dashboard/cart'); ?>" class="dropdown-item dropdown-footer">View Cart</a>
+                                                    <a href="<?= base_url('cs/dashboard/cart'); ?>" class="dropdown-item dropdown-footer">Ke Keranjang</a>
                                                 <?php endif; ?>
                                             </div>
 
@@ -158,7 +157,7 @@
                                     <div class="login-register-cart-button d-flex align-items-center">
                                         <!-- Login/Register -->
                                         <div class="login-register-btn mr-50">
-                                            <a href="<?= base_url('auth'); ?>" id="loginBtn">Login / Register</a>
+                                            <a href="<?= base_url('auth'); ?>" id="loginBtn">Masuk / Registrasi</a>
                                         </div>
                                     </div>
                                 <?php endif ?>

@@ -13,10 +13,14 @@ class Dashboard extends CI_Controller
 
 	public function index()
 	{
-		$id_user = $this->session->userdata('id_user');
+		$id_admin = $this->session->userdata('id_admin');
 		$fetch['header'] = "BeatAudio Studio";
 		$fetch['tittle'] = "Dashboard";
-		$fetch['user'] = $this->user->getById($id_user);
+		$fetch['user'] = $this->user->getById($id_admin);
+		// echo '<pre>';
+		// var_dump($fetch['user']);
+		// echo '</pre>';
+		// die;
 		$fetch['prod'] = $this->user->getAllCount();
 		$fetch['bm'] = $this->user->getAllbm();
 		$fetch['cs'] = $this->user->getAllCs();
@@ -33,7 +37,7 @@ class Dashboard extends CI_Controller
 	{
 		$id_user = $this->session->userdata('id_user');
 		$fetch['header'] = "BeatAudio Studio";
-		$fetch['tittle'] = "Beatmaker Content";
+		$fetch['tittle'] = "Instrumental";
 		$fetch['user'] = $this->user->getById($id_user);
 		$fetch['prod'] = $this->user->getAllCount();
 		$fetch['bm'] = $this->user->getAllbm();
@@ -55,50 +59,53 @@ class Dashboard extends CI_Controller
 		$fetch['ppn'] = $this->user->getTotal();
 
 		$fetch['header'] = "BeatAudio Studio";
-		$fetch['tittle'] = "Income From PPN";
+		$fetch['tittle'] = "Pendapatan Dari PPN";
 		$this->load->view('layout/adm-header', $fetch);
 		$this->load->view('layout/adm-side',);
 		$this->load->view('admin/income',);
 		$this->load->view('layout/adm-footer');
 	}
-	public function update()
+	public function update($id_product)
 	{
-		$data = [
-			'status_product' => 1
-		];
-
-		$this->db->update('product', $data);
-
-		$this->session->set_flashdata(
-			'message',
-			'<div class="alert alert-success alert-dismissible fade show"
-										role="alert">
-										<span class="alert-text">
-										Canceled</span><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>'
-		);
-		redirect('admin/dashboard/bmcontent');
-	}
-	public function updateReview($id_product)
-	{
-		$data = $this->user->getByIdProduct($id_product);
 		date_default_timezone_set('Asia/Jakarta');
+		$data = $this->user->getByIdProduct($id_product);
+		$define_id = $data['id_user'];
+		$define_idProduct = $data['id_product'];
+
+		$define_data = $this->user->getByIdBm($define_id);
+
+		$define_email = $define_data['email'];
+		// $define_password = $define_data['password'];
 
 		$params = [
 			'title' => $data['title'],
 			'date_release' => $data['date_release'],
 			'genre' => $data['genre'],
-			'date_canceled' => date('Y-m-d'),
+			'date_approve' => date('Y-m-d'),
 			'year' => date('Y'),
+			'nickname' => $define_data['nickname']
 		];
-		$prod = $data['id_product'];
-		$email = $this->input->post('email');
 		if ($data > 0) {
-			$this->_SendEmailForReview($email, $prod, $params, 'review');
-			#var_dump($prod);
+			$this->_EmailApprovement($define_email, $define_idProduct, $define_id, $params, 'approve');
 		}
+		#var_dump($define_email);
+		// $data = [
+		// 	'status_product' => 1
+		// ];
+
+		// $this->db->update('product', $data);
+
+		// $this->session->set_flashdata(
+		// 	'message',
+		// 	'<div class="alert alert-success alert-dismissible fade show"
+		// 								role="alert">
+		// 								<span class="alert-text">
+		// 								Canceled</span><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>'
+		// );
+		// redirect('admin/dashboard/bmcontent');
 	}
 
-	public function _SendEmailForReview($email, $prod, $params, $type)
+	public function _EmailApprovement($define_email, $define_idProduct, $define_id, $params, $type)
 	{
 		$config = [
 			'protocol' => 'smtp',
@@ -112,18 +119,21 @@ class Dashboard extends CI_Controller
 		];
 
 		$this->email->initialize($config);
-		$subject = 'CANCELED ' . time();
-		$canceledMessage = $this->load->view('email-sent/report-canceled', $params, TRUE);
+
+		$subject = 'DISETUJUI ' . time();
+		$approveMessage = $this->load->view('email-sent/report-approve', $params, TRUE);
 		$this->email->from('beataudio1812@gmail.com', 'Beat Audio');
-		$this->email->to($email);
-		if ($type == 'review') {
+		$this->email->to($define_email);
+
+		if ($type == 'approve') {
 			$this->email->subject($subject);
-			$this->email->message($canceledMessage);
+			$this->email->message($approveMessage);
+
 			$data = [
-				'status_product' => 3
+				'status_product' => 1
 			];
 
-			$this->user->updateProduct($prod, $data, 'product');
+			$this->user->updateProduct($define_idProduct, $data, 'product');
 		}
 		$this->load->library('email', $config);
 
@@ -141,30 +151,99 @@ class Dashboard extends CI_Controller
 			die;
 		}
 	}
+
+
+
+	// public function updateReview($id_product)
+	// {
+	// 	$data = $this->user->getByIdProduct($id_product);
+	// 	date_default_timezone_set('Asia/Jakarta');
+
+	// 	$params = [
+	// 		'title' => $data['title'],
+	// 		'date_release' => $data['date_release'],
+	// 		'genre' => $data['genre'],
+	// 		'date_canceled' => date('Y-m-d'),
+	// 		'year' => date('Y'),
+	// 	];
+	// 	$prod = $data['id_product'];
+	// 	$email = $this->input->post('email');
+	// 	if ($data > 0) {
+	// 		$this->_SendEmailForReview($email, $prod, $params, 'review');
+	// 		#var_dump($prod);
+	// 	}
+	// }
+
+	// public function _SendEmailForReview($email, $prod, $params, $type)
+	// {
+	// 	$config = [
+	// 		'protocol' => 'smtp',
+	// 		'smtp_host' => 'ssl://smtp.googlemail.com',
+	// 		'smtp_user' => 'beataudio1812@gmail.com',
+	// 		'smtp_pass' => 'coihrjfpbftfoqyd',
+	// 		'smtp_port' => 465,
+	// 		'mailtype' => 'html',
+	// 		'charset' => 'iso-8859-1',
+	// 		'newline' => "\r\n",
+	// 	];
+
+	// 	$this->email->initialize($config);
+	// 	$subject = 'CANCELED ' . time();
+	// 	$canceledMessage = $this->load->view('email-sent/report-canceled', $params, TRUE);
+	// 	$this->email->from('beataudio1812@gmail.com', 'Beat Audio');
+	// 	$this->email->to($email);
+	// 	if ($type == 'review') {
+	// 		$this->email->subject($subject);
+	// 		$this->email->message($canceledMessage);
+	// 		$data = [
+	// 			'status_product' => 3
+	// 		];
+
+	// 		$this->user->updateProduct($prod, $data, 'product');
+	// 	}
+	// 	$this->load->library('email', $config);
+
+	// 	if ($this->email->send()) {
+	// 		$this->session->set_flashdata(
+	// 			'message',
+	// 			'<div class="alert alert-success alert-dismissible fade show"
+	// 										role="alert">
+	// 										<span class="alert-text">
+	// 										Success canceled and email was sent</span><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>'
+	// 		);
+	// 		redirect('admin/dashboard/bmcontent');
+	// 	} else {
+	// 		$this->email->print_debugger();
+	// 		die;
+	// 	}
+	// }
 	public function deleteContent($id_product)
 	{
 		$data = $this->user->getByIdProduct($id_product);
+		$define_id = $data['id_user'];
+
+		$define_data = $this->user->getByIdBm($define_id);
+
+		$define_email = $define_data['email'];
+		$define_password = $define_data['password'];
+		// echo '<pre>';
+		// var_dump();
+		// echo '</pre>';
+		// die;
 		$first_name = htmlspecialchars($this->input->post('first_name'));
 		$last_name = htmlspecialchars($this->input->post('last_name'));
-		$email = $this->input->post('email');
+		#$email = $this->input->post('email');
 
-		$token = base64_encode(random_bytes(32));
-		$user_token = [
-			'email' => $email,
-			'token' => $token,
-			'date_created' => time()
-		];
-		$this->db->insert('user_token', $user_token);
 
 		date_default_timezone_set('Asia/Jakarta');
 		$params = [
-			'token' => $token,
-			'email' => $email,
-			'full_name' => $first_name . ' ' . $last_name,
+			'email' => $define_email,
+			'password' => $define_password,
+			'nickname' => $define_data['nickname'],
 			'title' => $data['title'],
 			'date_release' => $data['date_release'],
 			'genre' => $data['genre'],
-			'date_canceled' => date('Y-m-d'),
+			'date_takedown' => date('Y-m-d'),
 			'year' => date('Y'),
 		];
 		$prod = $data['id_product'];
@@ -172,10 +251,10 @@ class Dashboard extends CI_Controller
 		$callBackFull = $data['full_version'];
 		$callBackDemo = $data['demo_version'];
 		if ($data > 0) {
-			$this->_sendEmailTakeDown($email, $prod, $callBackThumbnail, $callBackFull, $callBackDemo, $params, 'delete');
+			$this->_sendEmailTakeDown($define_email, $prod, $callBackThumbnail, $callBackFull, $callBackDemo, $params, 'delete');
 		}
 	}
-	private function _sendEmailTakeDown($email, $prod, $callBackThumbnail, $callBackFull, $callBackDemo, $params, $type)
+	private function _sendEmailTakeDown($define_email, $prod, $callBackThumbnail, $callBackFull, $callBackDemo, $params, $type)
 	{
 		$config = [
 			'protocol' => 'smtp',
@@ -189,10 +268,10 @@ class Dashboard extends CI_Controller
 		];
 
 		$this->email->initialize($config);
-		$subject = 'TAKEDOWN ' . time();
+		$subject = 'DIHAPUS ' . time();
 		$canceledMessage = $this->load->view('email-sent/report-delete', $params, TRUE);
 		$this->email->from('beataudio1812@gmail.com', 'Beat Audio');
-		$this->email->to($email);
+		$this->email->to($define_email);
 
 		if ($type == 'delete') {
 			$this->email->subject($subject);
@@ -224,12 +303,13 @@ class Dashboard extends CI_Controller
 	public function requestWd()
 	{
 		$this->form_validation->set_rules('net_income', 'net income', 'required');
+		$this->form_validation->set_rules('wd_id', 'net income', 'required');
 		$this->form_validation->set_rules('email', 'net income', 'required');
 		$this->form_validation->set_rules('date_wd', 'net income', 'required');
 		if ($this->form_validation->run() == false) {
 			$id_user = $this->session->userdata('id_user');
 			$fetch['header'] = "BeatAudio Studio";
-			$fetch['tittle'] = "Withdraw";
+			$fetch['tittle'] = "Permintaan Penarikan";
 			$fetch['user'] = $this->user->getById($id_user);
 			$fetch['prod'] = $this->user->getAllCount();
 			$fetch['bm'] = $this->user->getAllbm();
@@ -243,11 +323,23 @@ class Dashboard extends CI_Controller
 			$net_income = $this->input->post('net_income');
 			$date_wd = $this->input->post('date_wd');
 			$email = $this->input->post('email');
-			$this->_sendEmail($email, $date_wd, $net_income, 'wd');
+			$wd_id = $this->input->post('wd_id');
+
+			// $data = [
+			// 	'wd_id' => $wd_id,
+			// 	'net_income' => $net_income,
+			// 	'email' => $email,
+			// 	'date_wd' => $date_wd,
+			// ];
+			// echo '<pre>';
+			// var_dump($data);
+			// echo '</pre>';
+			$this->_sendEmail($email, $date_wd, $net_income, $wd_id, 'wd');
 		}
 	}
-	private function _sendEmail($email, $date_wd, $net_income, $type)
+	private function _sendEmail($email, $date_wd, $net_income, $wd_id, $type)
 	{
+		date_default_timezone_set('Asia/Jakarta');
 		$config = [
 			'protocol' => 'smtp',
 			'smtp_host' => 'ssl://smtp.googlemail.com',
@@ -260,15 +352,14 @@ class Dashboard extends CI_Controller
 		];
 		$this->email->initialize($config);
 		$data = [
-			'img' => 'http://localhost/testing/assets/img/core-img/logos.png',
 			'now' => date('Y-m-d H:i:s'),
 			'year' => date('Y'),
-			'wd_id' => time(),
 			'net_income' => $net_income,
 			'email' => $email,
-			'date_wd' => $date_wd
+			'date_wd' => $date_wd,
+			'wd_id' => $wd_id
 		];
-		$subject = 'Withdraw ' . time();
+		$subject = 'PENARIKAN-' . $wd_id;
 		$registMessage = $this->load->view('email-sent/report-wd', $data, TRUE);
 
 		$this->email->from('beataudio1812@gmail.com', 'Beat Audio');
@@ -278,6 +369,7 @@ class Dashboard extends CI_Controller
 			$this->email->message($registMessage);
 
 			$data3 = [
+				'date_approve' => date('Y-m-d H:i:s'),
 				'status_income' => 1
 			];
 			$this->user->updateIncome($email, $data3, 'income');
@@ -329,29 +421,88 @@ class Dashboard extends CI_Controller
 	{
 		$data = $this->user->getProductByRequestt($id_user);
 		$image = $this->user->getByIdBm($id_user);
+		// echo '<pre>';
+		// var_dump($data);
+		// echo '</pre>';
+		if ($data == []) {
+			if ($image > 0) {
+				if ($image['image'] == "default.jpg") {
 
-		if ($image > 0) {
-			if ($image['image'] == "default.jpg") {
-				foreach ($data as $key) {
-					unlink(FCPATH . './files/thumbnail/' . $key['thumbnail']);
-					unlink(FCPATH . './files/master-image/' . $key['thumbnail']);
-					unlink(FCPATH . './files/full/' . $key['full_version']);
-					unlink(FCPATH . './files/demo/' . $key['demo_version']);
+					unlink(FCPATH . './files/pdf/' . $image['personal_pdf']);
+					$this->user->deleteByRequest($id_user);
+					$this->user->deleteUserByRequest($id_user);
+					$this->session->set_flashdata(
+						'message',
+						'<div class="alert alert-success alert-dismissible fade show"
+													role="alert">
+													<span class="alert-text">
+													Success delete data</span><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>'
+					);
+					redirect('admin/dashboard/beatmaker');
+					unlink(FCPATH . './files/pdf/' . $image['personal_pdf']);
+				} elseif ($image['image'] != "default.jpg") {
+					unlink(FCPATH . './files/pp/' . $image['image']);
+					unlink(FCPATH . './files/new-image/' . $image['image']);
+					unlink(FCPATH . './files/pdf/' . $image['personal_pdf']);
+					$this->user->deleteByRequest($id_user);
+					$this->user->deleteUserByRequest($id_user);
+					$this->session->set_flashdata(
+						'message',
+						'<div class="alert alert-success alert-dismissible fade show"
+													role="alert">
+													<span class="alert-text">
+													Success delete data</span><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>'
+					);
+					redirect('admin/dashboard/beatmaker');
 				}
-				$this->user->deleteByRequest($id_user);
-				$this->user->deleteUserByRequest($id_user);
-				redirect('admin/dashboard/beatmaker');
-			} elseif ($image['image'] != "default.jpg") {
-				foreach ($data as $key) {
-					unlink(FCPATH . './files/thumbnail/' . $key['thumbnail']);
-					unlink(FCPATH . './files/master-image/' . $key['thumbnail']);
-					unlink(FCPATH . './files/full/' . $key['full_version']);
-					unlink(FCPATH . './files/demo/' . $key['demo_version']);
+			}
+		} elseif ($data != []) {
+			if ($image > 0) {
+				if ($image['image'] == "default.jpg") {
+					#echo 'image default';
+					foreach ($data as $key) {
+						unlink(FCPATH . './files/thumbnail/' . $key['thumbnail']);
+						unlink(FCPATH . './files/master-image/' . $key['thumbnail']);
+						unlink(FCPATH . './files/full/' . $key['full_version']);
+						unlink(FCPATH . './files/demo/' . $key['demo_version']);
+					}
+					#unlink(FCPATH . './files/pp/' . $image['image']);
+					#unlink(FCPATH . './files/new-image/' . $image['image']);
+					unlink(FCPATH . './files/pdf/' . $image['personal_pdf']);
+					// $this->user->deleteByRequest($id_user);
+					// $this->user->deleteUserByRequest($id_user);
+					$this->user->deleteByRequest($id_user);
+					$this->user->deleteUserByRequest($id_user);
+					$this->session->set_flashdata(
+						'message',
+						'<div class="alert alert-success alert-dismissible fade show"
+													role="alert">
+													<span class="alert-text">
+													Success delete data</span><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>'
+					);
+					redirect('admin/dashboard/beatmaker');
+				} elseif ($image['image'] != "default.jpg") {
+					// echo $image['image'];
+					foreach ($data as $key) {
+						unlink(FCPATH . './files/thumbnail/' . $key['thumbnail']);
+						unlink(FCPATH . './files/master-image/' . $key['thumbnail']);
+						unlink(FCPATH . './files/full/' . $key['full_version']);
+						unlink(FCPATH . './files/demo/' . $key['demo_version']);
+					}
+					unlink(FCPATH . './files/pp/' . $image['image']);
+					unlink(FCPATH . './files/new-image/' . $image['image']);
+					unlink(FCPATH . './files/pdf/' . $image['personal_pdf']);
+					$this->user->deleteByRequest($id_user);
+					$this->user->deleteUserByRequest($id_user);
+					$this->session->set_flashdata(
+						'message',
+						'<div class="alert alert-success alert-dismissible fade show"
+													role="alert">
+													<span class="alert-text">
+													Success delete data</span><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>'
+					);
+					redirect('admin/dashboard/beatmaker');
 				}
-				unlink(FCPATH . './files/pp/' . $image['image']);
-				$this->user->deleteByRequest($id_user);
-				$this->user->deleteUserByRequest($id_user);
-				redirect('admin/dashboard/beatmaker');
 			}
 		}
 	}
@@ -373,6 +524,48 @@ class Dashboard extends CI_Controller
 		$this->load->view('admin/user-customer', $fetch);
 		$this->load->view('layout/adm-footer');
 	}
+	public function transaction()
+	{
+		$get_idcs = $this->input->get('key');
+
+		$define_idCs = base64_decode($get_idcs);
+		$fetch['header'] = "BeatAudio Studio";
+		$fetch['tittle'] = "Customer";
+		#getByProfile
+		$fetch['users'] = $this->user->getByProfile($define_idCs);
+		$fetch['bill'] = $this->user->getTransaction($define_idCs);
+
+		$this->load->view('layout/adm-header', $fetch);
+		$this->load->view('layout/adm-side',);
+		$this->load->view('admin/transaction', $fetch);
+		$this->load->view('layout/adm-footer');
+	}
+
+	public function item()
+	{
+		$get_OrderId = $this->input->get('orderID');
+		$get_idCs = $this->input->get('key');
+
+		$define_OrderID = base64_decode($get_OrderId);
+		$define_idCs = base64_decode($get_idCs);
+
+		$fetch['header'] = "BeatAudio";
+		$fetch['tittle'] = "Detail Item";
+
+		$fetch['item'] = $this->user->getHistory($define_idCs, $define_OrderID);
+		$fetch['id_cs'] = $define_idCs;
+		// echo '<pre>';
+		// var_dump($fetch['item']);
+		// echo '</pre>';
+		// die;
+		$this->load->view('layout/adm-header', $fetch);
+		$this->load->view('layout/adm-side');
+		$this->load->view('admin/list', $fetch);
+		$this->load->view('layout/adm-footer');
+	}
+
+
+
 
 	public function detailUserCustomer($id_cs)
 	{
@@ -392,22 +585,28 @@ class Dashboard extends CI_Controller
 	public function requestdeleteCs($id_cs)
 	{
 		$data = $this->user->getByIdCs($id_cs);
-		// var_dump($data);
+		$callbackimage = $data['image'];
+		$callbackpdf = $data['personal_pdf'];
+		// echo '<pre>';
+		// var_dump($callbackpdf);
+		// echo '</pre>';
 		// die;
 		if ($data > 0) {
 			if ($data['image'] == "default.jpg") {
-
+				unlink(FCPATH . './files/pdf/' . $callbackpdf);
 				$this->user->deleteCustomerByRequest($id_cs);
 			} elseif ($data['image'] != "default.jpg") {
-				unlink(FCPATH . './files/pp/' . $data['image']);
+				unlink(FCPATH . './files/pp/' . $callbackimage);
+				unlink(FCPATH . './files/new-image/' . $callbackimage);
+				unlink(FCPATH . './files/pdf/' . $callbackpdf);
 				$this->user->deleteCustomerByRequest($id_cs);
 			}
 			$this->session->set_flashdata(
 				'message',
 				'<div class="alert alert-success alert-dismissible fade show"
-                                            role="alert">
-                                            <span class="alert-text">
-                                            Success delete data</span><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>'
+		                                    role="alert">
+		                                    <span class="alert-text">
+		                                    Success delete data</span><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>'
 			);
 			redirect('admin/dashboard/customer');
 		}
@@ -455,7 +654,7 @@ class Dashboard extends CI_Controller
 		$new_password1 = $this->input->post('n_pass1');
 		$new_password2 = $this->input->post('n_pass2');
 
-		$change = $this->user->getById($this->session->userdata('id_user'));
+		$change = $this->user->getById($this->session->userdata('id_admin'));
 
 		if (password_verify($current_password, $change['password'])) {
 			if ($new_password1 == $new_password2) {
@@ -466,7 +665,7 @@ class Dashboard extends CI_Controller
 
 				// var_dump($data);
 				// die();
-				$this->user->updatePassword($this->session->userdata('id_user'), $data);
+				$this->user->updatePassword($this->session->userdata('id_admin'), $data);
 				$this->session->set_flashdata(
 					'message',
 					'<div class="alert alert-success alert-dismissible fade show"

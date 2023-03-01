@@ -20,7 +20,7 @@
 
             <div class="card card-primary">
                 <div class="card-header">
-                    <h3 class="card-title">Update Profile</h3>
+                    <h3 class="card-title"><?= $tittle; ?></h3>
                 </div>
                 <!-- /.card-header -->
                 <!-- form start -->
@@ -30,47 +30,47 @@
                         <div class="row">
                             <div class="col">
                                 <div class="form-group">
-                                    <label for="exampleInputEmail1">BeatMaker Name</label>
-                                    <input type="text" name="nickname" id="nickname" value="<?= $user['nickname']; ?>" class="form-control">
+                                    <label for="exampleInputEmail1">Nama Beatmaker</label>
+                                    <input autocomplete="off" type="text" name="nickname" id="nickname" value="<?= $user['nickname']; ?>" class="form-control">
                                     <?= form_error('nickname', '<small class=" text-danger">', '</small>'); ?>
                                 </div>
                                 <div class="form-group">
                                     <label for="exampleInputEmail1">Email</label>
-                                    <input name="email" id="email" value="<?= $user['email']; ?>" type="email" class="form-control" placeholder="Enter email" readonly>
+                                    <input autocomplete="off" name="email" id="email" value="<?= $user['email']; ?>" type="email" class="form-control" placeholder="Enter email" readonly>
                                 </div>
                                 <div class="form-group">
                                     <?php if ($query->num_rows() > 0) : ?>
-                                        <label for="exampleInputEmail1">First Name</label>
-                                        <input type="text" name="first_name" id="first_name" value="<?= $users['first_name']; ?>" class="form-control">
+                                        <label for="exampleInputEmail1">Nama Depan</label>
+                                        <input autocomplete="off" type="text" name="first_name" id="first_name" value="<?= $users['first_name']; ?>" class="form-control">
                                         <?= form_error('first_name', '<small class=" text-danger">', '</small>'); ?>
                                     <?php else : ?>
-                                        <label for="exampleInputEmail1">First Name</label>
-                                        <input type="text" name="first_name" id="first_name" class="form-control">
+                                        <label for="exampleInputEmail1">Nama Depan</label>
+                                        <input autocomplete="off" type="text" name="first_name" id="first_name" class="form-control">
                                         <?= form_error('first_name', '<small class=" text-danger">', '</small>'); ?>
 
                                     <?php endif; ?>
                                 </div>
                                 <div class="form-group">
                                     <?php if ($query->num_rows() > 0) : ?>
-                                        <label for="exampleInputEmail1">Lirst Name</label>
-                                        <input type="text" name="last_name" id="last_name" value="<?= $users['last_name']; ?>" class="form-control">
+                                        <label for="exampleInputEmail1">Nama Belakang</label>
+                                        <input autocomplete="off" type="text" name="last_name" id="last_name" value="<?= $users['last_name']; ?>" class="form-control">
                                         <?= form_error('last_name', '<small class=" text-danger">', '</small>'); ?>
                                     <?php else : ?>
-                                        <label for="exampleInputEmail1">Last Name</label>
-                                        <input type="text" name="last_name" id="last_name" class="form-control">
+                                        <label for="exampleInputEmail1">Nama Belakang</label>
+                                        <input autocomplete="off" type="text" name="last_name" id="last_name" class="form-control">
                                         <?= form_error('last_name', '<small class=" text-danger">', '</small>'); ?>
 
                                     <?php endif; ?>
                                 </div>
                                 <div class="form-group">
                                     <?php if ($query->num_rows() > 0) : ?>
-                                        <label for="exampleInputEmail1">Phone Number</label>
-                                        <input type="text" name="phone_number" id="phone_number" value="<?= $users['phone_number']; ?>" class="form-control">
+                                        <label for="exampleInputEmail1">Nomor Ponsel</label>
+                                        <input autocomplete="off" type="text" name="phone_number" id="phone_number" value="<?= $users['phone_number']; ?>" class="form-control">
                                         <?= form_error('phone_number', '<small class=" text-danger">', '</small>'); ?>
 
                                     <?php else : ?>
-                                        <label for="exampleInputEmail1">Phone Number</label>
-                                        <input type="text" name="phone_number" id="phone_number" class="form-control">
+                                        <label for="exampleInputEmail1">Nomor Ponsel</label>
+                                        <input autocomplete="off" type="text" name="phone_number" id="phone_number" class="form-control">
                                         <?= form_error('phone_number', '<small class=" text-danger">', '</small>'); ?>
 
                                     <?php endif; ?>
@@ -79,12 +79,12 @@
                             <div class="col">
                                 <div class="form-group">
                                     <?php if ($query->num_rows() > 0) : ?>
-                                        <label for="exampleInputEmail1">Full Address</label>
+                                        <label for="exampleInputEmail1">Alamat Lengkap</label>
                                         <textarea class="form-control" name="address" id="address" rows="2"> <?= $users['address']; ?></textarea>
                                         <?= form_error('address', '<small class=" text-danger">', '</small>'); ?>
 
                                     <?php else : ?>
-                                        <label for="exampleInputEmail1">Full Address</label>
+                                        <label for="exampleInputEmail1">Alamat Lengkap</label>
                                         <textarea class="form-control" name="address" id="address" rows="2"></textarea>
                                         <?= form_error('address', '<small class=" text-danger">', '</small>'); ?>
 
@@ -97,7 +97,7 @@
                                     <div class="input-group">
                                         <div class="custom-file">
                                             <input type="file" class="custom-file-input" id="image" name="image" accept=".jpeg, .jpg, .png">
-                                            <label class="custom-file-label" for="image">Choose file</label>
+                                            <label class="custom-file-label" for="image">png/jpeg/jpg</label>
                                         </div>
                                     </div>
                                 </div>

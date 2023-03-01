@@ -4,14 +4,14 @@
         <div class="row justify-content-center">
             <div class="col-12 col-lg-8">
                 <div class="login-content">
-                    <h3>Welcome Back</h3>
+                    <h3>Selamat Datang</h3>
                     <?= $this->session->flashdata('message'); ?>
                     <div class="card-body">
                         <form action="<?= base_url('auth'); ?>" method="post">
 
                             <div class="form-group">
                                 <label for="">Email</label>
-                                <input class="form-control" type="text" name="email" id="email" placeholder="Enter Your Email" value="<?= set_value('email'); ?>">
+                                <input autocomplete="off" class="form-control" type="text" name="email" id="email" placeholder="Enter Your Email" value="<?= set_value('email'); ?>">
                                 <?= form_error('email', '<small class=" text-danger">', '</small>'); ?>
                             </div>
 
@@ -26,10 +26,10 @@
                                 <button type="submit" class="btn  form-control oneMusic-btn mt-30">Submit</button>
                             </div>
                             <div class="col mb-3">
-                                <a href="<?= base_url('auth/register'); ?>">Create Account ?</a>
+                                <a href="<?= base_url('auth/register'); ?>">Buat Akun ?</a>
                             </div>
                             <div class="col ">
-                                <a href="<?= base_url('auth/forgotPassword'); ?>">Forogot Password ?</a>
+                                <a href="<?= base_url('auth/forgotPassword'); ?>">Lupa Password ?</a>
 
                             </div>
                         </form>

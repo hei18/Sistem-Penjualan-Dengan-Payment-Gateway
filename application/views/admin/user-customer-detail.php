@@ -6,7 +6,7 @@
 		<div class="container-fluid">
 			<div class="row mb-2">
 				<div class="col-1">
-					<a href="<?= base_url('admin/dashboard/customer'); ?>" class="btn btn-warning">Back</a>
+					<a href="<?= base_url('admin/dashboard/customer'); ?>" class="btn btn-warning">Kembali</a>
 
 				</div>
 				<div class="col">
@@ -41,28 +41,28 @@
 						<div class="card-body">
 							<?php if ($bmdata == null) : ?>
 								<div class="alert alert-danger" role="alert">
-									No Data, The user has not completed the profile
+									Tidak Ada Data
 								</div>
 							<?php else : ?>
 								<form>
 									<div class="row">
 										<div class="col">
 											<div class="form-group">
-												<label for="exampleInputEmail1">First Name</label>
+												<label for="exampleInputEmail1">Nama Depan</label>
 												<input type="text" class="form-control" value="<?= $bmdata['first_name']; ?>" readonly>
 											</div>
 											<div class="form-group">
-												<label for="exampleInputEmail1">Phone Number</label>
+												<label for="exampleInputEmail1">Nomor Ponsel</label>
 												<input type="text" class="form-control" value="<?= $bmdata['phone_number']; ?>" readonly>
 											</div>
 										</div>
 										<div class="col">
 											<div class="form-group">
-												<label for="exampleInputEmail1">Last Name</label>
+												<label for="exampleInputEmail1">Nama Belakang</label>
 												<input type="text" class="form-control" value="<?= $bmdata['last_name']; ?>" readonly>
 											</div>
 											<div class="form-group">
-												<label for="exampleInputEmail1">Address</label>
+												<label for="exampleInputEmail1">Alamat Lengkap</label>
 												<textarea class="form-control" id="exampleFormControlTextarea1" rows="1"><?= $bmdata['address']; ?></textarea>
 											</div>
 										</div>

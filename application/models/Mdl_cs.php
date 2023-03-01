@@ -71,6 +71,18 @@ class Mdl_cs extends CI_Model
 		return $this->db->get()->result_array();
 	}
 
+	public function getValidateCart($id_cs)
+	{
+		$this->db->select('*');
+		$this->db->from('cart');
+		$this->db->join('customer', 'customer.id_cs = cart.id_cs ');
+		#$this->db->join('profiles', 'profiles.id_cs = cart.id_cs',);
+		#$this->db->join('product', 'product.id_product = cart.id_product ');
+		$this->db->where('cart.id_cs =', $id_cs);
+		#$this->db->where('cart.id_user =', $id_user);
+		return $this->db->get()->result_array();
+	}
+
 	public function getCartSingle($id_cs)
 	{
 		$this->db->select('*');
@@ -122,9 +134,48 @@ class Mdl_cs extends CI_Model
 		$this->db->join('customer', 'customer.id_cs = transaction.id_cs');
 		$this->db->join('profiles', 'profiles.id_cs = customer.id_cs');
 		$this->db->where('transaction.id_cs =', $id_cs);
+		$this->db->order_by('id_transaction', 'DESC');
 		#$this->db->order_by('order_id');
 
 		return $this->db->get()->result_array();
+	}
+	public function getExpenses($id_cs, $from, $until)
+	{
+		$newFrom = $this->db->escape($from);
+		$newUntil = $this->db->escape($until);
+		$this->db->select('*');
+		$this->db->from('order_history');
+		$this->db->join('transaction', 'order_history.order_id = transaction.order_id');
+		// $this->db->join('customer', 'customer.id_cs = transaction.id_cs');
+		// $this->db->join('profiles', 'profiles.id_cs = customer.id_cs');
+		$this->db->where('order_history.id_cs =', $id_cs);
+		$this->db->where('order_history.status =', 1);
+		$this->db->where('DATE(transaction_time) BETWEEN ' . $newFrom . ' AND ' . $newUntil);
+
+
+		#$this->db->order_by('id_transaction', 'DESC');
+		#$this->db->order_by('order_id');
+
+		return $this->db->get()->result_array();
+	}
+	public function getSumExpenses($id_cs, $from, $until)
+	{
+		$newFrom = $this->db->escape($from);
+		$newUntil = $this->db->escape($until);
+		$this->db->select_sum('subtotal');
+		$this->db->from('order_history');
+		$this->db->join('transaction', 'order_history.order_id = transaction.order_id');
+		// $this->db->join('customer', 'customer.id_cs = transaction.id_cs');
+		// $this->db->join('profiles', 'profiles.id_cs = customer.id_cs');
+		$this->db->where('order_history.id_cs =', $id_cs);
+		$this->db->where('order_history.status =', 1);
+		$this->db->where('DATE(transaction_time) BETWEEN ' . $newFrom . ' AND ' . $newUntil);
+
+
+		#$this->db->order_by('id_transaction', 'DESC');
+		#$this->db->order_by('order_id');
+
+		return $this->db->get()->row()->subtotal;
 	}
 	public function getTransactionValidate($id_cs, $key)
 	{
@@ -156,6 +207,22 @@ class Mdl_cs extends CI_Model
 
 		return $this->db->get()->result_array();
 	}
+	public function getTransactionToSend($id_cs, $order_id)
+	{
+
+		$this->db->select('*');
+		$this->db->from('transaction');
+		#$this->db->join('cart', 'cart.id_cart = transaction.id_cart');
+		#$this->db->join('product', 'product.id_product = transaction.id_product');
+		$this->db->join('customer', 'customer.id_cs = transaction.id_cs');
+		$this->db->join('profiles', 'profiles.id_cs = customer.id_cs');
+		$this->db->where('transaction.id_cs =', $id_cs);
+		$this->db->where('transaction.order_id =', $order_id);
+		$this->db->where('transaction.status_code =', 200);
+		#$this->db->order_by('order_id');
+
+		return $this->db->get()->row_array();
+	}
 
 	public function getHistory($id_cs, $order_id)
 	{
@@ -164,9 +231,21 @@ class Mdl_cs extends CI_Model
 		#$this->db->join('cart', 'cart.id_cart = transaction.id_cart');
 		#$this->db->join('product', 'product.id_product = transaction.id_product');
 		$this->db->join('customer', 'customer.id_cs = order_history.id_cs');
-		$this->db->join('product', 'product.id_product = order_history.Id_product');
+		#$this->db->join('product', 'product.id_product = order_history.Id_product');
 		$this->db->where('order_history.id_cs =', $id_cs);
 		$this->db->where('order_history.order_id =', $order_id);
+		return $this->db->get()->result_array();
+	}
+	public function getHistoryToDelete($id_cs)
+	{
+		$this->db->select('*');
+		$this->db->from('order_history');
+		#$this->db->join('cart', 'cart.id_cart = transaction.id_cart');
+		#$this->db->join('product', 'product.id_product = transaction.id_product');
+		$this->db->join('customer', 'customer.id_cs = order_history.id_cs');
+		#$this->db->join('product', 'product.id_product = order_history.Id_product');
+		$this->db->where('order_history.id_cs =', $id_cs);
+		#$this->db->where('order_history.order_id =', $order_id);
 		return $this->db->get()->result_array();
 	}
 	public function countAllCart($id_cs)
@@ -182,10 +261,25 @@ class Mdl_cs extends CI_Model
 
 	public function sumSubtotal($id_cs)
 	{
-		$this->db->select_sum('subtotal');
+		$this->db->select_sum('bill_price');
 		$this->db->from('cart');
 		$this->db->where('id_cs', $id_cs);
+		return $this->db->get()->row()->bill_price;
+	}
+	public function sumSubtotalHIstory($id_cs)
+	{
+		$this->db->select_sum('subtotal');
+		$this->db->from('order_history');
+		$this->db->where('id_cs', $id_cs);
 		return $this->db->get()->row()->subtotal;
+	}
+	public function sumBillInvoice($id_cs)
+	{
+		$this->db->select_sum('bill_price');
+		$this->db->from('order_history');
+		$this->db->where('id_cs', $id_cs);
+		$this->db->where('status', 1);
+		return $this->db->get()->row()->bill_price;
 	}
 	public function getProfileRequest($id_cs)
 	{
@@ -197,14 +291,44 @@ class Mdl_cs extends CI_Model
 
 		return $this->db->get()->row_array();
 	}
+	public function getFileName($id_cs)
+	{
+		$this->db->select('*');
+		$this->db->from('customer');
+		#$this->db->join('profiles', 'customer.id_cs = profiles.id_profiles', 'left');
+
+		$this->db->where('customer.id_cs =', $id_cs);
+
+		return $this->db->get()->row_array();
+	}
 	public function getFile($id_cs, $order_id)
 	{
 		$this->db->select('*');
 		$this->db->from('order_history');
 		$this->db->join('customer', 'customer.id_cs = order_history.id_cs');
-		$this->db->join('product', 'product.id_product = order_history.id_product');
+		#$this->db->join('product', 'product.id_product = order_history.id_product');
+		#$this->db->join('transaction', 'transaction.id_cs = customer.id_cs');
 		$this->db->where('order_history.id_cs =', $id_cs);
 		$this->db->where('order_history.order_id =', $order_id);
+		return $this->db->get()->result_array();
+	}
+	public function getSales($id_cs, $order_id)
+	{
+		$this->db->select('*');
+		$this->db->from('order_history');
+		$this->db->join('customer', 'customer.id_cs = order_history.id_cs');
+		$this->db->join('product', 'product.id_product = order_history.id_product');
+		$this->db->join('transaction', 'transaction.id_cs = customer.id_cs');
+		$this->db->where('order_history.id_cs =', $id_cs);
+		$this->db->where('order_history.order_id =', $order_id);
+		return $this->db->get()->result_array();
+	}
+	public function getToken($id_cs, $order_id)
+	{
+		$this->db->select('*');
+		$this->db->from('order_history');
+		$this->db->where('id_cs =', $id_cs);
+		$this->db->where('order_id =', $order_id);
 		return $this->db->get()->result_array();
 	}
 	// public function getFileForUpdate($id_cs)
@@ -260,9 +384,9 @@ class Mdl_cs extends CI_Model
 	/**
 	 * Update
 	 */
-	public function updateCart($id_user, $id_cart, $data)
+	public function updateCart($id_cs, $id_cart, $data)
 	{
-		$this->db->update('cart', $data, ['id_user' => $id_user, 'id_cart' => $id_cart]);
+		$this->db->update('cart', $data, ['id_cs' => $id_cs, 'id_cart' => $id_cart]);
 	}
 	public function update_user($id_cs, $data)
 	{
@@ -295,8 +419,12 @@ class Mdl_cs extends CI_Model
 
 
 
-	public function updateOrderHistory($id_cs, $data)
+	public function updateOrderHistory($id_cs, $order_id, $data)
 	{
-		$this->db->update('order_history', $data, ['id_cs' => $id_cs]);
+		$this->db->update('order_history', $data, ['id_cs' => $id_cs, 'order_id' => $order_id]);
+	}
+	public function updateByIdOrder($id_history, $data)
+	{
+		$this->db->update('order_history', $data, ['id_history' => $id_history]);
 	}
 }

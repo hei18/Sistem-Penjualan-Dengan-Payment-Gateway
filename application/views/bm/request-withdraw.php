@@ -6,7 +6,7 @@
 		<div class="container-fluid">
 			<div class="row mb-2">
 				<div class="col">
-					<h1><?= $tittle; ?></h1>
+					<h1>Permintaan Penarikan</h1>
 				</div>
 
 
@@ -23,7 +23,7 @@
 
 			<div class="card">
 				<div class="card-header bg-warning">
-					Request Witdraw
+					Permintaan Penarikan
 				</div>
 				<div class="card-body">
 					<form action="<?= base_url('bm/channel/doWithdraw'); ?>" method="post">
@@ -35,9 +35,9 @@
 									<input type="text" class="form-control" name="email" id="email" value="<?= $data['email']; ?>" readonly>
 								</div>
 								<div class="form-group">
-									<label for="disabledSelect">Select Your Bank</label>
+									<label for="disabledSelect">Pilih Bank</label>
 									<select name="bank_name" class="form-control" id="myBank">
-										<option value="">---SELECT YOUR BANK---</option>
+										<option value="">---Pilih Bank---</option>
 										<?php foreach ($mybank as $key) : ?>
 											<option value="<?= $key['bank_name']; ?>" data-number="<?= $key['bank_number']; ?>">
 												<?= $key['bank_name']; ?>
@@ -48,11 +48,11 @@
 							</div>
 							<div class="col">
 								<div class="form-group">
-									<label for="formGroupExampleInput2">Income</label>
+									<label for="formGroupExampleInput2">Pendapatan</label>
 									<input type="text" class="form-control" name="net_income" id="net_income" value="<?= idr($data['net_income']); ?>" readonly>
 								</div>
 								<div class="form-group">
-									<label for="formGroupExampleInput2">Bank Number</label>
+									<label for="formGroupExampleInput2">No Rekening</label>
 									<input type="text" class="form-control" name="bank_number" id="bank_number" readonly>
 								</div>
 							</div>

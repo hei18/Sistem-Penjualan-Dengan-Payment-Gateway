@@ -1,6 +1,8 @@
 <?php if (!defined('BASEPATH')) exit('No direct script access allowed');
-header('Access-Control-Allow-Origin:*');
-header("Access-Control-Allow-Methods:GET, OPTIONS");
+// header('Access-Control-Allow-Origin:*');
+// header("Access-Control-Allow-Methods:POST, OPTIONS");
+// header('Content-Type: application/json');
+// header('Accept: application/json');
 class Snap extends CI_Controller
 {
 
@@ -39,15 +41,15 @@ class Snap extends CI_Controller
 	public function token()
 	{
 		$id_cs = $this->session->userdata('id_cs');
+
 		$c = $this->user->getCart($id_cs);
-		$grossamount		= $this->input->get('amount');
+		$grossamount	= $this->input->get('amount');
 
-		// Required
+		#getAutoNumber('transaction', 'order_id', 'BA-INV-', 12)
 		$transaction_details = array(
-			'order_id' => getAutoNumber('transaction', 'order_id', 'CsOrder-', 13),
-			'gross_amount' => $grossamount, // no decimal allowed for creditcard
+			'order_id' => 'BA-INV-' . rand(),
+			'gross_amount' => 	$grossamount, // no decimal allowed for creditcard
 		);
-
 		$items = array();
 		foreach ($c as $x) {
 			$items[] = [
@@ -58,8 +60,7 @@ class Snap extends CI_Controller
 			];
 		}
 
-		// Optional
-		#$item_details = array($item1_details, $item2_details);
+
 
 		$user = $this->user->getCartSingle($id_cs);
 
@@ -72,17 +73,6 @@ class Snap extends CI_Controller
 			'phone'         => $user['phone_number'],
 
 		);
-
-
-		// // Optional
-		// $customer_details = array(
-		// 	'first_name'    => "Andri",
-		// 	'last_name'     => "Litani",
-		// 	'email'         => "andri@litani.com",
-		// 	'phone'         => "081122334455",
-		// 	'billing_address'  => $billing_address,
-		// 	'shipping_address' => $shipping_address
-		// );
 
 		// Data yang akan dikirim untuk request redirect_url.
 		$credit_card['secure'] = true;
@@ -109,25 +99,26 @@ class Snap extends CI_Controller
 		error_log($snapToken);
 		echo $snapToken;
 	}
+
 	public function finish()
 	{
 		$result = json_decode($this->input->post('result_data'));
 		// echo 'RESULT <br><pre>';
-		// var_dump($result);
+		// var_dump($result->va_numbers[0]->bank);
 		// echo '</pre>';
 		// die;
-
+		#$result->va_numbers[0]->bank other
 		if ($result->payment_type == 'bank_transfer') {
 			if ($result->va_numbers) {
 				foreach ($result->va_numbers as $row) {
 					$bank = $row->bank;
 					$vaNumber = $row->va_number;
-					$billerCode = '';
+					$billerCode = '-';
 				}
 			} else {
 				$bank = 'permata';
 				$vaNumber = $result->permata_va_number;
-				$billerCode = '';
+				$billerCode = '-';
 			}
 		} elseif ($result->payment_type == 'echannel') {
 			$bank = 'mandiri';
@@ -136,11 +127,12 @@ class Snap extends CI_Controller
 		} else {
 			$bank = 'alfamart/indomaret';
 			$vaNumber = $result->payment_code;
-			$billerCode = '';
+			$billerCode = '-';
 		}
 		$grossAmount = str_replace('.00', '', $result->gross_amount);
 		$id_cs = $this->session->userdata('id_cs');
 		$c = $this->user->getCart($id_cs);
+		$file_token = base64_encode(random_bytes(32));
 		$check = array();
 		// if
 		foreach ($c as $x) {
@@ -148,7 +140,13 @@ class Snap extends CI_Controller
 				'id_cs' => $id_cs,
 				'id_product' => $x['id_product'],
 				'order_id' => $result->order_id,
+				'title' => $x['title'],
 				'full_version' => $x['full_version'],
+				'genre' => $x['genre'],
+				'bill_price' => $x['bill_price'],
+				'qty' => $x['qty'],
+				'subtotal' => $x['subtotal'],
+				'file_token' => $file_token,
 				'status' => 0,
 			];
 		}
@@ -161,6 +159,7 @@ class Snap extends CI_Controller
 			'gross_amount' => $grossAmount,
 			'payment_type' => $result->payment_type,
 			'transaction_time' => $result->transaction_time,
+			'settlement_time' => NULL,
 			'transaction_status' => $result->transaction_status,
 			'pdf_url' => $result->pdf_url,
 			'status_code' => $result->status_code,
@@ -177,12 +176,6 @@ class Snap extends CI_Controller
 		$this->db->insert('transaction', $data);
 		$email = $this->session->userdata('email');
 		$this->_EmailValidate($email, $key, 'validate');
-		// $active_alert = '<div class="alert alert-warning alert-dismissible fade show"
-		// 	role="alert">
-		// 	<span class="alert-text">
-		// 	Check your email for instruction!!</span><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>';
-		// $this->session->set_flashdata('message', $active_alert);
-		// redirect('cs/dashboard/transaction');
 	}
 
 	private function _EmailValidate($email, $key, $type)
@@ -214,15 +207,16 @@ class Snap extends CI_Controller
 		$this->email->from('beataudio1812@gmail.com', 'Beat Audio');
 		$this->email->to($email);
 		if ($type == 'validate') {
-			$this->email->subject('PAYMENT INSTRUCTION - ' . time());
+			$this->email->subject('INSTRUKSI PEMBAYARAN - ' . time());
 			$this->email->message($message);
+			$this->user->deleteCartByIdUser($id_cs);
 		}
 		$this->load->library('email', $config);
 		$this->email->send();
 		$active_alert = '<div class="alert alert-warning alert-dismissible fade show"
 			role="alert">
 			<span class="alert-text">
-			Check your email for instruction!!</span><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>';
+			Check email anda untuk instruksi pembayaran atau bisa download di kolom panduan</span><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>';
 		$this->session->set_flashdata('message', $active_alert);
 		redirect('cs/dashboard/transaction');
 	}

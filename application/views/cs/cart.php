@@ -21,29 +21,32 @@
 
 			<div class="card">
 				<div class="card-header bg-warning">
-					<h3 class="card-title">Cart</h3>
+					<h3 class="card-title"><?= $tittle; ?></h3>
 				</div>
 				<!-- /.card-header -->
 				<div class="card-body">
 					<div class="table-responsive">
+
 						<table class=" table table-bordered" width="100%">
 							 <thead>
 								<tr class="bg-light">
-									<th>Title</th>
-									<th>Qty</th>
 
+									<th>Aksi</th>
+									<th>Judul Instrumental</th>
+									<th>Jumlah</th>
+
+									<th>Harga</th>
 									<th>Subtotal</th>
 
-									<th>Action</th>
 
 								</tr>
 							</thead>
 							<tbody>
 								<?php if ($cart == null) : ?>
 									<tr>
-										<td colspan="4">
+										<td colspan="5">
 											<div class="alert alert-info" role="alert">
-												No Data
+												Tidak Ada Data
 											</div>
 										</td>
 									</tr>
@@ -52,25 +55,34 @@
 								<?php
 								$total = 0;
 								foreach ($cart as $c) : ?>
-									<tr>
+									<form action="<?= base_url('cs/dashboard/updatecart/'); ?>" method="post">
+										<tr>
+											<input type="hidden" name="id_cart" value="<?= $c['id_cart']; ?>">
+											<input type="hidden" name="bill_price" value="<?= $c['bill_price']; ?>">
+											<th class="text-right">
+												<button class="btn btn-sm btn-warning" type="submit" name="submit">Ubah</button>
 
-										<th><?= $c['title']; ?></th>
-										<th><?= $c['qty']; ?></th>
+												<a class="btn btn-sm btn-danger" onclick="return confirm('Are you sure want to delete <?= $c['title']; ?> ?')" href="<?= base_url('cs/dashboard/deleted/' . $c['id_cart']); ?>"><i class="far fa-trash-alt"></i></a>
 
-										<th><?= idr($c['subtotal']); ?></th>
+											</th>
+											<th><?= $c['title']; ?></th>
+											<th> <input type="number" name="qty" id="qty" value="<?= $c['qty']; ?>" min="1">
 
-										<th class="text-right">
-											<a class="btn btn-sm btn-danger" onclick="return confirm('Are you sure want to delete <?= $c['title']; ?> ?')" href="<?= base_url('cs/dashboard/deleted/' . $c['id_cart']); ?>"><i class="far fa-trash-alt"></i></a>
+											</th>
 
-										</th>
-									</tr>
+											<th class="text-right"><?= idr($c['bill_price']); ?></th>
+											<th class="text-right"><?= idr($c['subtotal']); ?></th>
+
+										</tr>
+
+									</form>
 
 
 								<?php
-									$total += $c['qty'] * $c['selling_price'];
+									$total += $c['qty'] * $c['bill_price'];
 								endforeach; ?>
 								<tr>
-									<th colspan="3" class="bg-light">Total Payment</th>
+									<th colspan="4" class="bg-light">Total Harga</th>
 									<th class="text-right bg-light">
 										<?= idr($total); ?>
 
@@ -79,13 +91,15 @@
 							</tbody>
 
 						</table>
+
+
 						<form id="payment-form" method="post" action="<?= site_url() ?>cs/snap/finish">
 							<input type="hidden" name="result_type" id="result-type" value="">
 							<input type="hidden" name="result_data" id="result-data" value="">
 						</form>
 						<?php if ($cart == null) : ?>
 						<?php else : ?>
-							<button class="col-12 btn-info" id="pay-button" data-amount="<?= $total; ?>">Pay!</button>
+							<button class="col-12 btn-info" id="pay-button" data-amount="<?= $total; ?>">Bayar</button>
 						<?php endif; ?>
 
 

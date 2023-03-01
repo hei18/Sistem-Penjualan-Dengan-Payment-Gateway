@@ -1,6 +1,5 @@
 <?php if (!defined('BASEPATH')) exit('No direct script access allowed');
-header('Access-Control-Allow-Origin:*');
-header("Access-Control-Allow-Methods:GET, OPTIONs");
+
 class Snap extends CI_Controller
 {
 
@@ -28,6 +27,7 @@ class Snap extends CI_Controller
 		$this->load->library('midtrans');
 		$this->midtrans->config($params);
 		$this->load->helper('url');
+		$this->load->model('mdl_cs', 'user');
 	}
 
 	public function index()
@@ -37,31 +37,28 @@ class Snap extends CI_Controller
 
 	public function token()
 	{
+		// $id_cs = $this->session->usedata('id_cs');
+		// var_dump($id_cs);
 
 		// Required
+		$grossamount	= $this->input->get('amount');
+
+
 		$transaction_details = array(
 			'order_id' => rand(),
-			'gross_amount' => 94000, // no decimal allowed for creditcard
+			'gross_amount' => 	$grossamount, // no decimal allowed for creditcard
 		);
 
 		// Optional
-		$item1_details = array(
-			'id' => 'a1',
-			'price' => 18000,
-			'quantity' => 3,
-			'name' => "Apple"
-		);
-
-		// Optional
-		$item2_details = array(
+		$item_details = array(
 			'id' => 'a2',
-			'price' => 20000,
-			'quantity' => 2,
+			'price' => $grossamount,
+			'quantity' => 1,
 			'name' => "Orange"
 		);
 
 		// Optional
-		$item_details = array($item1_details, $item2_details);
+		#$item_details = array($item1_details, $item2_details);
 
 		// Optional
 		$billing_address = array(
@@ -120,6 +117,7 @@ class Snap extends CI_Controller
 		error_log($snapToken);
 		echo $snapToken;
 	}
+
 	public function finish()
 	{
 		$result = json_decode($this->input->post('result_data'));

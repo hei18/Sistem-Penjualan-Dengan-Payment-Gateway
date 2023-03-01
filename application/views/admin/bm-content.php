@@ -34,13 +34,14 @@
 							<thead>
 								<tr>
 
-									<th>Thumbnail</th>
-									<th>BeatMaker</th>
-									<th>Title</th>
-									<th>Full_version</th>
-									<th>Demo_version</th>
-									<th>Genre</th>
+									<th>Gambar</th>
+									<th>Beatmaker</th>
+									<th>Judul</th>
+									<th>Versi Lengkap</th>
+									<th>Versi Demo</th>
+									<th>Jenis Musik</th>
 									<th>Status</th>
+
 									<th>Info</th>
 
 								</tr>
@@ -65,11 +66,11 @@
 											<td><?= $d['nickname']; ?></td>
 											<td><?= $d['title']; ?></td>
 											<td><audio controls controlsList="nodownload">
-													<source src="<?= base_url('files/full/') . $d['full_version']; ?>" type="audio/mpeg">
+													<source src="<?= base_url('files/full/') . $d['full_version']; ?>">
 												</audio>
 											</td>
 											<td><audio controls controlsList="nodownload">
-													<source src="<?= base_url('files/demo/') . $d['demo_version']; ?>" type="audio/mpeg">
+													<source src="<?= base_url('files/demo/') . $d['demo_version']; ?>">
 												</audio>
 											</td>
 											<td>
@@ -87,10 +88,10 @@
 											</td>
 											<td>
 												<?php if ($d['status_product'] == 0) : ?>
-													<button type="submit" class="btn btn-sm btn-info"><i class="fa-solid fa-pen-to-square"></i></button>
+													<button type="submit" class="btn btn-sm btn-danger"><i class="fa-solid fa-trash"></i></i></button>
 
 
-													<a class="btn btn-sm btn-warning" onclick="return confirm('Are you sure want to post <?= $d['title']; ?> ?')" href="<?= base_url('admin/dashboard/update/' . $d['id_product']); ?>"><i class="fa-solid fa-pen-to-square"></i></a>
+													<a class="btn btn-sm btn-warning" onclick="return confirm('Yakin ingin post <?= $d['title']; ?> ?')" href="<?= base_url('admin/dashboard/update/' . $d['id_product']); ?>"><i class="fa-solid fa-pen-to-square"></i></a>
 												<?php elseif ($d['status_product'] == 1) : ?>
 													<span class="badge badge-success">Posted</span>
 												<?php elseif ($d['status_product'] == 3) : ?>

@@ -35,11 +35,11 @@
  										<tr>
 
 
- 											<th scope="col">Title</th>
+ 											<th scope="col">Judul</th>
  											<th scope="col">Instrumental</th>
- 											<th scope="col">Genre</th>
- 											<th scope="col">Price</th>
- 											<th scope="col">Action</th>
+ 											<th scope="col">Jenis Musik</th>
+ 											<th scope="col">Harga</th>
+ 											<th scope="col">Aksi</th>
 
  										</tr>
  									</thead>
@@ -128,7 +128,7 @@
  						<img class="card-img-top" src="<?= base_url('files/thumbnail/') . $b['thumbnail']; ?>" alt="Card image cap" style="width: 150px; height: 150px;">
 
  						<div class="card-body">
- 							<h5 class="card-title">Description</h5>
+ 							<h5 class="card-title">Deskripsi</h5>
  							<p class="card-text">
  								<?= $b['description']; ?>
  							</p>
@@ -139,13 +139,13 @@
  				</div>
  				<div class="modal-footer">
  					<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
- 					<form action="<?= base_url('publics/artist/' . $b['id_user']); ?>" method="post">
+ 					<form action="<?= base_url('publics/artist?key=' . base64_encode($b['id_user'])); ?>" method="post">
 
  						<input type="hidden" name="id_product" id="id_product" value="<?= $b['id_product']; ?>">
  						<input type="hidden" name="title" id="title" value="<?= $b['title']; ?>">
  						<input type="hidden" name="full_version" id="full_version" value="<?= $b['full_version']; ?>">
  						<input type="hidden" name="selling_price" id="selling_price" value="<?= $b['selling_price']; ?>">
- 						<button type="submit" name="submit" id="submit" value="submit" class="btn btn-primary">Add To Cart</button>
+ 						<button type="submit" name="submit" id="submit" value="submit" class="btn btn-primary">Tambah Ke Kranjang</button>
  					</form>
  				</div>
  			</div>
@@ -157,7 +157,7 @@
  	<div class="modal-dialog modal-dialog-centered">
  		<div class="modal-content">
  			<div class="modal-header">
- 				<h5 class="modal-title" id="exampleModalLabel">Create Customer account to buy</h5>
+ 				<h5 class="modal-title" id="exampleModalLabel">Buatlah Akun Customer Untuk Membeli</h5>
  				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
  					<span aria-hidden="true">&times;</span>
  				</button>
@@ -165,11 +165,11 @@
  			<div class="modal-body">
  				<div class="row">
  					<div class="col">
- 						<h5>If you have account</h5>
+ 						<h5>Jika Punya Akun</h5>
  						<a href="<?= base_url('auth'); ?>" class="btn btn-primary">Login</a>
  					</div>
  					<div class="col">
- 						<h5>If you don't have account</h5>
+ 						<h5>Jika Tidak Punya Akun</h5>
  						<a href="<?= base_url('auth/register'); ?>" class="btn btn-warning">Register</a>
  					</div>
  				</div>
@@ -183,59 +183,13 @@
  		</div>
  	</div>
  </div>
- <section class="contact-area section-padding-100 bg-img bg-overlay bg-fixed has-bg-img" style="background-image: url(<?= base_url('assets/'); ?>img/bg-img/bg-2.jpg);">
- 	<div class="container">
- 		<div class="row">
- 			<div class="col-12">
- 				<div class="section-heading white">
- 					<p>See what’s new</p>
- 					<h2>Get In Touch</h2>
- 				</div>
- 			</div>
- 		</div>
 
- 		<div class="row">
- 			<div class="col-12">
- 				<!-- Contact Form Area -->
- 				<div class="contact-form-area">
- 					<form action="#" method="post">
- 						<div class="row">
- 							<div class="col-md-6 col-lg-4">
- 								<div class="form-group">
- 									<input type="text" class="form-control" id="name" placeholder="Name">
- 								</div>
- 							</div>
- 							<div class="col-md-6 col-lg-4">
- 								<div class="form-group">
- 									<input type="email" class="form-control" id="email" placeholder="E-mail">
- 								</div>
- 							</div>
- 							<div class="col-lg-4">
- 								<div class="form-group">
- 									<input type="text" class="form-control" id="subject" placeholder="Subject">
- 								</div>
- 							</div>
- 							<div class="col-12">
- 								<div class="form-group">
- 									<textarea name="message" class="form-control" id="message" cols="30" rows="10" placeholder="Message"></textarea>
- 								</div>
- 							</div>
- 							<div class="col-12 text-center">
- 								<button class="btn oneMusic-btn mt-30" type="submit">Send <i class="fa fa-angle-double-right"></i></button>
- 							</div>
- 						</div>
- 					</form>
- 				</div>
- 			</div>
- 		</div>
- 	</div>
- </section>
 
  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
  	<div class="modal-dialog modal-dialog-centered">
  		<div class="modal-content">
  			<div class="modal-header">
- 				<h5 class="modal-title" id="exampleModalLabel">Create Customer account to buy</h5>
+ 				<h5 class="modal-title" id="exampleModalLabel">Buatlah Akun Customer Untuk Membeli</h5>
  				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
  					<span aria-hidden="true">&times;</span>
  				</button>
@@ -243,11 +197,11 @@
  			<div class="modal-body">
  				<div class="row">
  					<div class="col">
- 						<h5>If you have account</h5>
+ 						<h5>Jika Punya Akun</h5>
  						<a href="<?= base_url('auth'); ?>" class="btn btn-primary">Login</a>
  					</div>
  					<div class="col">
- 						<h5>If you don't have account</h5>
+ 						<h5>Jika Tidak Punya Akun</h5>
  						<a href="<?= base_url('auth/register'); ?>" class="btn btn-warning">Register</a>
  					</div>
  				</div>

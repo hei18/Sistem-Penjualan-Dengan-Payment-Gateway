@@ -21,7 +21,7 @@
 
 			<div class="card">
 				<div class="card-header bg-primary">
-					<h3 class="card-title">Detail Item</h3>
+					<h3 class="card-title"> <a href="<?= base_url('cs/dashboard/transaction'); ?>" class="btn btn-sm btn-warning">Kembali</a> Detail Item</h3>
 				</div>
 				<!-- /.card-header -->
 				<div class="card-body">
@@ -29,9 +29,12 @@
 						<table class=" table table-bordered" width="100%">
 							 <thead>
 								<tr>
-									<th>Thumbnail</th>
-									<th>Title</th>
-									<th>Item</th>
+
+									<th>Judul</th>
+									<th>Jenis Instrumental</th>
+									<th>Harga</th>
+									<th>Jumlah</th>
+									<th>Subtotal</th>
 									<th>Status</th>
 
 
@@ -42,11 +45,12 @@
 
 
 									<tr>
-										<th>
-											<img src="<?= base_url('files/thumbnail/') . $c['thumbnail']; ?>" alt="<?= base64_encode($c['thumbnail']); ?>" srcset="" style="max-width: 80px;">
-										</th>
+
 										<th><?= $c['title']; ?></th>
 										<th><?= $c['genre']; ?></th>
+										<th><?= idr($c['bill_price']); ?></th>
+										<th><?= $c['qty'] ?></th>
+										<th><?= idr($c['subtotal']); ?></th>
 										<th>
 											<?php if ($c['status'] == 1) : ?>
 												<span class="badge badge-success">Sent</span>

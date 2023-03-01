@@ -28,6 +28,7 @@ class Handler extends CI_Controller
 		$this->veritrans->config($params);
 		$this->load->helper('url');
 		$this->load->model('mdl_cs', 'user');
+		$this->load->library('encryption');
 	}
 
 	public function index($order_id)
@@ -108,40 +109,65 @@ class Handler extends CI_Controller
 	}
 	public function d()
 	{
-		$key1 = $this->input->get('order_id');
-		$key2 = $this->input->get('payment_type');
+		$key1 = $this->input->get('uid');
+		$key2 = $this->input->get('key');
 
-		$validate = $this->veritrans->status($key1);
+		$define_OrderID = base64_decode($key1);
+		$define_PaymenType = base64_decode($key2);
+
+
+
+		$validate = $this->veritrans->status($define_OrderID);
+		// echo '<pre>';
+		// var_dump($validate);
+		// echo '</pre>';
+		// die;
 		$define_code = $validate->status_code;
+
+
+
+
 		// echo '<pre>';
 		// var_dump($validate->order_id);
 		// echo '</pre>';
-		if ($key1 == $validate->order_id) {
-			if ($key2 == $validate->payment_type) {
-				if ($define_code == 200) {
-					$data = [
-						'status_code' => $define_code
-					];
-					$this->db->update('transaction', $data, ['order_id' => $key1]);
-					$active_alert = '<div class="alert alert-success alert-dismissible fade show"
-					role="alert">
-					<span class="alert-text">
-					Confirm Sucess, Now click button "Give Me Beat"</span><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>';
-					$this->session->set_flashdata('message', $active_alert);
-					redirect('cs/dashboard/transaction');
-				} elseif ($define_code == 201) {
-					$active_alert = '<div class="alert alert-warning alert-dismissible fade show"
-					role="alert">
-					<span class="alert-text">
-					Do your payment !</span><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>';
-					$this->session->set_flashdata('message', $active_alert);
-					redirect('cs/dashboard/transaction');
-				} else {
-					$data = [
-						'status_code' => $define_code
-					];
-					$this->db->update('transaction', $data, ['order_id' => $$key1]);
-				}
+		if ($define_code == 201) {
+			if ($define_PaymenType == $validate->payment_type) {
+				$active_alert = '<div class="alert alert-warning alert-dismissible fade show"
+						role="alert">
+						<span class="alert-text">
+						Do your payment !</span><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>';
+				$this->session->set_flashdata('message', $active_alert);
+			}
+			redirect('cs/dashboard/transaction');
+		} elseif ($define_code == 200) {
+			if ($define_PaymenType == $validate->payment_type) {
+				$data = [
+					'status_code' => $define_code,
+					'settlement_time' =>  $validate->settlement_time,
+					'transaction_status' => $validate->transaction_status
+				];
+				$this->db->update('transaction', $data, ['order_id' => $define_OrderID]);
+				$active_alert = '<div class="alert alert-success alert-dismissible fade show"
+								role="alert">
+								<span class="alert-text">
+								Confirm Sucess, Now click button "Give Me Beat"</span><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>';
+				$this->session->set_flashdata('message', $active_alert);
+				redirect('cs/dashboard/transaction');
+			}
+		} else {
+			if ($define_PaymenType == $validate->payment_type) {
+				$data = [
+					'status_code' => $define_code,
+					'settlement_time' =>  $validate->settlement_time,
+					'transaction_status' => $validate->transaction_status
+				];
+				$this->db->update('transaction', $data, ['order_id' => $define_OrderID]);
+				$active_alert = '<div class="alert alert-success alert-dismissible fade show"
+								role="alert">
+								<span class="alert-text">
+								Confirm Sucess, Now click button "Give Me Beat"</span><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>';
+				$this->session->set_flashdata('message', $active_alert);
+				redirect('cs/dashboard/transaction');
 			}
 		}
 	}

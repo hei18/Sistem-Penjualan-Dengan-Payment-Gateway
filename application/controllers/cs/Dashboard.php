@@ -9,43 +9,97 @@ class Dashboard extends CI_Controller
 		parent::__construct();
 		as_cs();
 
-		$this->load->model('mdl_cs', 'user');
-		$this->load->model('mdl_cs', 'users');
-		$this->load->model('mdl_cs', 'carts');
-		$this->load->model('mdl_cs', 'item');
+		$this->load->model('mdl_cs', 'cs');
 		$this->load->library('pdf');
+		$this->load->library('encryption');
 	}
 	public function index()
 	{
 		$id_cs = $this->session->userdata('id_cs');
 		$fetch['header'] = "BeatAudio Studio";
 		$fetch['tittle'] = "Dashboard";
-		$fetch['user'] = $this->user->getByIdCs($id_cs);
-		$fetch['prod'] = $this->user->getAllCount();
-		$fetch['bm'] = $this->user->getAllbm();
-		$fetch['beat'] = $this->user->getOneProduct();
+		$fetch['user'] = $this->cs->getByIdCs($id_cs);
+		$fetch['prod'] = $this->cs->getAllCount();
+		$fetch['bm'] = $this->cs->getAllbm();
+		$fetch['beat'] = $this->cs->getOneProduct();
 		// echo '<pre>';
 		// var_dump($fetch['beat']);
 		// echo '</pre>';
 		// die;
 		$this->load->view('layout/cs-header', $fetch);
-		$this->load->view('layout/cs-side',);
+		$this->load->view('layout/cs-side');
 		$this->load->view('cs/dashboard', $fetch);
 		$this->load->view('layout/adm-footer');
 	}
 
+	public function add()
+	{
+		$id_cs = $this->session->userdata('id_cs');
+		$id_product = $this->input->post('id_product');
+		$selling_price = $this->input->post('selling_price');
+		$title = $this->input->post('title');
+		$qty = $this->cs->getCartId($id_cs, $id_product);
+		#$qty = $this->db->get_where('cart', []);
+
+
+		// var_dump($qty['id_cart']);
+		// die;
+		if ($qty == 0) {
+			$sumQty = $qty['qty'] + 1;
+
+			// var_dump($sumQty);
+			// die;
+			$subtotal = $sumQty * $selling_price;
+			$data = [
+				'id_cart' => getAutoNumber('cart', 'id_cart', 'INV', 8),
+				'id_cs' => $id_cs,
+				'id_product' => $id_product,
+				'title'	=> $title,
+				'qty'	=> $sumQty,
+				'bill_price' => $selling_price,
+				'subtotal' => $subtotal
+			];
+			$this->db->insert('cart', $data);
+		} elseif ($qty['id_cart'] != 0) {
+
+			$sumQty = $qty['qty'] + 1;
+			// var_dump($sumQty);
+			// die;
+			$subtotal = $sumQty * $selling_price;
+			$data = [
+				'id_cart' => $qty['id_cart'],
+				'id_cs' => $id_cs,
+				'id_product' => $id_product,
+				'title'	=>  $title,
+				'qty'	=> $sumQty,
+				'bill_price' => $selling_price,
+				'subtotal' => $subtotal
+			];
+			$this->cs->updateCart($id_cs, $qty['id_cart'], $data, 'cart');
+		}
+
+
+		#$this->cart->insert($data);
+		$active_alert = '<div class="alert alert-success alert-dismissible fade show"
+		role="alert">
+		<span class="alert-text">
+		Berhasil Menambahkan Ke Keranjang</span><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>';
+		$this->session->set_flashdata('message', $active_alert);
+		redirect('publics/instrumental');
+	}
+
 	// public function add()
 	// {
-	// 	$id_user = $this->session->userdata('id_user');
+
+	// 	$id_cs = $this->session->userdata('id_cs');
 	// 	$id_product = $this->input->post('id_product');
 	// 	$selling_price = $this->input->post('selling_price');
 	// 	$title = $this->input->post('title');
-	// $qty = $this->user->getCartId($id_user, $id_product);
+	// 	$qty = $this->cs->getCartId($id_cs, $id_product);
 	// 	#$qty = $this->db->get_where('cart',[])
 
 
-	// 	// var_dump($qty['id_cart']);
-	// 	// die;
+
 	// 	if ($qty == 0) {
 	// 		$sumQty = $qty['qty'] + 1;
 
@@ -53,86 +107,31 @@ class Dashboard extends CI_Controller
 	// 		// die;
 	// 		$subtotal = $sumQty * $selling_price;
 	// 		$data = [
-	// 			'id_cart' => getAutoNumber('cart', 'id_cart', 'INV', 8),
-	// 			'id_user' => $id_user,
+
+	// 			'id_cs' => $id_cs,
 	// 			'id_product' => $id_product,
 	// 			'title'	=> $title,
 	// 			'qty'	=> $sumQty,
-	// 			'selling_price' => $selling_price,
-	// 			'subtotal' => $subtotal
+	// 			'bill_price' => $selling_price,
+	// 			// 'subtotal' => $subtotal,
+	// 			// 'mode' => 201,
 	// 		];
 	// 		$this->db->insert('cart', $data);
-	// 	} elseif ($qty['id_cart'] != 0) {
-
-	// 		$sumQty = $qty['qty'] + 1;
-	// 		// var_dump($sumQty);
-	// 		// die;
-	// 		$subtotal = $sumQty * $selling_price;
-	// 		$data = [
-	// 			'id_cart' => $qty['id_cart'],
-	// 			'id_user' => $id_user,
-	// 			'id_product' => $id_product,
-	// 			'title'	=>  $title,
-	// 			'qty'	=> $sumQty,
-	// 			'selling_price' => $selling_price,
-	// 			'subtotal' => $subtotal
-	// 		];
-	// 		$this->user->updateCart($id_user, $qty['id_cart'], $data, 'cart');
+	// 		$active_alert = '<div class="alert alert-success alert-dismissible fade show"
+	// 		role="alert">
+	// 		<span class="alert-text">
+	// 		Sukses menambahkan ke cart</span><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>';
+	// 		$this->session->set_flashdata('message', $active_alert);
+	// 		redirect('publics/instrumental');
+	// 	} elseif ($qty['id_cart'] != null) {
+	// 		$active_alert = '<div class="alert alert-danger alert-dismissible fade show"
+	// 		role="alert">
+	// 		<span class="alert-text">
+	// 		Hanya dapat 1 kali per instrumental</span><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>';
+	// 		$this->session->set_flashdata('message', $active_alert);
+	// 		redirect('publics/instrumental');
 	// 	}
-
-
-	// 	#$this->cart->insert($data);
-	// 	$active_alert = '<div class="alert alert-success alert-dismissible fade show"
-	// 	role="alert">
-	// 	<span class="alert-text">
-	// 	Success add to cart</span><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>';
-	// 	$this->session->set_flashdata('message', $active_alert);
-	// 	redirect('publics/instrumental');
 	// }
-
-	public function add()
-	{
-
-		$id_cs = $this->session->userdata('id_cs');
-		$id_product = $this->input->post('id_product');
-		$selling_price = $this->input->post('selling_price');
-		$title = $this->input->post('title');
-		$qty = $this->user->getCartId($id_cs, $id_product);
-		#$qty = $this->db->get_where('cart',[])
-
-
-		if ($qty == 0) {
-			$sumQty = $qty['qty'] + 1;
-
-			// var_dump($sumQty);
-			// die;
-			$subtotal = $sumQty * $selling_price;
-			$data = [
-
-				'id_cs' => $id_cs,
-				'id_product' => $id_product,
-				'title'	=> $title,
-				'qty'	=> $sumQty,
-				'selling_price' => $selling_price,
-				'subtotal' => $subtotal,
-				// 'mode' => 201,
-			];
-			$this->db->insert('cart', $data);
-			$active_alert = '<div class="alert alert-success alert-dismissible fade show"
-			role="alert">
-			<span class="alert-text">
-			Success add to cart</span><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>';
-			$this->session->set_flashdata('message', $active_alert);
-			redirect('publics/instrumental');
-		} elseif ($qty['id_cart'] != null) {
-			$active_alert = '<div class="alert alert-danger alert-dismissible fade show"
-			role="alert">
-			<span class="alert-text">
-			You can only add to cart one time per instrumental!!!</span><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>';
-			$this->session->set_flashdata('message', $active_alert);
-			redirect('publics/instrumental');
-		}
-	}
 	public function addHome()
 	{
 
@@ -140,10 +139,12 @@ class Dashboard extends CI_Controller
 		$id_product = $this->input->post('id_product');
 		$selling_price = $this->input->post('selling_price');
 		$title = $this->input->post('title');
-		$qty = $this->user->getCartId($id_cs, $id_product);
-		#$qty = $this->db->get_where('cart',[])
+		$qty = $this->cs->getCartId($id_cs, $id_product);
+		#$qty = $this->db->get_where('cart', []);
 
 
+		// var_dump($qty['id_cart']);
+		// die;
 		if ($qty == 0) {
 			$sumQty = $qty['qty'] + 1;
 
@@ -151,38 +152,87 @@ class Dashboard extends CI_Controller
 			// die;
 			$subtotal = $sumQty * $selling_price;
 			$data = [
-
+				'id_cart' => getAutoNumber('cart', 'id_cart', 'INV', 8),
 				'id_cs' => $id_cs,
 				'id_product' => $id_product,
 				'title'	=> $title,
 				'qty'	=> $sumQty,
-				'selling_price' => $selling_price,
-				'subtotal' => $subtotal,
-				// 'mode' => 201,
+				'bill_price' => $selling_price,
+				'subtotal' => $subtotal
 			];
 			$this->db->insert('cart', $data);
-			// $active_alert = '<div class="alert alert-success alert-dismissible fade show"
-			// role="alert">
-			// <span class="alert-text">
-			// Success add to cart</span><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>';
-			$this->session->set_flashdata('onecart', 'Success add to cart');
-			redirect('publics');
-		} elseif ($qty['id_cart'] != null) {
+		} elseif ($qty['id_cart'] != 0) {
 
-			$this->session->set_flashdata('error', 'You can only add to cart one time per instrumental!!!');
-			redirect('publics');
+			$sumQty = $qty['qty'] + 1;
+			// var_dump($sumQty);
+			// die;
+			$subtotal = $sumQty * $selling_price;
+			$data = [
+				'id_cart' => $qty['id_cart'],
+				'id_cs' => $id_cs,
+				'id_product' => $id_product,
+				'title'	=>  $title,
+				'qty'	=> $sumQty,
+				'bill_price' => $selling_price,
+				'subtotal' => $subtotal
+			];
+			$this->cs->updateCart($id_cs, $qty['id_cart'], $data, 'cart');
 		}
+		$this->session->set_flashdata('onecart', 'Sukses menambahkan ke cart');
+		redirect('publics');
 	}
+	// public function addHome()
+	// {
+
+	// 	$id_cs = $this->session->userdata('id_cs');
+	// 	$id_product = $this->input->post('id_product');
+	// 	$selling_price = $this->input->post('selling_price');
+	// 	$title = $this->input->post('title');
+	// 	$qty = $this->cs->getCartId($id_cs, $id_product);
+	// 	#$qty = $this->db->get_where('cart',[])
+
+
+	// 	if ($qty == 0) {
+	// 		$sumQty = $qty['qty'] + 1;
+
+	// 		// var_dump($sumQty);
+	// 		// die;
+	// 		$subtotal = $sumQty * $selling_price;
+	// 		$data = [
+
+	// 			'id_cs' => $id_cs,
+	// 			'id_product' => $id_product,
+	// 			'title'	=> $title,
+	// 			'qty'	=> $sumQty,
+	// 			'bill_price' => $selling_price,
+	// 			// 'subtotal' => $subtotal,
+	// 			// 'mode' => 201,
+	// 		];
+	// 		$this->db->insert('cart', $data);
+	// 		// $active_alert = '<div class="alert alert-success alert-dismissible fade show"
+	// 		// role="alert">
+	// 		// <span class="alert-text">
+	// 		// Success add to cart</span><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>';
+	// 	} elseif ($qty['id_cart'] != null) {
+
+	// 		$this->session->set_flashdata('error', 'Hanya dapat 1 kali per instrument!');
+	// 		redirect('publics');
+	// 		$this->session->set_flashdata('onecart', 'Sukses menambahkan ke cart');
+	// 		redirect('publics');
+	// 	}
+	// }
 	public function addNew()
 	{
 		$id_cs = $this->session->userdata('id_cs');
 		$id_product = $this->input->post('id_product');
 		$selling_price = $this->input->post('selling_price');
 		$title = $this->input->post('title');
-		$qty = $this->user->getCartId($id_cs, $id_product);
-		#$qty = $this->db->get_where('cart',[])
+		$qty = $this->cs->getCartId($id_cs, $id_product);
+		#$qty = $this->db->get_where('cart', []);
 
 
+		// var_dump($qty['id_cart']);
+		// die;
 		if ($qty == 0) {
 			$sumQty = $qty['qty'] + 1;
 
@@ -190,56 +240,106 @@ class Dashboard extends CI_Controller
 			// die;
 			$subtotal = $sumQty * $selling_price;
 			$data = [
-
+				'id_cart' => getAutoNumber('cart', 'id_cart', 'INV', 8),
 				'id_cs' => $id_cs,
 				'id_product' => $id_product,
 				'title'	=> $title,
 				'qty'	=> $sumQty,
-				'selling_price' => $selling_price,
-				'subtotal' => $subtotal,
-				// 'mode' => 201,
+				'bill_price' => $selling_price,
+				'subtotal' => $subtotal
 			];
 			$this->db->insert('cart', $data);
-			$active_alert = '<div class="alert alert-success alert-dismissible fade show"
-			role="alert">
-			<span class="alert-text">
-			Success add to cart</span><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>';
-			$this->session->set_flashdata('message', $active_alert);
-			redirect('cs/dashboard/cart');
-		} elseif ($qty['id_cart'] != null) {
-			$active_alert = '<div class="alert alert-danger alert-dismissible fade show"
-			role="alert">
-			<span class="alert-text">
-			You can only add to cart one time per instrumental!!!</span><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>';
-			$this->session->set_flashdata('message', $active_alert);
-			redirect('cs/dashboard');
+		} elseif ($qty['id_cart'] != 0) {
+
+			$sumQty = $qty['qty'] + 1;
+			// var_dump($sumQty);
+			// die;
+			$subtotal = $sumQty * $selling_price;
+			$data = [
+				'id_cart' => $qty['id_cart'],
+				'id_cs' => $id_cs,
+				'id_product' => $id_product,
+				'title'	=>  $title,
+				'qty'	=> $sumQty,
+				'bill_price' => $selling_price,
+				'subtotal' => $subtotal
+			];
+			$this->cs->updateCart($id_cs, $qty['id_cart'], $data, 'cart');
 		}
+		$active_alert = '<div class="alert alert-success alert-dismissible fade show"
+		role="alert">
+		<span class="alert-text">
+		Sukses menambahkan ke cart</span><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>';
+		$this->session->set_flashdata('message', $active_alert);
+		redirect('cs/dashboard/cart');
 	}
+	// public function addNew()
+	// {
+	// 	$id_cs = $this->session->userdata('id_cs');
+	// 	$id_product = $this->input->post('id_product');
+	// 	$selling_price = $this->input->post('selling_price');
+	// 	$title = $this->input->post('title');
+	// 	$qty = $this->cs->getCartId($id_cs, $id_product);
+	// 	#$qty = $this->db->get_where('cart',[])
+
+
+	// 	if ($qty == 0) {
+	// 		$sumQty = $qty['qty'] + 1;
+
+	// 		// var_dump($sumQty);
+	// 		// die;
+	// 		$subtotal = $sumQty * $selling_price;
+	// 		$data = [
+
+	// 			'id_cs' => $id_cs,
+	// 			'id_product' => $id_product,
+	// 			'title'	=> $title,
+	// 			'qty'	=> $sumQty,
+	// 			'bill_price' => $selling_price,
+	// 			// 'subtotal' => $subtotal,
+	// 			// 'mode' => 201,
+	// 		];
+	// 		$this->db->insert('cart', $data);
+	// 		$active_alert = '<div class="alert alert-success alert-dismissible fade show"
+	// 		role="alert">
+	// 		<span class="alert-text">
+	// 		Sukses menambahkan ke cart</span><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>';
+	// 		$this->session->set_flashdata('message', $active_alert);
+	// 		redirect('cs/dashboard/cart');
+	// 	} elseif ($qty['id_cart'] != null) {
+	// 		$active_alert = '<div class="alert alert-danger alert-dismissible fade show"
+	// 		role="alert">
+	// 		<span class="alert-text">
+	// 		Hanya dapat 1 kali per instrument!!</span><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>';
+	// 		$this->session->set_flashdata('message', $active_alert);
+	// 		redirect('cs/dashboard');
+	// 	}
+	// }
 	public function cart()
 	{
 		$id_cs = $this->session->userdata('id_cs');
-		$param = $this->user->getProfile($id_cs);
+		$param = $this->cs->getProfile($id_cs);
 
 		if ($param == NULL) {
 			$active_alert = '<div class="alert alert-danger alert-dismissible fade show"
 			role="alert">
 			<span class="alert-text">
-			You must be update your profile first</span><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>';
+			Lengkapi data anda</span><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>';
 			$this->session->set_flashdata('message', $active_alert);
 			redirect('cs/dashboard/profile');
 		} else {
 			$fetch['header'] = "BeatAudio Studio";
-			$fetch['tittle'] = "Cart";
-			$fetch['user'] = $this->user->getByIdCs($id_cs);
-			$fetch['prod'] = $this->user->getAllCount();
-			$fetch['bm'] = $this->user->getAllbm();
-			$fetch['cart'] = $this->carts->getCart($id_cs);
+			$fetch['tittle'] = "Keranjang";
+			$fetch['user'] = $this->cs->getByIdCs($id_cs);
+			$fetch['prod'] = $this->cs->getAllCount();
+			$fetch['bm'] = $this->cs->getAllbm();
+			$fetch['cart'] = $this->cs->getCart($id_cs);
 			// var_dump($fetch['cart']);
 			// die;
-			$fetch['count'] = $this->carts->countAllCart($id_cs);
-			$fetch['sum'] = $this->carts->sumSubtotal($id_cs);
+			$fetch['count'] = $this->cs->countAllCart($id_cs);
+			$fetch['sum'] = $this->cs->sumSubtotal($id_cs);
 			$this->load->view('layout/cs-header', $fetch);
-			$this->load->view('layout/cs-side',);
+			$this->load->view('layout/cs-side');
 			$this->load->view('cs/cart', $fetch);
 			$this->load->view('layout/adm-footer');
 		}
@@ -249,8 +349,8 @@ class Dashboard extends CI_Controller
 	{
 		$id_cs = $this->session->userdata('id_cs');
 		$fetch['header'] = "BeatAudio";
-		$fetch['user'] = $this->user->getByIdCs($id_cs);
-		$fetch['users'] = $this->users->getByProfile($id_cs);
+		$fetch['user'] = $this->cs->getByIdCs($id_cs);
+		$fetch['users'] = $this->cs->getByProfile($id_cs);
 		// var_dump($fetch['users']);
 		// die;
 		$this->load->view('layout/cs-header', $fetch);
@@ -261,16 +361,23 @@ class Dashboard extends CI_Controller
 
 	public function updateprofile()
 	{
-
-		$this->form_validation->set_rules(
-			'nickname',
-			'Nickname',
-			'required|trim|is_unique[customer.nickname]',
-			array(
-				'required'      => 'You have not provided %s.',
-				'is_unique'     => '%s has been use, change to another'
-			)
-		);
+		if ($this->input->post('nickname') != 'BeatAudio User') {
+			$this->form_validation->set_rules(
+				'nickname',
+				'Nickname',
+				'required'
+			);
+		} else {
+			$this->form_validation->set_rules(
+				'nickname',
+				'Nickname',
+				'required|trim|is_unique[customer.nickname]',
+				array(
+					'required'      => 'You have not provided %s.',
+					'is_unique'     => '%s sudah ada, silahkan ganti'
+				)
+			);
+		}
 		$this->form_validation->set_rules(
 			'email',
 			'Beat Maker Name',
@@ -279,31 +386,43 @@ class Dashboard extends CI_Controller
 		$this->form_validation->set_rules(
 			'first_name',
 			'First Name',
-			'required|trim|regex_match[/^([a-z ])+$/i]'
+			'required|trim|regex_match[/^([a-z ])+$/i]',
+			[
+				'required' => 'Tidak Boleh Kosong'
+			]
 		);
 		$this->form_validation->set_rules(
 			'last_name',
 			'Last Name',
-			'required|trim|regex_match[/^([a-z ])+$/i]'
+			'required|trim|regex_match[/^([a-z ])+$/i]',
+			[
+				'required' => 'Tidak Boleh Kosong'
+			]
 		);
 		$this->form_validation->set_rules(
 			'phone_number',
 			'Phone Number',
-			'required|trim|numeric|min_length[10]|max_length[13]'
+			'required|trim|numeric|min_length[10]|max_length[13]',
+			[
+				'required' => 'Tidak Boleh Kosong'
+			]
 		);
 		$this->form_validation->set_rules(
 			'address',
 			'Address',
-			'required'
+			'required',
+			[
+				'required' => 'Tidak Boleh Kosong'
+			]
 		);
 
 
 		if ($this->form_validation->run() == false) {
 			$id_cs = $this->session->userdata('id_cs');
-			$fetch['tittle'] = "Channel Update Profile";
+			$fetch['tittle'] = "Update Profile";
 			$fetch['header'] = "BeatAudio";
-			$fetch['user'] = $this->user->getByIdCs($id_cs);
-			$fetch['users'] = $this->users->getByProfile($id_cs);
+			$fetch['user'] = $this->cs->getByIdCs($id_cs);
+			$fetch['users'] = $this->cs->getByProfile($id_cs);
 			$this->load->view('layout/cs-header', $fetch);
 			$this->load->view('layout/cs-side',);
 			$this->load->view('cs/update-profile');
@@ -354,7 +473,7 @@ class Dashboard extends CI_Controller
 					'<div class="alert alert-danger alert-dismissible fade show"
 		                                        role="alert">
 		                                        <span class="alert-text">
-		                                        Your file upload is not image!!</span><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>'
+		                                        Opps, yang anda upload bukan gambar</span><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>'
 				);
 				redirect('cs/dashboard/updateprofile');
 			}
@@ -389,29 +508,29 @@ class Dashboard extends CI_Controller
 		}
 
 
-		$query = $this->users->getByProfile($id_cs);
+		$query = $this->cs->getByProfile($id_cs);
 		if ($query['id_profiles'] != NULL) {
 
-			$this->user->update_user($id_cs, $data, 'customer');
-			$this->user->updateUserProfile($id_cs, $data2, 'profiles');
+			$this->cs->update_user($id_cs, $data, 'customer');
+			$this->cs->updateUserProfile($id_cs, $data2, 'profiles');
 			$this->session->set_flashdata(
 				'message',
 				'<div class="alert alert-success alert-dismissible fade show"
 			                        role="alert">
 			                        <span class="alert-text">
-			                        Your account has been updated</span><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>'
+			                        Sukses update data</span><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>'
 			);
 			redirect('cs/dashboard/profile');
 		} elseif ($query['id_profiles'] == NULL) {
 
-			$this->user->update_user($id_cs, $data, 'customer');
+			$this->cs->update_user($id_cs, $data, 'customer');
 			$this->db->insert('profiles', $data2);
 			$this->session->set_flashdata(
 				'message',
 				'<div class="alert alert-success alert-dismissible fade show"
 			                        role="alert">
 			                        <span class="alert-text">
-			                        Your account has been updated</span><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>'
+			                        Sukses update data</span><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>'
 			);
 
 			redirect('cs/dashboard/profile');
@@ -461,10 +580,10 @@ class Dashboard extends CI_Controller
 	{
 		$id_cs = $this->session->userdata('id_cs');
 		$fetch['header'] = "BeatAudio";
-		$fetch['tittle'] = "Transaction";
-		$fetch['user'] = $this->user->getByIdCs($id_cs);
-		$fetch['users'] = $this->users->getByProfile($id_cs);
-		$fetch['bill'] = $this->users->getTransaction($id_cs);
+		$fetch['tittle'] = "Transaksi";
+		$fetch['user'] = $this->cs->getByIdCs($id_cs);
+		$fetch['users'] = $this->cs->getByProfile($id_cs);
+		$fetch['bill'] = $this->cs->getTransaction($id_cs);
 		#$fetch['item'] = $this->item->getHistory($id_cs);
 		// echo '<pre>';
 		// var_dump($fetch['item']);
@@ -477,20 +596,83 @@ class Dashboard extends CI_Controller
 		$this->load->view('layout/adm-footer');
 	}
 
-	public function item($order_id)
+
+
+	public function expenses()
 	{
+		$this->form_validation->set_rules('from', 'From Date', 'required|trim');
+		$this->form_validation->set_rules('until', 'From Date', 'required|trim');
+		if ($this->form_validation->run() == false) {
+			$id_cs = $this->session->userdata('id_cs');
+			$fetch['header'] = "BeatAudio";
+			$fetch['tittle'] = "Pengeluaran";
+			// $fetch['user'] = $this->cs->getByIdCs($id_cs);
+			$fetch['users'] = $this->cs->getByProfile($id_cs);
+			#$fetch['bill'] = $this->cs->getExpenses($id_cs);
+			// echo '<pre>';
+			// var_dump($fetch['bill']);
+			// echo '</pre>';
+			// die;
+
+			$this->load->view('layout/cs-header', $fetch);
+			$this->load->view('layout/cs-side',);
+			$this->load->view('cs/expenses', $fetch);
+			$this->load->view('layout/adm-footer');
+		} else {
+			$this->_expansesReport();
+		}
+
+		// $from = @$this->input->post('from');
+		// $until = @$this->input->post('until');
+		// if ($from && $until) {
+		// 	$expenses = $this->cs->getExpenses($id_cs, $from, $until);
+		// 	var_dump($expenses);
+		// 	die;
+		// }
+	}
+
+	public function _expansesReport()
+	{
+		$id_cs = $this->session->userdata('id_cs');
+		$from = @$this->input->post('from');
+		$until = @$this->input->post('until');
+		$expenses = $this->cs->getExpenses($id_cs, $from, $until);
+
+		$sum = $this->cs->getSumExpenses($id_cs, $from, $until);
+		$this->session->set_flashdata('expenses', $expenses);
+		$this->session->set_flashdata('sum', $sum);
+		$this->session->set_flashdata('from', $from);
+		$this->session->set_flashdata('until', $until);
+		redirect('cs/dashboard/expenses');
+	}
+
+	public function printExpenses($id_cs, $from, $until)
+	{
+		$id_cs = $this->session->userdata('id_cs');
+		$reportWd['expenses'] = $this->cs->getExpenses($id_cs, $from, $until);
+		$reportWd['sum'] = $this->cs->getSumExpenses($id_cs, $from, $until);
+
+		// echo '<pre>';
+		// var_dump($reportWd);
+		// echo '</pre>';
+
+		$this->load->view('email-sent/printExpenses', $reportWd);
+	}
+
+	public function item()
+	{
+		$get_OrderID = $this->input->get('q');
+		$define_orderID = base64_decode($get_OrderID);
+
+
+
 		$id_cs = $this->session->userdata('id_cs');
 		$fetch['header'] = "BeatAudio";
 		$fetch['tittle'] = "Detail Item";
-		$fetch['user'] = $this->user->getByIdCs($id_cs);
-		$fetch['users'] = $this->users->getByProfile($id_cs);
-		$fetch['bill'] = $this->users->getTransaction($id_cs);
-		$fetch['item'] = $this->item->getHistory($id_cs, $order_id);
-		// echo '<pre>';
-		// var_dump($fetch['item']);
-
-		// echo '</pre>';
-		// die;
+		$fetch['user'] = $this->cs->getByIdCs($id_cs);
+		$fetch['users'] = $this->cs->getByProfile($id_cs);
+		$fetch['bill'] = $this->cs->getTransaction($id_cs);
+		$fetch['item'] = $this->cs->getHistory($id_cs, $define_orderID);
 		$this->load->view('layout/cs-header', $fetch);
 		$this->load->view('layout/cs-side',);
 		$this->load->view('cs/list', $fetch);
@@ -498,39 +680,51 @@ class Dashboard extends CI_Controller
 	}
 	public function updateCart()
 	{
+
 		$id_cart = $this->input->post('id_cart');
-		$id_cs = $this->input->post('id_cs');
-		$id_product = $this->input->post('id_product');
-		$title = $this->input->post('title');
+		$id_cs = $this->session->userdata('id_cs');
+		// $id_product = $this->input->post('id_product');
+		// $title = $this->input->post('title');
 		$qty = $this->input->post('qty');
-		$selling_price = $this->input->post('selling_price');
-		$sum = $qty * $selling_price;
-		if ($this->input->post('submit')) {
-			$data = [
-				'id_cart' => $id_cart,
-				'id_cs' => $id_cs,
-				'id_product' => $id_product,
-				'title' => $title,
-				'qty' => $qty,
-				'selling_price' => $selling_price,
-				'subtotal' => $sum,
-			];
+		$bill_price = $this->input->post('bill_price');
+		$sum = $qty * $bill_price;
+		$data = [
+			'id_cart' => $id_cart,
+			'id_cs' => $id_cs,
+			// 'id_product' => $id_product,
+			// 'title' => $title,
+			'qty' => $qty,
+			'bill_price' => $bill_price,
+			'subtotal' => $sum,
+		];
+		// echo '<pre>';
+		// var_dump($data);
+		// echo '</pre>';
 
-			$this->carts->updateCart($id_cs, $id_cart, $data);
-			redirect('cs/dashboard/cart');
-		} elseif ($this->input->post('delete')) {
-		}
-	}
-
-	public function deleted($id_cart)
-	{
-		$this->carts->deleteCart($id_cart);
+		$this->cs->updateCart($id_cs, $id_cart, $data);
 		$this->session->set_flashdata(
 			'message',
 			'<div class="alert alert-success alert-dismissible fade show"
 										role="alert">
 										<span class="alert-text">
-										Success delete data</span><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>'
+										Berhasil</span><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>'
+		);
+		redirect('cs/dashboard/cart');
+		// if ($this->input->post('submit')) {
+
+		// } elseif ($this->input->post('delete')) {
+		// }
+	}
+
+	public function deleted($id_cart)
+	{
+		$this->cs->deleteCart($id_cart);
+		$this->session->set_flashdata(
+			'message',
+			'<div class="alert alert-success alert-dismissible fade show"
+										role="alert">
+										<span class="alert-text">
+										Sukses hapus data</span><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>'
 		);
 		redirect('cs/dashboard/cart');
 	}
@@ -542,18 +736,29 @@ class Dashboard extends CI_Controller
 				'old_pass',
 				'Old Password',
 				'required',
+				[
+					'required' => 'Tidak Boleh Kosong'
+				]
 
 			);
 			$this->form_validation->set_rules(
 				'n_pass1',
 				'Password',
 				'required|trim|matches[n_pass2]',
+				[
+					'required' => 'Tidak Boleh Kosong',
+					'matches' => 'Tidak sama',
+				]
 
 			);
 			$this->form_validation->set_rules(
 				'n_pass2',
 				'Password',
 				'required|trim|matches[n_pass1]',
+				[
+					'required' => 'Tidak Boleh Kosong',
+					'matches' => 'Tidak sama',
+				]
 
 			);
 		} elseif ($this->input->post('delete')) {
@@ -568,10 +773,10 @@ class Dashboard extends CI_Controller
 		if ($this->form_validation->run() == false) {
 			$id_cs = $this->session->userdata('id_cs');
 			$fetch['header'] = "BeatAudio Studio";
-			$fetch['tittle'] = "Dashboard";
-			$fetch['user'] = $this->user->getByIdCs($id_cs);
-			$fetch['prod'] = $this->user->getAllCount();
-			$fetch['bm'] = $this->user->getAllbm();
+			$fetch['tittle'] = "Pengaturan";
+			$fetch['user'] = $this->cs->getByIdCs($id_cs);
+			$fetch['prod'] = $this->cs->getAllCount();
+			$fetch['bm'] = $this->cs->getAllbm();
 
 			$this->load->view('layout/cs-header', $fetch);
 			$this->load->view('layout/cs-side',);
@@ -583,9 +788,10 @@ class Dashboard extends CI_Controller
 				$new_password1 = $this->input->post('n_pass1');
 				$new_password2 = $this->input->post('n_pass2');
 
-				$change = $this->user->getByIdCs($this->session->userdata('id_cs'));
+				$change = $this->cs->getByIdCs($this->session->userdata('id_cs'));
 
 				if (password_verify($current_password, $change['password'])) {
+					// echo $current_password;
 					if ($new_password1 == $new_password2) {
 
 						$data = [
@@ -594,15 +800,15 @@ class Dashboard extends CI_Controller
 
 						// var_dump($data);
 						// die();
-						$this->user->updatePassword($this->session->userdata('id_user'), $data);
+						$this->cs->updatePassword($this->session->userdata('id_cs'), $data);
 						$this->session->set_flashdata(
 							'message',
 							'<div class="alert alert-success alert-dismissible fade show"
-                    role="alert">
-                    <span class="alert-text">
-                    You have been change password</span>
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                    <span aria-hidden="true">&times;</span></button></div>'
+					role="alert">
+					<span class="alert-text">
+					Berhasil</span>
+					<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+					<span aria-hidden="true">&times;</span></button></div>'
 						);
 						redirect('cs/dashboard/setting');
 					}
@@ -612,7 +818,7 @@ class Dashboard extends CI_Controller
 						'<div class="alert alert-danger alert-dismissible fade show"
                 role="alert">
                 <span class="alert-text">
-                The old password is wrong</span>
+                Password lama salah</span>
                 <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                 <span aria-hidden="true">&times;</span></button></div>'
 					);
@@ -626,27 +832,27 @@ class Dashboard extends CI_Controller
 						'<div class="alert alert-danger alert-dismissible fade show"
                 role="alert">
                 <span class="alert-text">
-                Wrong Request!!</span>
+                Permintaah Salah</span>
                 <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                 <span aria-hidden="true">&times;</span></button></div>'
 					);
 					redirect('cs/dashboard/setting');
 				} elseif ($req == "DELETED") {
 					$id_cs = $this->session->userdata('id_cs');
-					$cart = $this->user->getCart($id_cs);
+					$cart = $cart = $this->cs->getValidateCart($id_cs);;
 					if (!empty($cart)) {
 						$this->session->set_flashdata(
 							'message',
 							'<div class="alert alert-danger alert-dismissible fade show"
 					role="alert">
 					<span class="alert-text">
-					Request denied, you have cart on waiting</span>
+					Permintaan ditolak, anda masih memiliki item di keranjang</span>
 					<button type="button" class="close" data-dismiss="alert" aria-label="Close">
 					<span aria-hidden="true">&times;</span></button></div>'
 						);
 						redirect('cs/dashboard/setting');
 					} else {
-						$trans = $this->user->getTransactionView($id_cs);
+						$trans = $this->cs->getTransactionView($id_cs);
 						#var_dump($trans);
 						if ($trans != []) {
 							$this->session->set_flashdata(
@@ -654,7 +860,7 @@ class Dashboard extends CI_Controller
 								'<div class="alert alert-danger alert-dismissible fade show"
 						role="alert">
 						<span class="alert-text">
-						Request denied, you have a pending payment transaction!!</span>
+						Permintaan ditolak, anda masih belum menyelesaikan pembayaran</span>
 						<button type="button" class="close" data-dismiss="alert" aria-label="Close">
 						<span aria-hidden="true">&times;</span></button></div>'
 							);
@@ -668,7 +874,9 @@ class Dashboard extends CI_Controller
 			}
 		}
 	}
-
+	/**
+	 * Request Delete Data
+	 */
 	private function _SendEmailToDelete($email, $req, $type)
 	{
 		$config = [
@@ -686,60 +894,102 @@ class Dashboard extends CI_Controller
 
 
 		$id_cs = $this->session->userdata('id_cs');
-		$param = $this->user->getProfileRequest($id_cs);
-		// $Full = $this->user->getByProducts($id_cs);
-		// $Demo = $this->user->getByProducts($id_cs);
-		$params['bm'] = $this->user->getProfileRequest($id_cs);
 
-		$params['tr'] = $this->user->getTransaction($id_cs);
+		$param = $this->cs->getFileName($id_cs);
+		$params['empty'] = $this->cs->getFileName($id_cs);
+		$params['bm'] = $this->cs->getProfileRequest($id_cs);
+		$params['tr'] = $this->cs->getTransaction($id_cs);
+		$params['order'] = $this->cs->getHistoryToDelete($id_cs);
+		$params['total'] = $this->cs->sumSubtotalHIstory($id_cs);
+
 		$this->load->view('email-sent/data-cs-print', $params);
+		$filename = $param['email'] . '-personal-data.pdf';
+		// if ($params['bm']['nickname'] != NULL) {
+		// } else {
+		// 	$filename = time() . '-personal-data.pdf';
+		// }
 
 
 
+
+		$ciphertext = base64_encode($id_cs);
 		$data['bm'] = [
-			'uid' => $id_cs,
-			'full_name' => $param['first_name'] . ' ' . $param['last_name'],
+			'uid' => $ciphertext,
+			'pdf' => $filename,
+			'full_name' => 'BeatAudio User',
 		];
+
 		$message = $this->load->view('email-sent/request-delete-cs', $data, TRUE);
-		$filename = $params['bm']['nickname'] . '-personal-data.pdf';
 		$this->email->from('beataudio1812@gmail.com', 'Beat Audio');
 		$this->email->to($email);
 		if ($type == 'delete') {
-			$this->email->subject('REQUEST DELETE - ' . time());
+			$this->email->subject('PERMINTAN PENGHAPUSAN - ' . time());
 			$this->email->message($message);
-			$this->email->attach($_SERVER['DOCUMENT_ROOT'] . '/testing/files/pdf/' . $filename);
-			// $data1 = [
-			//     'id_user' => ''
-			// ];
 			$data2 = [
 				'is_active' => 0,
 				'request_delete' => $req,
+				'personal_pdf' => $filename
 			];
-			$this->user->update_user($this->session->userdata('id_cs'), $data2);
-			#$this->user->updateIncome($this->session->userdata('email'), $data1);
+			$this->cs->update_user($this->session->userdata('id_cs'), $data2);
 		}
 		$this->load->library('email', $config);
 		$this->email->send();
-		unlink($_SERVER['DOCUMENT_ROOT'] . '/testing/files/pdf/' . $filename);
+
 		$this->session->unset_userdata('id_user');
 		$this->session->unset_userdata('id_cs');
 		$this->session->unset_userdata('nickname');
 		$this->session->unset_userdata('email');
 		$this->session->unset_userdata('role');
 
-		$this->session->set_flashdata('message', '<div class="alert alert-success" role="alert">Your Request In Process and check your email</div>');
+		$this->session->set_flashdata('message', '<div class="alert alert-success" role="alert">Permintaan sedang di proses, silahkan check email anda</div>');
 		redirect('auth');
 	}
-	public function yourData()
+	public function d()
+	{
+		$id_history = $this->input->get('id');
+		$file_token = $this->input->get('token');
+		// var_dump($file_token);
+		// die;
+		$file = $this->input->get('file');
+		$param = $this->db->get_where(
+			'order_history',
+			[
+				'id_history' => $id_history,
+
+			]
+		)->row();
+
+		// var_dump($param);
+
+		// die;
+		// if ($id_history == $param->id_history && $file_token == $param->file_token) {
+		// 	echo 'berhasil';
+		// }
+
+		if ($param->id_history == $id_history && $param->file_token == $file_token) {
+			$data = [
+				'file_token' => null,
+			];
+			$this->cs->updateByIdOrder($id_history, $data);
+			if ($file == $param->full_version) {
+				force_download('files/full/' . $file, NULL);
+			}
+			echo 'berhasil';
+		} elseif ($param->id_history == $id_history && $param->file_token == NULL) {
+			$this->load->view('not-found');
+		}
+	}
+
+	public function check()
 	{
 		$id_cs = $this->session->userdata('id_cs');
+		$param = $this->cs->getFileName($id_cs);
+		$params['empty'] = $this->cs->getFileName($id_cs);
+		$params['bm'] = $this->cs->getProfileRequest($id_cs);
+		$params['tr'] = $this->cs->getTransaction($id_cs);
+		$params['order'] = $this->cs->getHistoryToDelete($id_cs);
+		$params['total'] = $this->cs->sumSubtotalHIstory($id_cs);
 
-
-
-		// $this->session->unset_userdata('id_user');
-		// $this->session->unset_userdata('id_cs');
-		// $this->session->unset_userdata('nickname');
-		// $this->session->unset_userdata('email');
-		// $this->session->unset_userdata('role');
+		$this->load->view('email-sent/data-cs-print', $params);
 	}
 }

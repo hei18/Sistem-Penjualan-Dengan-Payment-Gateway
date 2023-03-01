@@ -34,9 +34,9 @@
 								<tr>
 
 
-									<th>Sales From</th>
+									<th>Penjualan Dari</th>
 
-									<th>Income</th>
+									<th>Pendapatan</th>
 
 
 								</tr>
@@ -46,7 +46,7 @@
 									<tr>
 										<td colspan="7">
 											<div class="alert alert-info" role="alert">
-												No Data
+												Tidak Ada Data
 											</div>
 										</td>
 									</tr>
@@ -66,9 +66,13 @@
 
 								endforeach; ?>
 								<tr>
-									<th colspan="1" class="bg-light">Total Income</th>
+									<th colspan="1" class="bg-light">Total Pendapatan</th>
 									<th class="text-right bg-light">
-										<?= idr($ppn); ?>
+										<?php if ($ppn == NULL) : ?>
+											Rp.0
+										<?php else : ?>
+											<?= idr($ppn); ?>
+										<?php endif; ?>
 
 									</th>
 								</tr>

@@ -34,10 +34,10 @@
 							<thead>
 								<tr>
 
-									<th>Nickname</th>
-									<th>Eamail</th>
-									<th>Request DELETE</th>
-									<th>Action</th>
+									<th>Beatmaker</th>
+									<th>Email</th>
+									<th>Permintaan Hapus</th>
+									<th>Aksi</th>
 
 								</tr>
 							</thead>
@@ -54,14 +54,14 @@
 										</td>
 										<td>
 											<?php if ($d['request_delete'] == "DELETED") : ?>
-												REQUEST TO DELETE
+												PERMINTAAN PENGHAPUSAN
 											<?php elseif ($d['request_delete'] == NULL) : ?>
-												NO REQUEST
+												TIDAK ADA PERMINTAAN
 											<?php endif; ?>
 										</td>
 										<td>
 											<?php if ($d['request_delete'] == "DELETED") : ?>
-												<a class="btn btn-sm btn-danger" onclick="return confirm('Request delte from <?= $d['nickname']; ?> ')" href="<?= base_url('admin/dashboard/requestdelete/' . $d['id_user']); ?>"><i class="far fa-trash-alt"></i></a>
+												<a class="btn btn-sm btn-danger" onclick="return confirm('PERMINTAAN PENGHAPUSAN DARI <?= $d['nickname']; ?> ')" href="<?= base_url('admin/dashboard/requestdelete/' . $d['id_user']); ?>"><i class="far fa-trash-alt"></i></a>
 											<?php elseif ($d['request_delete'] == NULL) : ?>
 											<?php endif; ?>
 

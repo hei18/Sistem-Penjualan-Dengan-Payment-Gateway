@@ -4,6 +4,11 @@ defined('BASEPATH') or exit('No direct script access allowed');
 class Mdl_artist extends CI_Model
 {
 
+    public function insert_profiles_bm($data)
+    {
+        $this->db->insert('profiles', $data);
+    }
+
     public function get_artist()
     {
         return $this->db->get('profiles')->result_array();
@@ -156,6 +161,13 @@ class Mdl_artist extends CI_Model
         $this->db->where('id_cs', $id_cs);
         return $this->db->get()->row()->subtotal;
     }
+    // public function sumSubtotal($id_cs)
+    // {
+    //     $this->db->select_sum('bill_price');
+    //     $this->db->from('cart');
+    //     $this->db->where('id_cs', $id_cs);
+    //     return $this->db->get()->row()->bill_price;
+    // }
 
     public function updateEmailCs($email, $data)
     {

@@ -31,7 +31,7 @@
 		<div class="container-fluid">
 			<div class="alert alert-info alert-dismissible fade show d-md-none" role="alert">
 				<span class="alert-text">
-					You can upload your instrumental in website</span><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					Anda hanya bisa upload instrumental di versi website</span><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 			</div>
 			<?= $this->session->flashdata('message'); ?>
 			<div class="row">
@@ -43,9 +43,9 @@
 						<!-- /.card-header -->
 						<div class="card-body">
 							<form action="<?= base_url('bm/channel/bank_account'); ?>" method="post">
-								<label for="disabledSelect">Bank Name</label>
+								<label for="disabledSelect">Nama Bank</label>
 								<select id="bank_name" name="bank_name" class="form-control">
-									<option value="">Select Your Bank</option>
+									<option value="">Pilih Bank</option>
 									<option value="BCA">BCA</option>
 									<option value="BNI">BNI</option>
 									<option value="BRI">BRI</option>
@@ -53,8 +53,8 @@
 								</select>
 								<?= form_error('bank_name', '<small class=" text-danger">', '</small>'); ?>
 								<div class="form-group">
-									<label for="exampleInputEmail1">Bank Number</label>
-									<input type="text" name="bank_number" id="bank_number" class="form-control">
+									<label for="exampleInputEmail1">Nomor Rekening</label>
+									<input autocomplete="off" type="text" name="bank_number" id="bank_number" class="form-control">
 									<?= form_error('bank_number', '<small class=" text-danger">', '</small>'); ?>
 								</div>
 								<button type="submit" class="btn btn-primary">Submit</button>
@@ -66,7 +66,7 @@
 				<div class="col">
 					<div class="card">
 						<div class="card-header bg-danger">
-							<h3 class="card-title">Your Bank Account</h3>
+							<h3 class="card-title">Akun Bank Anda</h3>
 						</div>
 						<!-- /.card-header -->
 						<div class="card-body">
@@ -76,8 +76,8 @@
 										<tr>
 
 											<th scope="col">Bank</th>
-											<th scope="col">Bank Number</th>
-											<th scope="col">Handle</th>
+											<th scope="col">Nomor Rekening</th>
+											<th scope="col">Aksi</th>
 										</tr>
 									</thead>
 									<tbody>

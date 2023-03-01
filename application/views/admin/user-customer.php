@@ -24,7 +24,7 @@
 
 			<div class="card">
 				<div class="card-header bg-warning">
-					All Customer
+					Semua Customer
 				</div>
 				<!-- /.card-header -->
 				<div class="card-body">
@@ -33,10 +33,11 @@
 						<table class="table table-bordered table-hover">
 							<thead>
 								<tr>
-									<th>Nickname</th>
-									<th>Eamail</th>
-									<th>Request Status</th>
-									<th>Action</th>
+									<th>Nama Panggilan</th>
+									<th>Email</th>
+									<th>Permintaan</th>
+									<th>Transaksi</th>
+									<th>Aksi</th>
 
 
 								</tr>
@@ -46,18 +47,25 @@
 									<tr>
 
 										<td>
-											<?= $d['id_cs']; ?>
+
 											<?= $d['nickname'] ?>
 										</td>
 										<td>
 											<?= $d['email'] ?>
 										</td>
 										<td>
-											<?= $d['request_delete'] ?>
+											<?php if ($d['request_delete'] == "DELETED") : ?>
+												PERMINTAAN PENGHAPUSAN
+											<?php elseif ($d['request_delete'] == NULL) : ?>
+												TIDAK ADA PERMINTAAN
+											<?php endif; ?>
+										</td>
+										<td>
+											<a href="<?= base_url('admin/dashboard/transaction?key=') . base64_encode($d['id_cs']); ?>" class="btn btn-sm btn-info"><i class="fa-solid fa-money-bill"></i></a>
 										</td>
 										<td>
 											<?php if ($d['request_delete'] == "DELETED") : ?>
-												<a class="btn btn-sm btn-danger" onclick="return confirm('Request delte from <?= $d['nickname']; ?> ')" href="<?= base_url('admin/dashboard/requestdeleteCs/' . $d['id_cs']); ?>"><i class="far fa-trash-alt"></i></a>
+												<a class="btn btn-sm btn-danger" onclick="return confirm('Request delete from <?= $d['nickname']; ?> ')" href="<?= base_url('admin/dashboard/requestdeleteCs/' . $d['id_cs']); ?>"><i class="far fa-trash-alt"></i></a>
 											<?php elseif ($d['request_delete'] == NULL) : ?>
 											<?php endif; ?>
 

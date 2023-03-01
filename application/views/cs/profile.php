@@ -6,7 +6,7 @@
 		<div class="container-fluid">
 			<div class="row mb-2">
 				<div class="col-sm-6">
-					<h1>Profile</h1>
+					<h1>Profil</h1>
 
 				</div>
 
@@ -38,22 +38,22 @@
 				<div class="col-md-8">
 					<div class="card card-primary">
 						<div class="card-header">
-							<h3 class="card-title">About <?= $user['nickname']; ?></h3>
+							<h3 class="card-title">Data Diri <?= $user['nickname']; ?></h3>
 						</div>
 						<div class="card-body">
-							<?php $query = $this->db->query("SELECT * FROM profiles INNER JOIN user ON profiles.id_user = user.id_user"); ?>
+							<?php $query = $this->db->query("SELECT * FROM profiles INNER JOIN customer ON profiles.id_cs = customer.id_cs"); ?>
 							<?php if ($query->num_rows() > 0) : ?>
 								<div class="row">
 									<div class="col">
-										<strong><i class="fa-sharp fa-solid fa-user"></i>&nbsp;&nbsp;&nbsp;Full Name</strong>
+										<strong><i class="fa-sharp fa-solid fa-user"></i>&nbsp;&nbsp;&nbsp;Nama Lengkap</strong>
 
 										<p class="text-muted">
-											<?= $users['first_name']; ?><?= $users['last_name']; ?>
+											<?= $users['first_name']; ?> <?= $users['last_name']; ?>
 										</p>
 
 										<hr>
 
-										<strong><i class="fas fa-map-marker-alt mr-1"></i>&nbsp;&nbsp;&nbsp;Address</strong>
+										<strong><i class="fas fa-map-marker-alt mr-1"></i>&nbsp;&nbsp;&nbsp;Alamat Lengkap</strong>
 
 										<p class="text-muted"><?= $users['address']; ?></p>
 
@@ -61,12 +61,12 @@
 									</div>
 									<div class="col">
 
-										<strong><i class="fa-solid fa-envelope"></i></i>&nbsp;&nbsp;&nbsp;email</strong>
+										<strong><i class="fa-solid fa-envelope"></i></i>&nbsp;&nbsp;&nbsp;Email</strong>
 
 										<p class="text-muted"><?= $users['email']; ?></p>
 
 										<hr>
-										<strong><i class="fa-sharp fa-solid fa-phone"></i>&nbsp;&nbsp;&nbsp;Phone Number</strong>
+										<strong><i class="fa-sharp fa-solid fa-phone"></i>&nbsp;&nbsp;&nbsp;Nomor Ponsel</strong>
 
 										<p class="text-muted">
 											<?= $users['phone_number']; ?>

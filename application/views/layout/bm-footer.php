@@ -19,12 +19,7 @@
 <script src="<?= base_url('assets/'); ?>dist/js/adminlte.js"></script>
 <script src="<?= base_url('assets/'); ?>js/simple.money.format.js"></script>
 
-<!-- PAGE PLUGINS -->
-<!-- jQuery Mapael -->
-<script src="<?= base_url('assets/'); ?>plugins/jquery-mousewheel/jquery.mousewheel.js"></script>
-<script src="<?= base_url('assets/'); ?>plugins/raphael/raphael.min.js"></script>
-<script src="<?= base_url('assets/'); ?>plugins/jquery-mapael/jquery.mapael.min.js"></script>
-<script src="<?= base_url('assets/'); ?>plugins/jquery-mapael/maps/usa_states.min.js"></script>
+
 <!-- ChartJS -->
 <script src="<?= base_url('assets/'); ?>plugins/chart.js/Chart.min.js"></script>
 <script src="<?= base_url('assets/'); ?>plugins/datatables/jquery.dataTables.min.js"></script>
@@ -39,6 +34,8 @@
 <script src="<?= base_url('assets/'); ?>plugins/datatables-buttons/js/buttons.html5.min.js"></script>
 <script src="<?= base_url('assets/'); ?>plugins/datatables-buttons/js/buttons.print.min.js"></script>
 <script src="<?= base_url('assets/'); ?>plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
+<!-- Select2 -->
+
 <script>
    $('.custom-file-input').on('change', function() {
       let fileName = $(this).val().split('\\').pop();
@@ -110,45 +107,99 @@
       }
    });
 </script>
-<script>
+<!-- <script>
    $(document).ready(function() {
-
-      $('#full_version').on('change', function() {
+      $("body").on('change', '#full_version', '#demo_version', function() {
          for (var i = 0; i < $(this).get(0).files.length; ++i) {
             var file1 = $(this).get(0).files[i].size;
             if (file1) {
-               var file_size = $(this).get(0).files[i].size;
-               if (file_size > 314572800) {
-                  $('#file-result1').html("max file upload is 300MB");
+         }
+
+      });
+      // $('#full_version').on('change', function() {
+      //    for (var i = 0; i < $(this).get(0).files.length; ++i) {
+      //       var file1 = $(this).get(0).files[i].size;
+      //       if (file1) {
+      //          var file_size = $(this).get(0).files[i].size;
+      //          if (file_size > 104857600) {
+      //             $('#file-result1').html("max file upload is 100MB");
+      //             $('input[name="submit"]').prop('disabled', true);
+      //          } else {
+      //             $('#demo_version').on('change', function() {
+      //                for (var i = 0; i < $(this).get(0).files.length; ++i) {
+      //                   var file2 = $(this).get(0).files[i].size;
+      //                   if (file2) {
+      //                      var file_size = $(this).get(0).files[i].size;
+      //                      if (file_size > 104857600) {
+      //                         $('#file-result2').html("max file upload is 100MB");
+      //                         $('input[name="submit"]').prop('disabled', true);
+      //                      } else {
+      //                         $('input[name="submit"]').prop('disabled', false);
+      //                      }
+      //                   }
+      //                }
+      //             });
+      //          }
+      //       }
+      //    }
+      // });
+
+   });
+</script> -->
+<script>
+   var full_version = document.getElementById('full_version');
+   var demo_version = document.getElementById('demo_version');
+   var thumbnail = document.getElementById('thumbnail');
+   if (full_version.addEventListener || demo_version.addEventListener || thumbnail.addEventListener) {
+      full_version.addEventListener('change', function(event) {
+         for (var i = 0; i < $(this).get(0).files.length; ++i) {
+            full_version = $(this).get(0).files[i].size;
+            if (full_version) {
+               var file_full = $(this).get(0).files[i].size;
+               if (file_full > 104857600) {
+                  $('#file-result1').html("Maksimal file full versi adalah 100MB");
                   $('input[name="submit"]').prop('disabled', true);
+
                } else {
-                  $('#demo_version').on('change', function() {
-                     for (var i = 0; i < $(this).get(0).files.length; ++i) {
-                        var file1 = $(this).get(0).files[i].size;
-                        if (file1) {
-                           var file_size = $(this).get(0).files[i].size;
-                           if (file_size > 314572800) {
-                              $('#file-result2').html("max file upload is 300MB");
-                              $('input[name="submit"]').prop('disabled', true);
-                           } else {
-                              $('input[name="submit"]').prop('disabled', false);
-                           }
-                        }
-                     }
-                  });
+                  $('input[name="submit"]').prop('disabled', false);
                }
             }
          }
       });
 
+      demo_version.addEventListener('change', function(event) {
+         for (var i = 0; i < $(this).get(0).files.length; ++i) {
+            demo_version = $(this).get(0).files[i].size;
+            if (demo_version) {
+               var file_demo = $(this).get(0).files[i].size;
+               if (file_demo > 104857600) {
+                  $('#file-result2').html("Maksimal file demo versi adalah 100MB");
+                  $('input[name="submit"]').prop('disabled', true);
 
+               } else {
+                  $('input[name="submit"]').prop('disabled', false);
+               }
+            }
+         }
+      });
 
-   });
+      thumbnail.addEventListener('change', function(event) {
+         for (var i = 0; i < $(this).get(0).files.length; ++i) {
+            thumbnail = $(this).get(0).files[i].size;
+            if (thumbnail) {
+               var image = $(this).get(0).files[i].size;
+               if (image > 2097152) {
+                  $('#file-result3').html("Maksimal file gambar adalah 2MB");
+                  $('input[name="submit"]').prop('disabled', true);
+
+               } else {
+                  $('input[name="submit"]').prop('disabled', false);
+               }
+            }
+         }
+      });
+   }
 </script>
-<!-- AdminLTE for demo purposes -->
-<!-- <script src="<?= base_url('assets/'); ?>dist/js/demo.js"></script> -->
-<!-- AdminLTE dashboard demo (This is only for demo purposes) -->
-<!-- <script src="<?= base_url('assets/'); ?>dist/js/pages/dashboard2.js"></script> -->
 </body>
 
 </html>
